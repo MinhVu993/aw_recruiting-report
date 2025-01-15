@@ -1,0 +1,86 @@
+[
+  {
+    "name": "candidate-listing",
+    "path": "/candidate-listing",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\candidate-listing.vue",
+    "chunkName": "pages/candidate-listing",
+    "_name": "_22fbe7a1"
+  },
+  {
+    "name": "create-candidate",
+    "path": "/create-candidate",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\create-candidate.vue",
+    "chunkName": "pages/create-candidate",
+    "_name": "_29fac04a"
+  },
+  {
+    "name": "demand",
+    "path": "/demand",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\demand.vue",
+    "chunkName": "pages/demand",
+    "_name": "_699fa8f4"
+  },
+  {
+    "name": "deptcontrol",
+    "path": "/deptcontrol",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\deptcontrol.vue",
+    "chunkName": "pages/deptcontrol",
+    "_name": "_41141f1f"
+  },
+  {
+    "name": "intern",
+    "path": "/intern",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\intern.vue",
+    "chunkName": "pages/intern",
+    "_name": "_17983a3b"
+  },
+  {
+    "name": "recruiting-report",
+    "path": "/recruiting-report",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\recruiting-report.vue",
+    "chunkName": "pages/recruiting-report",
+    "_name": "_2b87a524"
+  },
+  {
+    "name": "resign",
+    "path": "/resign",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\resign.vue",
+    "chunkName": "pages/resign",
+    "_name": "_5e9082ce"
+  },
+  {
+    "name": "resign-report",
+    "path": "/resign-report",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\resign-report.vue",
+    "chunkName": "pages/resign-report",
+    "_name": "_05094ad0"
+  },
+  {
+    "name": "template-print-bqt",
+    "path": "/template-print/bqt",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\bqt.vue",
+    "chunkName": "pages/template-print/bqt",
+    "_name": "_7b6b1b5c"
+  },
+  {
+    "name": "template-print-hires",
+    "path": "/template-print/hires",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\hires.vue",
+    "chunkName": "pages/template-print/hires",
+    "_name": "_f067a3e8"
+  },
+  {
+    "name": "template-print-resign",
+    "path": "/template-print/resign",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\resign.vue",
+    "chunkName": "pages/template-print/resign",
+    "_name": "_54293e9a"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\aw-recruiting-report\\\\pages\\\\index.vue",
+    "chunkName": "pages/index",
+    "_name": "_600302b9"
+  }
+]

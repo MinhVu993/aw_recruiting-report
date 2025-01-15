@@ -1,0 +1,8 @@
+{
+  "Auth": {
+    "description": "Auto imported from components/auth.vue"
+  },
+  "DsFilter": {
+    "description": "Auto imported from components/DsFilter.vue"
+  }
+}
