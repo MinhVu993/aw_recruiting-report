@@ -107,10 +107,67 @@
         {{ $t('Export excel') }}
     </v-btn>
 </template>
-<template v-slot:[`header.dem_dept`]="{ header }">
-    {{ $t('Division') }}
+<template #[`header.dem_dept`]>
+    <DsFilter :name="$t('Division')" :in-items="filterItems.dem_dept"
+    @changed="updateFilter('dem_dept', $event)" />
 </template>
-<template v-slot:[`header.dem_sub_department`]="{ header }">
+<template #[`header.dem_sub_department`]>
+    <DsFilter :name="$t('Department')" :in-items="filterItems.dem_sub_department"
+    @changed="updateFilter('dem_sub_department', $event)" />
+</template>
+<template #[`header.dem_unit`]>
+    <DsFilter :name="$t('Unit')" :in-items="filterItems.dem_unit"
+    @changed="updateFilter('dem_unit', $event)" />
+</template>
+<template #[`header.dem_position`]>
+    <DsFilter :name="$t('Position')" :in-items="filterItems.dem_position"
+    @changed="updateFilter('dem_position', $event)" />
+</template>
+<template #[`header.dem_sub_position`]>
+    <DsFilter :name="$t('Sub Position')" :in-items="filterItems.dem_sub_position"
+    @changed="updateFilter('dem_sub_position', $event)" />
+</template> 
+<template #[`header.dem_amount`]>
+    <DsFilter :name="$t('Amount')" :in-items="filterItems.dem_amount"
+    @changed="updateFilter('dem_amount', $event)" />
+</template>
+<template #[`header.dem_inputdate`]>
+    <DsFilter :name="$t('Request date')" :in-items="filterItems.dem_inputdate"
+    @changed="updateFilter('dem_inputdate', $event)" />
+</template>
+<template #[`header.dem_recruited`]>
+    <DsFilter :name="$t('Recruited')" :in-items="filterItems.dem_recruited"
+    @changed="updateFilter('dem_recruited', $event)" />
+</template>
+<template #[`header.dem_fulfilled`]>
+    <DsFilter :name="$t('Full filled')" :in-items="filterItems.dem_fulfilled"
+    @changed="updateFilter('dem_fulfilled', $event)" />
+</template>
+<template #[`header.dem_fullfilldate`]>
+    <DsFilter :name="$t('Full filled date')" :in-items="filterItems.dem_fullfilldate"
+    @changed="updateFilter('dem_fullfilldate', $event)" />
+</template>
+<template #[`header.stocknumber`]>
+    <DsFilter :name="$t('Still in need')" :in-items="filterItems.stocknumber"
+    @changed="updateFilter('stocknumber', $event)" />
+</template>
+<template #[`header.dem_note`]>
+    <DsFilter :name="$t('Note')" :in-items="filterItems.dem_note"
+    @changed="updateFilter('dem_note', $event)" />
+</template>
+<template #[`header.dem_candidates`]>
+    <DsFilter :name="$t('Candidates')" :in-items="filterItems.dem_candidates"
+    @changed="updateFilter('dem_candidates', $event)" />
+</template>
+<template #[`header.dem_pause_start_at`]>
+    <DsFilter :name="$t('On hold start')" :in-items="filterItems.dem_pause_start_at"
+    @changed="updateFilter('dem_pause_start_at', $event)" />
+</template>
+<template #[`header.dem_pause_end_at`]>
+    <DsFilter :name="$t('On hold end')" :in-items="filterItems.dem_pause_end_at"
+    @changed="updateFilter('dem_pause_end_at', $event)" />
+</template>
+<!-- <template v-slot:[`header.dem_sub_department`]="{ header }">
     {{ $t('Department') }}
 </template>
 <template v-slot:[`header.dem_unit`]="{ header }">
@@ -151,7 +208,7 @@
 </template>
 <template v-slot:[`header.dem_pause_end_at`]="{ header }">
     {{ $t('On hold end') }}
-</template>
+</template> -->
 <!-- actions -->
 <template v-slot:[`header.actions`]="{ header }">
     {{ $t('Actions') }}
@@ -199,22 +256,26 @@
                         <div class="text-subtitle-1 font-weight-bold mb-3 primary--text">{{ $t("Basic Information") }}
                         </div>
                         <v-row>
-                            <v-col cols="12" md="4">
+                        <!-- THÊM trường ID vào đây -->
+                         <v-col cols="12" md="3">
+                            <v-text-field v-model="demand.id" :label="$t('ID')" outlined dense hide-details prepend-inner-icon="mdi-identifier"></v-text-field>
+                        </v-col>
+                            <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.department" :items="itemsSelectDept"
                                 :label="$t('Division') + '*'" :rules="[rules.required]" outlined dense
                                 hide-details class="mb-3" prepend-inner-icon="mdi-domain"></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.sub_department" :items="filteredUnits"
                                 :label="$t('Department') + '*'" :rules="[rules.required]" outlined dense
                                 hide-details class="mb-3" prepend-inner-icon="mdi-domain"></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.sub_division" :items="itemsDiv"
                                 :label="$t('Unit') + '*'" :rules="[rules.required]" outlined dense
                                 hide-details class="mb-3" prepend-icon="mdi-domain"></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.position" :items="itemsPos"
                                 :label="$t('Position') + '*'" :rules="[rules.required]" outlined dense
                                 hide-details class="mb-3"
@@ -246,7 +307,9 @@
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-text-field v-model="createoDate" :label="$t('Start date')" readonly
                                     outlined dense hide-details v-bind="attrs" v-on="on"
-                                    prepend-inner-icon="mdi-calendar-plus"></v-text-field>
+                                    prepend-inner-icon="mdi-calendar-plus" clearable
+                                    @click:clear="createoDate = ''"
+                                    ></v-text-field>
                                 </template>
                                 <v-date-picker v-model="createoDate" @input="dateCreate = false"
                                 color="teal darken-4"></v-date-picker>
@@ -258,7 +321,8 @@
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field v-model="fromDate" :label="$t('On hold start') + '*'" readonly
                                 outlined dense hide-details v-bind="attrs" v-on="on"
-                                prepend-inner-icon="mdi-calendar-start"></v-text-field>
+                                prepend-inner-icon="mdi-calendar-start" clearable
+                                @click:clear="fromDate = ''"></v-text-field>
                             </template>
                             <v-date-picker v-model="fromDate" @input="date = false"
                             color="teal darken-4"></v-date-picker>
@@ -270,7 +334,8 @@
                         <template v-slot:activator="{ on, attrs }">
                             <v-text-field v-model="toDate" :label="$t('On hold end')" readonly outlined
                             dense hide-details v-bind="attrs" v-on="on"
-                            prepend-inner-icon="mdi-calendar-end"></v-text-field>
+                            prepend-inner-icon="mdi-calendar-end" clearable
+                            @click:clear="toDate = ''"></v-text-field>
                         </template>
                         <v-date-picker v-model="toDate" @input="dateTo = false"
                         color="teal darken-4" :min="fromDate"></v-date-picker>
@@ -282,11 +347,12 @@
                     <template v-slot:activator="{ on, attrs }">
                         <v-text-field v-model="fullfilldate" :label="$t('Full fill date')" readonly
                         outlined dense hide-details v-bind="attrs" v-on="on"
-                        prepend-inner-icon="mdi-calendar-plus"></v-text-field>
+                        prepend-inner-icon="mdi-calendar-plus" clearable
+                        @click:clear="fullfilldate = ''"></v-text-field>
                     </template>
                     <v-date-picker v-model="fullfilldate" @input="s_fullfiledate = false"
                     color="teal darken-4"></v-date-picker>
-                </v-menu>
+                    </v-menu>
             </v-col>
         </v-row>
     </v-col>
@@ -394,8 +460,10 @@
 <script>
     import dayjs from 'dayjs';
     import * as XLSX from 'xlsx';
+        import DSFilter from '@/components/DsFilter.vue'
     
     export default {
+        components: { DSFilter },
         data() {
             return {
                 api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
@@ -474,6 +542,40 @@
                 s_fullfiledate: false,
                 confirmDialog: false,
                 selectedItem: null,
+                filters: {
+                    dem_dept: [],
+                    dem_sub_department: [],
+                    dem_unit: [],
+                    dem_position: [],
+                    dem_sub_position: [],
+                    dem_amount: [],
+                    dem_inputdate: [],
+                    dem_recruited: [],
+                    dem_fulfilled: [],
+                    dem_fullfilldate: [],
+                    stocknumber: [],
+                    dem_note: [],
+                    dem_candidates: [],
+                    dem_pause_start_at: [],
+                    dem_pause_end_at: []
+                },
+                filterItems: {
+                    dem_dept: [],
+                    dem_sub_department: [],
+                    dem_unit: [],
+                    dem_position: [],
+                    dem_sub_position: [],
+                    dem_amount: [],
+                    dem_inputdate: [],
+                    dem_recruited: [],
+                    dem_fulfilled: [],
+                    dem_fullfilldate: [],
+                    stocknumber: [],
+                    dem_note: [],
+                    dem_candidates: [],
+                    dem_pause_start_at: [],
+                    dem_pause_end_at: []
+                },
             }
         },
         computed: {
@@ -527,6 +629,24 @@
                         );
                     }
                 }
+
+                // Apply other filters
+                Object.entries(this.filters).forEach(([key, values]) => {
+                    if (values && values.length > 0) {
+                        filteredData = filteredData.filter(item => {
+                            if (key === 'dem_dept') {
+                                return values.includes(this.getDepartmentName(item[key]));
+                            }
+                            if (key === 'dem_candidates') {
+                                return values.includes(this.getCandidatesCount(item[key]).toString());
+                            }
+                            if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
+                                return values.includes(item[key]?.toString());
+                            }
+                            return values.includes(item[key]);
+                        });
+                    }
+                });
                 
                 return filteredData.map(item => ({
                     ...item,
@@ -607,6 +727,7 @@
                     const res = await this.$axios.get(this.api + 'getAllDemandData');
                     this.demandData = res.data;
                     this.originalDemandData = [...res.data];
+                    this.updateFilterItems(); // Update filter options after fetching data
                 } catch (err) {
                     console.log(err);
                 } finally {
@@ -615,15 +736,14 @@
             },
             async editItem(item) {
                 this.id = item.id;
-                
                 this.demand.department = this.getDepartmentName(item.dem_dept);
                 await this.$nextTick();
-                
                 this.demand.sub_department = item.dem_sub_department;
                 await this.$nextTick();
                 
                 this.demand = {
                     ...this.demand,
+                    id: item.id,
                     position: item.dem_position,
                     sub_position: item.dem_sub_position,
                     quantity: item.dem_amount,
@@ -883,6 +1003,43 @@
                     });
                 }
             },
+            updateFilter(field, values) {
+                this.filters[field] = values;
+            },
+        
+            updateFilterItems() {
+                Object.keys(this.filterItems).forEach(key => {
+                    const uniqueValues = new Set();
+                    
+                    this.demandData.forEach(item => {
+                        let value;
+                        
+                        if (key === 'dem_dept') {
+                            value = this.getDepartmentName(item[key]);
+                        } else if (key === 'dem_candidates') {
+                            value = this.getCandidatesCount(item[key]).toString();
+                        } else if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
+                            value = item[key]?.toString();
+                        } else {
+                            value = item[key];
+                        }
+        
+                        if (value !== undefined && value !== null && value !== '') {
+                            uniqueValues.add(value);
+                        }
+                    });
+        
+                    this.filterItems[key] = Array.from(uniqueValues).sort();
+                });
+            },
+        
+            resetFilters() {
+                Object.keys(this.filters).forEach(key => {
+                    this.filters[key] = [];
+                });
+                this.selectDept = '';
+                this.selectedPositions = [];
+            },
         },
         watch: {
             'demand.department': {
@@ -901,6 +1058,12 @@
                     this.demand.sub_division = '';
                 }
             },
+            demandData: {
+                handler() {
+                    this.updateFilterItems();
+                },
+                deep: true
+            }
         },
         mounted() {
             this.fetchDemand();

@@ -614,8 +614,8 @@
                             hide-details></v-combobox>
                     </v-col>
                     <v-col cols="2">
-                        <v-combobox v-model="level" :items="item_level" :label="$t('Job Level')" dense outlined
-                            hide-details></v-combobox>
+                        <v-combobox v-model="level" :items="item_level" item-text="job_code" item-value="id"
+                            :label="$t('Job Level')" dense outlined hide-details></v-combobox>
                     </v-col>
                     <v-col cols="2">
                         <v-combobox v-model="code_mc" :items="item_code_mc" :label="$t('Factory Code')" dense outlined
@@ -686,7 +686,7 @@
                         <v-textarea v-model="reason" :label="$t('Rejection Reason')" outlined dense hide-details
                             rows="1"></v-textarea>
                     </v-col>
-                </v-row>
+                    </v-row>
             </v-col>
 
             <v-col cols="12" class="d-flex justify-end">
@@ -1053,7 +1053,7 @@ export default {
             dantoc: '',
             deputy: '',
             level: '',
-            code_mc: 'AW',
+            code_mc: 'SCS006',
             loc_work: 'AW',
             direct: '',
             married: '',
@@ -1073,11 +1073,11 @@ export default {
             item_newDept: [],
             item_position: [],
             item_time_trial: [6, 30, 60],
-            item_parameters: ['A01', 'A02', 'CN01', 'CN02', 'CN03', 'TW-VN'],
+            item_parameters: [ 'A01', 'A02','CN01','CN02','CN03','TW-VN'],
             item_dantoc: [],
-            item_deputy: ['1000A', '2000A', '3000A', '4000A', '5000A', '6000A', '7000A', '8000A', '9000A'],
-            item_level: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-            item_code_mc: ['AW'],
+            item_deputy: ['00', '01', '02', '03', '04', '05', '06', '07', '08','09'],
+            item_level: [],
+            item_code_mc: ['SCS006'],
             item_loc_work: ['AW'],
             item_direct: [],
             item_married: [],
@@ -1196,6 +1196,26 @@ export default {
         }
     },
     methods: {
+        // get all Job Level
+        async getJobLevel() {
+            try {
+                let res = await this.$axios.get(this.api + 'getJobLevel');
+                if (res.status === 200) {
+                    // Map the data to include both id and job_code
+                    this.item_level = res.data.dataJobLevel.map(item => ({
+                        id: item.id,
+                        job_code: item.job_code
+                    }));
+                }
+            } catch (error) {
+                console.log(error);
+                this.$notify({
+                    title: 'Error',
+                    text: 'Failed to load job levels',
+                    type: 'error'
+                });
+            }
+        },
         async getReasons() {
             try {
                 let res = await this.$axios.get(this.api + 'getDataReasonResign');
@@ -2136,6 +2156,7 @@ export default {
         this.getAllDirect();
         this.getAllMarried();
         this.getDeptCode();
+        this.getJobLevel();
         this.getAllSourceRecruiting();
         if (this.$route.query.id) {
             this.id = this.$route.query.id;

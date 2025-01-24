@@ -266,21 +266,21 @@ export default {
             loading: true,
             api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
             headers: [
-                { text: this.$t('Key in'), value: "key_in_date", sortable: false, align: 'center' },
-                { text: this.$t('Name'), value: "candidate_name", sortable: false, align: 'center' },
-                { text: this.$t('Birth day'), value: "dateofbirth", sortable: false, align: 'center' },
-                { text: this.$t('Sex'), value: "gender", sortable: false, align: 'center' },
-                { text: this.$t('ID no'), value: "emp_id", sortable: false, align: 'center' },
-                { text: this.$t('Position'), value: "position", sortable: false, align: 'center' },
-                { text: this.$t('Dept applied'), value: "apply_dp", sortable: false, align: 'center' },
-                { text: this.$t('Unit'), value: "tmp_departid", sortable: false, align: 'center' },
-                { text: this.$t('HR acc'), value: "hr_ac_qu", sortable: false, align: 'center' },
-                { text: this.$t('Dept acc'), value: "dp_ac_qu", sortable: false, align: 'center' },
-                { text: this.$t('Reg'), value: "reg", sortable: false, align: 'center' },
-                { text: this.$t('Expected'), value: "ex_en_date", sortable: false, align: 'center' },
-                { text: this.$t('Actually date'), value: "act_en_date", sortable: false, align: 'center' },
+                { text: this.$t('Key in'), value: "key_in_date", align: 'center' },
+                { text: this.$t('Name'), value: "candidate_name", align: 'center' },
+                { text: this.$t('Birth day'), value: "dateofbirth", align: 'center' },
+                { text: this.$t('Sex'), value: "gender", align: 'center' },
+                { text: this.$t('ID no'), value: "emp_id", align: 'center' },
+                { text: this.$t('Position'), value: "position", align: 'center' },
+                { text: this.$t('Dept applied'), value: "apply_dp", align: 'center' },
+                { text: this.$t('Unit'), value: "tmp_departid", align: 'center' },
+                { text: this.$t('HR acc'), value: "hr_ac_qu", align: 'center' },
+                { text: this.$t('Dept acc'), value: "dp_ac_qu", align: 'center' },
+                { text: this.$t('Reg'), value: "reg", align: 'center' },
+                { text: this.$t('Expected'), value: "ex_en_date", align: 'center' },
+                { text: this.$t('Actually date'), value: "act_en_date", align: 'center' },
                 { text: this.$t('Empno HRM'), value: "newEmpno", align: 'center' },
-                { text: this.$t('Note'), value: "note", sortable: false, align: 'center' },
+                { text: this.$t('Note'), value: "note", align: 'center' },
 
             ],
             dataCadidates: [],
@@ -565,7 +565,7 @@ export default {
             }, {});
 
             const dept_map = this.dept.reduce((acc, item) => {
-                acc[item.id] = item.sub_division;
+                acc[item.id] = item.department;
                 return acc;
             }, {});
 

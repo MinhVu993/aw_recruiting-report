@@ -105,7 +105,6 @@ export default {
         };
     },
     mounted() {
-        // Get data from URL params
         if (this.$route.query.data) {
             try {
                 this.printData = JSON.parse(this.$route.query.data);

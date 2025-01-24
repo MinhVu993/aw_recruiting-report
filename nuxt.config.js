@@ -22,7 +22,7 @@ export default {
   },
   ssr: false,
   server: {
-    host: process.env.HOST || "10.1.17.69",
+    host: process.env.HOST || "gmo021.cansportsvg.com",
     port: 3040,
   },
   // Target: https://go.nuxtjs.dev/config-target
