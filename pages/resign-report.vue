@@ -176,8 +176,8 @@
                     <template v-slot:body.append>
                         <tr class="total-row">
                             <td>{{ $t('Total') }}</td>
-                            <td v-for="header in visibleHeaders.slice(1)" :key="header.value">
-                                {{ totalResign[header.value] || 0 }}
+                            <td v-for="header in visibleHeaders.slice(1)" :key="header.value" class="text-center">
+                                {{ calculateColumnTotal(header.value) }}
                             </td>
                         </tr>
                     </template>
@@ -371,6 +371,18 @@ export default {
                 }
             });
             return totals;
+        },
+        dynamicTotals() {
+            if (!this.reportData.length) return {};
+            
+            return this.headers.reduce((totals, header) => {
+                if (header.value !== 'dept') {
+                    totals[header.value] = this.reportData.reduce((sum, row) => {
+                        return sum + (parseFloat(row[header.value]) || 0);
+                    }, 0);
+                }
+                return totals;
+            }, {});
         }
     },
     watch: {
@@ -543,6 +555,9 @@ export default {
                     this.totalResign[column] += Number(row[dataKey]) || 0;
                 });
             });
+        },
+        calculateColumnTotal(column) {
+            return this.dynamicTotals[column] || 0;
         }
     },
     async mounted() {
@@ -716,27 +731,23 @@ export default {
 }
 
 .total-row {
-    background-color: #004D40 !important;
-    /* teal darken-4 */
+    background-color: #004D40 !important; /* teal darken-4 */
 }
-
 .total-row td {
     color: white !important;
     font-size: 1.1em !important;
-    border-top: 2px solid #00695C !important;
-    /* teal darken-3 for border */
+    border-top: 2px solid #00695C !important; /* teal darken-3 for border */
     border-bottom: none !important;
     text-align: center !important;
+    background-color: #004D40 !important; /* Thêm background-color cho tất cả các ô */
 }
 
 .total-row td:first-child {
-    background-color: #00695C !important;
-    /* slightly lighter for first column */
+    background-color: #00695C !important; 
     position: sticky;
     left: 0;
     z-index: 2;
 }
-
 /* New table styling */
 ::v-deep .v-data-table {
     border: 1px solid #e0e0e0 !important;
@@ -744,6 +755,7 @@ export default {
 
 ::v-deep .v-data-table__wrapper {
     overflow-y: auto !important;
+    position: relative !important;
 }
 
 ::v-deep .v-data-table thead th {
@@ -759,4 +771,9 @@ export default {
 ::v-deep .v-data-table tbody tr:not(.total-row):hover {
     background-color: #f3fd99 !important;
 }
+
+::v-deep .v-data-table tbody tr.total-row {
+    position: relative !important;
+}
+
 </style>

@@ -180,9 +180,9 @@ export default {
             today: new Date().toISOString().slice(0, 10),
             headers: [
                 // { text: 'ID', value: 'id', sortable: true },
-                { text: 'Unit', value: 'sub_division', sortable: true },
-                { text: 'Department', value: 'sub_department', sortable: true },
                 { text: 'Division', value: 'department', sortable: true },
+                { text: 'Department', value: 'sub_department', sortable: true },
+                { text: 'Unit', value: 'sub_division', sortable: true },
                 { text: 'Name', value: 'name', sortable: true },
                 { text: 'Start date', value: 'start_date', sortable: true },
                 { text: 'End date', value: 'end_date', sortable: true },

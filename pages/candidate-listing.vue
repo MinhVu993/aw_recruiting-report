@@ -318,6 +318,7 @@ export default {
             selectedNote: '',
             isUpdating: false,
             DemandData: [],
+            sourceRecruiting: [],
         }
     },
     methods: {
@@ -569,6 +570,12 @@ export default {
                 return acc;
             }, {});
 
+            const sourceMap = this.sourceRecruiting.reduce((acc, item) => {
+                const sourceNames = JSON.parse(item.source);
+                acc[item.id] = sourceNames;
+                return acc;
+            }, {});
+
             const toText = (value) => {
                 if (value === null || value === undefined) return '';
                 return `'${value}`;
@@ -578,6 +585,9 @@ export default {
             return data.map((item, index) => {
                 const duty_name = dutyMap[item.tmp_dutyid] ? dutyMap[item.tmp_dutyid][currentLocale] : '';
                 const Dept_appply = dept_map[item.apply_dp] ? dept_map[item.apply_dp] : '';
+                const sourceName = sourceMap[item.recru_source] 
+                    ? sourceMap[item.recru_source][currentLocale] 
+                    : item.recru_source;
 
                 return {
                     'No': index + 1,
@@ -597,9 +607,7 @@ export default {
                     'Register': item.reg,
                     'Expected date': item.ex_en_date,
                     'Actual date': item.act_en_date,
-                    'Recruit source': item.recru_source,
-                    // 'Brought company bus': item.brou_com_bus,
-                    // 'Registered for bus': item.regedForBus,
+                    'Recruit source': sourceName,
                     'VG work times': toText(item.vg_work_times),
                     'Old employee no': toText(item.old_empno),
                     'Re VG from': item.re_vg_from,
@@ -632,7 +640,6 @@ export default {
                     'Province': toText(item.province),
                     'Education': toText(item.edu),
                     'Probation': item.probation,
-                    // 'Bus info': item.bus_info,
                     'CCCD date': item.datecccd,
                     'Reason': item.reason,
                     'Change date': item.change_en_date
@@ -842,17 +849,17 @@ export default {
             });
             window.open(routeData.href, '_blank');
         },
-        async fetchDemand() {
-                this.loading = true;
-                try {
-                    const res = await this.$axios.get(this.api + 'getAllDemandData');
-                    this.demandData = res.data;
-                } catch (err) {
-                    console.log(err);
-                } finally {
-                    this.loading = false;
-                }
-            },
+        // async fetchDemand() {
+        //         this.loading = true;
+        //         try {
+        //             const res = await this.$axios.get(this.api + 'getAllDemandData');
+        //             this.demandData = res.data;
+        //         } catch (err) {
+        //             console.log(err);
+        //         } finally {
+        //             this.loading = false;
+        //         }
+        //     },
         async handleDemandFilter() {
             if (this.$route.query.id ) {
                 this.demandDept = this.$route.query.id;
@@ -893,13 +900,23 @@ export default {
             if (!note) return '';
             // Limit preview to first 100 characters
             return note.length > 100 ? note.substring(0, 100) + '...' : note;
-        }
+        },
+        async getAllSourceRecruiting() {
+                try {
+                    const response = await this.$axios.get(this.api + 'getSourceRecruiting');
+                    this.sourceRecruiting = response.data;
+
+                } catch (error) {
+                    console.error("Error fetching source recruiting data:", error);
+                }
+            },
     },
     mounted() {
         this.getAllDept();
         this.getLastEmpno();
         this.getAllDuty();
-        this.fetchDemand();
+        // this.fetchDemand();
+        this.getAllSourceRecruiting();
     },
     watch: {
         '$route.query': {

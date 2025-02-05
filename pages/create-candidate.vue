@@ -276,13 +276,9 @@
             <!-- Personal Information Section -->
             <v-col cols="12">
                 <v-card class="pa-4 mb-2" elevation="2">
-                    <!--  -->
                     <div class="section-header">
                         <v-icon color="primary" class="mr-2">mdi-account</v-icon>
                         <span class="text-h6">[{{ $t('Personal Information') }}]</span>
-                        <!-- <span class="text-h6 error--text ml-2">
-                            <em>{{ $t('Please enter your ID number to check information.') }} </em>
-                        </span> -->
                     </div>
                     <v-row dense>
                         <v-col cols="3">
@@ -826,7 +822,6 @@
                                 <template v-slot:[`item.department`]="{ item }">
                                     {{ item.department }}
                                 </template>
-                             
                                 <template v-slot:[`item.dem_unit`]="{ item }">
                                     {{ item.dem_unit }}
                                 </template>
@@ -1084,7 +1079,6 @@ export default {
             item_edu: [],
             item_birth_province: [],
             item_province: [],
-            // item_bus_info: ['Ben Cau Tri', 'Tan Chau Tri', 'Chau Thanh Vui', 'Tan Bien Cuong'],
             code: '',
             birthMenu: false,
             cccdMenu: false,
@@ -1112,9 +1106,9 @@ export default {
             dialogDemand: false,
             dataListDemand: [],
             headersDemand: [
-                { text: 'ID', align: 'start', sortable: false, value: 'id' },
-                { text: 'Department', align: 'start', sortable: false, value: 'department' },
-                { text: 'Unit', align: 'start', sortable: false, value: 'dem_unit' },
+                { text: 'Demand ID', sortable: false, value: 'dem_id' },
+                { text: 'Department', sortable: false, value: 'department' },
+                { text: 'Unit', sortable: false, value: 'dem_unit' },
                 { text: 'Position', value: 'dem_position', sortable: false, align: 'center' },
                 { text: 'Sub Position', value: 'dem_sub_position', sortable: false, align: 'center' },
                 { text: 'Quantity', value: 'dem_amount', sortable: false, align: 'center' },
@@ -1680,9 +1674,6 @@ export default {
                 ex_en_date: this.inDateWork,
                 act_en_date: this.inDateAccWork,
                 recru_source: this.source_recruit?.code, // Add fallback to null
-                // job_content:'', 
-                // brou_com_bus: this.interview_bus,
-                // regedForBus: this.reg_bus,
                 vg_work_times: this.inVG,
                 old_empno: this.empno_old,
                 re_vg_from: this.comp_return,
@@ -1705,7 +1696,7 @@ export default {
                 tmp_dutyid: this.position?.code,
                 ethnic: this.dantoc?.code,
                 tmp_categoryid: this.tmp_categoryid,
-                tmp_levelid: this.level,
+                tmp_levelid: this.level?.job_code,
                 tmp_rankid: this.deputy,
                 tmp_siteid: this.code_mc,
                 tmp_workareaid: this.loc_work,
