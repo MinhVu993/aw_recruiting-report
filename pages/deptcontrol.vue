@@ -25,18 +25,18 @@
                                 <v-card-text class="pt-4">
                                     <v-row>
                                         <v-col cols="12" md="4">
-                                            <v-text-field v-model="dept" :label="$t('Department')" outlined dense
+                                            <v-text-field v-model="dept" :label="$t('Division')" outlined dense
                                                 prepend-inner-icon="mdi-office-building"
                                                 :rules="[v => !!v || $t('Required')]" hide-details="auto"
                                                 class="rounded-lg" clearable></v-text-field>
                                         </v-col>
                                         <v-col cols="12" md="4">
-                                            <v-text-field v-model="subDept" :label="$t('Dept unit')" outlined dense
+                                            <v-text-field v-model="subDept" :label="$t('Department')" outlined dense
                                                 prepend-inner-icon="mdi-subdirectory-arrow-right" hide-details
                                                 clearable></v-text-field>
                                         </v-col>
                                         <v-col cols="12" md="4">
-                                            <v-text-field v-model="description" :label="$t('Division')" outlined dense
+                                            <v-text-field v-model="description" :label="$t('Unit')" outlined dense
                                                 prepend-inner-icon="mdi-text" hide-details clearable></v-text-field>
                                         </v-col>
                                         <v-col cols="12" md="6">
