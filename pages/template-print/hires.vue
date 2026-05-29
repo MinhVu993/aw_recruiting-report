@@ -25,17 +25,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in printData" :key="index">
-                    <td class="text-center">{{ item.no }}</td>
-                    <td class="text-center">{{ item.ex_date }}</td>
-                    <td class="text-center">{{ item.name }}</td>
-                    <td class="text-center">{{ item.duty }}</td>
-                    <td class="text-center">{{ item.dept }}</td>
-                    <td class="text-center">{{ item.result === 'yes' ? '✓' : '' }}</td>
-                    <td class="text-center">{{ item.result !== 'yes' ? '✓' : '' }}</td>
-                    <td class="text-center">{{ item.reasion }}</td>
-                    <td class="text-center">{{ item.change_Date }}</td>
-                    <td class="text-center">{{ item.note }}</td>
+                <tr v-for="(item, index) in formattedData" :key="index">
+                    <td class="text-center">{{ index + 1 }}</td>
+                    <td class="text-center">{{ item.ex_en_date }}</td>
+                    <td class="text-center">{{ item.candidate_name }}</td>
+                    <td class="text-center">{{ item.duty_name }}</td>
+                    <td class="text-center">{{ item.tmp_departid }}</td>
+                    <td class="text-center">{{ item.reg === 'yes' ? '✓' : '' }}</td>
+                    <td class="text-center">{{ item.reg !== 'yes' ? '✓' : '' }}</td>
+                    <td class="text-center">{{ item.reason || '' }}</td>
+                    <td class="text-center">{{ item.change_en_date || '' }}</td>
+                    <td class="text-center">{{ item.note || '' }}</td>
                 </tr>
             </tbody>
         </table>
@@ -48,31 +48,64 @@ export default {
     layout: "print",
     data() {
         return {
+            api: '/api/aw-recuitingReport/',
             printData: [],
             today: dayjs().format("YYYY-MM-DD"),
             imageLoaded: true // No logo in this template, so we can set it to true
         };
     },
-    mounted() {
-        if (this.$route.query.data) {
-            try {
-                this.printData = JSON.parse(this.$route.query.data);
-                console.log(this.$route.query.data);
-                this.tryPrint();
-            } catch (e) {
-                console.error('Error parsing print data:', e);
-                this.printData = [];
-            }
+    computed: {
+        formattedData() {
+            return this.printData
+                .map(item => ({
+                    ...item,
+                    duty_name: this.parseJson(item.duty_name)?.vi || '',
+                    note: '' // Add note field if needed
+                }))
+                .sort((a, b) => {
+                    return a.tmp_departid.localeCompare(b.tmp_departid, 'vi');
+                });
         }
     },
+    mounted() {
+        // if (this.$route.query.data) {
+        //     try {
+        //         this.printData = JSON.parse(this.$route.query.data);
+        //         console.log(this.$route.query.data);
+        //         this.tryPrint();
+        //     } catch (e) {
+        //         console.error('Error parsing print data:', e);
+        //         this.printData = [];
+        //     }
+        // }
+        this.getDateHires();
+    },
     methods: {
-        tryPrint() {
-            if (this.imageLoaded && this.printData.length > 0) {
-                setTimeout(() => {
-                    window.print();
-                }, 500);
+        parseJson(jsonString) {
+            try {
+                return JSON.parse(jsonString);
+            } catch (e) {
+                return null;
             }
-        }
+        },
+        // tryPrint() {
+        //     if (this.imageLoaded && this.printData.length > 0) {
+        //         setTimeout(() => {
+        //             window.print();
+        //         }, 500);
+        //     }
+        // }
+        async getDateHires() {
+            try {
+                const res = await this.$axios.post(this.api + 'printHires', {
+                    ex_en_date: this.$route.query.data,
+                });
+                this.printData = res.data;
+                
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },  
     }
 };
 </script>

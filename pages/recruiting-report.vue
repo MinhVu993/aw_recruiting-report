@@ -89,7 +89,7 @@
             'show-first-last-page': true
           }">
           <template v-slot:[`item.dem_dept`]="{ item }">
-            {{ getDepartmentName(item.dem_dept) }}
+            {{ (item.dem_dept) }}
           </template>
           <template v-slot:[`item.demand`]="{ item }">
             {{ item.demand }}
@@ -239,7 +239,7 @@
   export default {
     data() {
       return {
-        api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+        api: '/api/aw-recuitingReport/',
         today: dayjs().format('YYYY-MM-DD'),
         selectDept: [], // Ensure this is an array
         selectDiv: [], // Change from null to array
@@ -404,7 +404,7 @@
         this.exporting = true;
         try {
           const dataToExport = this.filteredReportData.map(item => ({
-            'Division': this.getDepartmentName(item.dem_dept),
+            'Division': item.dem_dept,
             'Dept': item.dem_sub_department,
             'Unit': item.dem_unit,
             Demand: item.demand,
@@ -494,7 +494,7 @@
         let params = {
           key_in_date: this.today,
           // tmp_departid: this.dataCadidates.map(item => item.tmp_departid),
-          dem_dept: this.selectDept.length ? this.selectDept : this.item_dept.map(dept => dept.id),
+          dem_dept: this.selectDept.length ? this.selectDept : this.item_dept.map(dept => dept.department),
           fromdate: this.fromDate,
           todate: this.toDate
         }

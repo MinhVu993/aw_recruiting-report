@@ -176,7 +176,7 @@
 export default {
     data() {
         return {
-            api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+            api: '/api/aw-recuitingReport/',
             today: new Date().toISOString().slice(0, 10),
             headers: [
                 // { text: 'ID', value: 'id', sortable: true },

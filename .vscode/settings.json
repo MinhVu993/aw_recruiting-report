@@ -15,6 +15,7 @@
   "editor.formatOnSave": false,
   "editor.formatOnType": false,
   "vue.server.hybridMode": true,
+  "peacock.color": "#513227",
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#734738",
     "activityBar.background": "#734738",
@@ -33,6 +34,5 @@
     "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#51322799",
     "titleBar.inactiveForeground": "#e7e7e799"
-  },
-  "peacock.color": "#513227"
+  }
 }

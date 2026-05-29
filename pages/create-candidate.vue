@@ -88,7 +88,7 @@
             "Action": "Actions",
             "Demand": "Demand",
             "Unit": "Unit"
-            },
+        },
         "vi": {
             "Personal Information": "Thông tin cá nhân",
             "Name": "Họ tên",
@@ -283,8 +283,8 @@
                     <v-row dense>
                         <v-col cols="3">
                             <v-text-field ref="nameField" v-model="name" :label="$t('Name')" outlined dense
-                                :error-messages="nameError" :error="!!nameError" hide-details="auto"
-                                @click="focusNameField" @input="validateName"></v-text-field>
+                            :error-messages="nameError" :error="!!nameError" hide-details="auto"
+                            @click="focusNameField" @input="validateName"></v-text-field>
                         </v-col>
                         <v-col cols="2">
                             <v-radio-group v-model="gender" row dense hide-details class="mt-0">
@@ -295,36 +295,36 @@
                         </v-col>
                         <v-col cols="2">
                             <v-text-field v-model="dateBirth" :label="$t('Birth day')" outlined dense hide-details
-                                v-mask="'####-##-##'" prepend-inner-icon="mdi-calendar"
-                                placeholder="YYYY-MM-DD"></v-text-field>
+                            v-mask="'####-##-##'" prepend-inner-icon="mdi-calendar"
+                            placeholder="YYYY-MM-DD"></v-text-field>
                         </v-col>
                         <v-col cols="3">
                             <v-text-field v-model="cccd" :label="$t('ID Number')" outlined dense hide-details
-                                @change="checkEmpno" maxlength="12" @input="validateCccd"
-                                :rules="[rules.required, rules.number, rules.length]"></v-text-field>
+                            @change="checkEmpno" maxlength="12" @input="validateCccd"
+                            :rules="[rules.required, rules.number, rules.length]"></v-text-field>
                         </v-col>
                         <v-col cols="2">
                             <v-text-field v-model="selectedDatecccd" :label="$t('ID Issue Date')" outlined dense
-                                hide-details v-mask="'####-##-##'" prepend-inner-icon="mdi-calendar"
-                                placeholder="YYYY-MM-DD"></v-text-field>
+                            hide-details v-mask="'####-##-##'" prepend-inner-icon="mdi-calendar"
+                            placeholder="YYYY-MM-DD"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
                         <v-col cols="2">
                             <v-text-field v-model="tel" :label="$t('Phone Number')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                         <v-col cols="4">
                             <v-text-field v-model="address" :label="$t('Address')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                         <v-col cols="2">
                             <v-text-field v-model="sub_tel" :label="$t('Alternative Phone')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                         <v-col cols="4">
                             <v-text-field v-model="sub_address" :label="$t('Alternative Address')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                     </v-row>
                 </v-card>
@@ -338,11 +338,11 @@
                     <v-row dense>
                         <v-col cols="2">
                             <v-text-field v-model="dm_id" :label="$t('Demand ID')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                         <v-col cols="2">
                             <v-text-field v-model="dm_Subpos" :label="$t('Sub position')" outlined dense
-                                hide-details></v-text-field>
+                            hide-details></v-text-field>
                         </v-col>
                         <!-- button select demand-->
                         <v-col cols="2">
@@ -364,638 +364,638 @@
                     <v-row dense>
                         <v-col cols="2">
                             <v-combobox v-model="loc_apply" :items="item_loc_apply" :label="$t('Position')" dense
-                                outlined hide-details></v-combobox>
+                            outlined hide-details></v-combobox>
                         </v-col>
                         <v-col cols="2">
                             <v-combobox v-model="dept_apply" :items="item_dept_apply" item-text="deptName_temp"
-                                return-object :label="$t('Department')" dense outlined hide-details></v-combobox>
+                            return-object :label="$t('Department')" dense outlined hide-details></v-combobox>
                         </v-col>
                         <v-col cols="2">
                             <div style="display: flex; align-items: center;">
                                 <v-combobox v-model="source_recruit" :items="item_source_recruit" :item-value="code"
-                                    :item-text="item => item.name[this.$i18n.locale]" :label="$t('Recruitment Source')"
-                                    dense outlined hide-details>
-                                </v-combobox>
-                                <v-btn @click="dialogSourceRecuiting = true" fab x-small color="error" dark
-                                    style="margin-left: 8px;">
-                                    <v-icon>mdi-plus</v-icon>
-                                </v-btn>
-                            </div>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-menu v-model="dateMenu" :close-on-content-click="true" transition="scale-transition">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="date_cv" :label="$t('CV Received Date')" readonly
-                                        v-bind="attrs" v-on="on" outlined dense hide-details
-                                        prepend-inner-icon="mdi-calendar" clearable @click:clear="date_cv = null">
-                                    </v-text-field>
-                                </template>
-                                <v-date-picker v-model="date_cv" @input="dateMenu = false" header-color="teal"
-                                    :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-menu v-model="dateSalary" :close-on-content-click="false" transition="scale-transition">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="date_salary" :label="$t('Salary Sign Date')" readonly
-                                        v-bind="attrs" v-on="on" outlined dense hide-details
-                                        prepend-inner-icon="mdi-calendar" clearable @click:clear="date_salary = null">
-                                    </v-text-field>
-                                </template>
-                                <v-date-picker v-model="date_salary" @input="dateSalary = false" header-color="teal"
-                                    :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col cols="1">
-                            <v-text-field v-model="inVG" :label="$t('Worked at AW')" outlined dense
-                                hide-details></v-text-field>
-                        </v-col>
-                        <v-col cols="1" v-if="Number(inVG) > 0">
-                            <v-btn fab x-small color="error" dark @click="showResignDialog" style="margin-left: 8px;">
-                                <v-icon>mdi-plus</v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </v-card>
+                                :item-text="item => item.name[this.$i18n.locale]" :label="$t('Recruitment Source')"
+                                dense outlined hide-details>
+                            </v-combobox>
+                            <v-btn @click="dialogSourceRecuiting = true" fab x-small color="error" dark
+                            style="margin-left: 8px;">
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                    </div>
+                </v-col>
+                <v-col cols="2">
+                    <v-menu v-model="dateMenu" :close-on-content-click="true" transition="scale-transition">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-text-field v-model="date_cv" :label="$t('CV Received Date')" readonly
+                            v-bind="attrs" v-on="on" outlined dense hide-details
+                            prepend-inner-icon="mdi-calendar" clearable @click:clear="date_cv = null">
+                        </v-text-field>
+                    </template>
+                    <v-date-picker v-model="date_cv" @input="dateMenu = false" header-color="teal"
+                    :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"></v-date-picker>
+                </v-menu>
             </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="2">
-                        <v-menu v-model="dateHR" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="date_hr_inter" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('HR Interview Date')" clearable
-                                    @click:clear="date_hr_inter = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="dateHR = false" v-model="date_hr_inter"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="dateHRAcc" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="date_hr_review" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('HR Review Date')" clearable
-                                    @click:clear="date_hr_review = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="dateHRAcc = false" v-model="date_hr_review"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="datedept" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="date_dept_inter" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('Dept Interview Date')" clearable
-                                    @click:clear="date_dept_inter = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="datedept = false" v-model="date_dept_inter"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="datedeptAcc" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="date_dept_review" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('Dept Review Date')" clearable
-                                    @click:clear="date_dept_review = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="datedeptAcc = false" v-model="date_dept_review"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="dateInWork" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="inDateWork" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('Expected start date')" clearable
-                                    @click:clear="inDateWork = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="dateInWork = false" v-model="inDateWork"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="dateAccInWork" :close-on-content-click="false" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="inDateAccWork" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('Actual Start Date')" clearable
-                                    @click:clear="inDateAccWork = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="dateAccInWork = false" v-model="inDateAccWork"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="2">
-                        <v-checkbox v-model="hrAcc" :label="$t('HR Accept')" color="red" value="yes"
-                            hide-details></v-checkbox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-checkbox v-model="deptACC" :label="$t('Dept Accept')" color="red" value="yes"
-                            hide-details></v-checkbox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-checkbox v-model="inWorker" :label="$t('Started Working')" color="red" value="yes"
-                            hide-details></v-checkbox>
-                    </v-col>
-                    <!-- <v-col cols="2">
-                        <v-checkbox v-model="interview_bus" :label="$t('Recruited by Bus')" color="red" value="yes"
-                            hide-details></v-checkbox>
-                    </v-col> -->
-                    <!-- <v-col cols="2">
-                        <v-checkbox v-model="reg_bus" :label="$t('Bus Registration')" color="red" value="yes"
-                            hide-details></v-checkbox>
-                    </v-col> -->
+            <v-col cols="2">
+                <v-menu v-model="dateSalary" :close-on-content-click="false" transition="scale-transition">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-text-field v-model="date_salary" :label="$t('Salary Sign Date')" readonly
+                        v-bind="attrs" v-on="on" outlined dense hide-details
+                        prepend-inner-icon="mdi-calendar" clearable @click:clear="date_salary = null">
+                    </v-text-field>
+                </template>
+                <v-date-picker v-model="date_salary" @input="dateSalary = false" header-color="teal"
+                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"></v-date-picker>
+            </v-menu>
+        </v-col>
+        <v-col cols="1">
+            <v-text-field v-model="inVG" :label="$t('Worked at AW')" outlined dense
+            hide-details></v-text-field>
+        </v-col>
+        <v-col cols="1" v-if="Number(inVG) > 0">
+            <v-btn fab x-small color="error" dark @click="showResignDialog" style="margin-left: 8px;">
+                <v-icon>mdi-plus</v-icon>
+            </v-btn>
+        </v-col>
+    </v-row>
+</v-card>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="2">
+            <v-menu v-model="dateHR" :close-on-content-click="false" transition="scale-transition"
+            nudge-bottom="5" offset-y min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+                <v-text-field hide-details="" dense outlined v-model="date_hr_inter" readonly
+                v-bind="attrs" v-on="on" :label="$t('HR Interview Date')" clearable
+                @click:clear="date_hr_inter = null">
+                <template v-slot:prepend-inner>
+                    <v-icon slot="append">mdi-calendar-today</v-icon>
+                </template>
+            </v-text-field>
+        </template>
+        <v-date-picker @input="dateHR = false" v-model="date_hr_inter"
+        :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+        header-color="teal"></v-date-picker>
+    </v-menu>
+</v-col>
+<v-col cols="2">
+    <v-menu v-model="dateHRAcc" :close-on-content-click="false" transition="scale-transition"
+    nudge-bottom="5" offset-y min-width="auto">
+    <template v-slot:activator="{ on, attrs }">
+        <v-text-field hide-details="" dense outlined v-model="date_hr_review" readonly
+        v-bind="attrs" v-on="on" :label="$t('HR Review Date')" clearable
+        @click:clear="date_hr_review = null">
+        <template v-slot:prepend-inner>
+            <v-icon slot="append">mdi-calendar-today</v-icon>
+        </template>
+    </v-text-field>
+</template>
+<v-date-picker @input="dateHRAcc = false" v-model="date_hr_review"
+:locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+header-color="teal"></v-date-picker>
+</v-menu>
+</v-col>
+<v-col cols="2">
+    <v-menu v-model="datedept" :close-on-content-click="false" transition="scale-transition"
+    nudge-bottom="5" offset-y min-width="auto">
+    <template v-slot:activator="{ on, attrs }">
+        <v-text-field hide-details="" dense outlined v-model="date_dept_inter" readonly
+        v-bind="attrs" v-on="on" :label="$t('Dept Interview Date')" clearable
+        @click:clear="date_dept_inter = null">
+        <template v-slot:prepend-inner>
+            <v-icon slot="append">mdi-calendar-today</v-icon>
+        </template>
+    </v-text-field>
+</template>
+<v-date-picker @input="datedept = false" v-model="date_dept_inter"
+:locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+header-color="teal"></v-date-picker>
+</v-menu>
+</v-col>
+<v-col cols="2">
+    <v-menu v-model="datedeptAcc" :close-on-content-click="false" transition="scale-transition"
+    nudge-bottom="5" offset-y min-width="auto">
+    <template v-slot:activator="{ on, attrs }">
+        <v-text-field hide-details="" dense outlined v-model="date_dept_review" readonly
+        v-bind="attrs" v-on="on" :label="$t('Dept Review Date')" clearable
+        @click:clear="date_dept_review = null">
+        <template v-slot:prepend-inner>
+            <v-icon slot="append">mdi-calendar-today</v-icon>
+        </template>
+    </v-text-field>
+</template>
+<v-date-picker @input="datedeptAcc = false" v-model="date_dept_review"
+:locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+header-color="teal"></v-date-picker>
+</v-menu>
+</v-col>
+<v-col cols="2">
+    <v-menu v-model="dateInWork" :close-on-content-click="false" transition="scale-transition"
+    nudge-bottom="5" offset-y min-width="auto">
+    <template v-slot:activator="{ on, attrs }">
+        <v-text-field hide-details="" dense outlined v-model="inDateWork" readonly
+        v-bind="attrs" v-on="on" :label="$t('Expected start date')" clearable
+        @click:clear="inDateWork = null">
+        <template v-slot:prepend-inner>
+            <v-icon slot="append">mdi-calendar-today</v-icon>
+        </template>
+    </v-text-field>
+</template>
+<v-date-picker @input="dateInWork = false" v-model="inDateWork"
+:locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+header-color="teal"></v-date-picker>
+</v-menu>
+</v-col>
+<v-col cols="2">
+    <v-menu v-model="dateAccInWork" :close-on-content-click="false" transition="scale-transition"
+    nudge-bottom="5" offset-y min-width="auto">
+    <template v-slot:activator="{ on, attrs }">
+        <v-text-field hide-details="" dense outlined v-model="inDateAccWork" readonly
+        v-bind="attrs" v-on="on" :label="$t('Actual Start Date')" clearable
+        @click:clear="inDateAccWork = null">
+        <template v-slot:prepend-inner>
+            <v-icon slot="append">mdi-calendar-today</v-icon>
+        </template>
+    </v-text-field>
+</template>
+<v-date-picker @input="dateAccInWork = false" v-model="inDateAccWork"
+:locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+header-color="teal"></v-date-picker>
+</v-menu>
+</v-col>
+</v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="2">
+            <v-checkbox v-model="hrAcc" :label="$t('HR Accept')" color="red" value="yes"
+            hide-details></v-checkbox>
+        </v-col>
+        <v-col cols="2">
+            <v-checkbox v-model="deptACC" :label="$t('Dept Accept')" color="red" value="yes"
+            hide-details></v-checkbox>
+        </v-col>
+        <v-col cols="2">
+            <v-checkbox v-model="inWorker" :label="$t('Started Working')" color="red" value="yes"
+            hide-details></v-checkbox>
+        </v-col>
+        <!-- <v-col cols="2">
+            <v-checkbox v-model="interview_bus" :label="$t('Recruited by Bus')" color="red" value="yes"
+            hide-details></v-checkbox>
+        </v-col> -->
+        <!-- <v-col cols="2">
+            <v-checkbox v-model="reg_bus" :label="$t('Bus Registration')" color="red" value="yes"
+            hide-details></v-checkbox>
+        </v-col> -->
+        
+    </v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="1">
+            <v-text-field v-model="empno_old" :label="$t('Old Employee No')" outlined dense
+            hide-details></v-text-field>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="comp_return" :items="item_comp_return" :label="$t('Return Company')" dense
+            outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="9">
+            <v-textarea v-model="remark" :label="$t('Note')" outlined dense hide-details
+            rows="1"></v-textarea>
+        </v-col>
+        
+    </v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="2">
+            <v-combobox v-model="nation" :items="item_nation" :label="$t('Country Code')" dense outlined
+            hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="nationality" :items="item_nationality" :label="$t('Nationality Code')"
+            dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-text-field v-model="empno_hrm" :label="$t('Empno HRM')" outlined dense
+            hide-details></v-text-field>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="newDept" :items="item_newDept" item-text="name" item-value="code"
+            :label="$t('Select dept')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="position" :items="item_position" :item-value="code"
+            :item-text="item => item.name[this.$i18n.locale] || Object.values(item.name)[0]"
+            :label="$t('Position')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="time_trial" :items="item_time_trial" :label="$t('Trial Period')" dense
+            outlined hide-details></v-combobox>
+        </v-col>
+    </v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="2">
+            <v-combobox v-model="parameters" :items="item_parameters" :label="$t('Select Parameter')" dense
+            outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="dantoc" :items="item_dantoc" :item-value="code" item-text="name"
+            :label="$t('Select Ethnicity')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="deputy" :items="item_deputy" :label="$t('Select Rank')" dense outlined
+            hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="level" :items="item_level" item-text="job_code" item-value="id"
+            :label="$t('Job Level')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="code_mc" :items="item_code_mc" :label="$t('Factory Code')" dense outlined
+            hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="loc_work" :items="item_loc_work" :label="$t('Work Area')" dense outlined
+            hide-details></v-combobox>
+        </v-col>
+    </v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="2">
+            <v-combobox v-model="direct" :items="item_direct" item-value="id" item-text="name"
+            :label="$t('Direct')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="married" :items="item_married" item-text="name" item-value="code"
+            :label="$t('Marital Status')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="edu" :items="item_edu" :item-value="code" item-text="name"
+            :label="$t('Education')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="birth_province" :items="item_birth_province" item-text="name"
+            item-value="code" :label="$t('Birth Province')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <v-col cols="2">
+            <v-combobox v-model="province" :items="item_province" item-text="name" item-value="code"
+            :label="$t('Province')" dense outlined hide-details></v-combobox>
+        </v-col>
+        <!-- <v-col cols="2">
+            <v-combobox v-model="bus_info" :items="item_bus_info" :label="$t('Bus')" dense outlined
+            hide-details></v-combobox>
+        </v-col> -->
+        <v-col cols="2">
+            <v-text-field v-model="tmp_categoryid" :label="$t('Category ID')" outlined dense
+            hide-details></v-text-field>
+        </v-col>
+    </v-row>
+</v-col>
+<v-col cols="12" class="d-flex">
+    <v-row dense>
+        <v-col cols="4">
+            <v-text-field v-model="school_gra" :label="$t('Graduate School')" outlined dense
+            hide-details></v-text-field>
+        </v-col>
+        <v-col cols="2">
+            <v-menu v-model="change_date_acc" :close-on-content-click="true" transition="scale-transition"
+            nudge-bottom="5" offset-y min-width="auto">
+            <template v-slot:activator="{ on, attrs }">
+                <v-text-field hide-details="" dense outlined v-model="change_date" readonly
+                v-bind="attrs" v-on="on" :label="$t('Change Start Date')" clearable
+                @click:clear="change_date = null">
+                <template v-slot:prepend-inner>
+                    <v-icon slot="append">mdi-calendar-today</v-icon>
+                </template>
+            </v-text-field>
+        </template>
+        <v-date-picker @input="dateAccInWork = false" v-model="change_date"
+        :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
+        header-color="teal"></v-date-picker>
+    </v-menu>
+</v-col>
+<v-col cols="4">
+    <v-textarea v-model="reason" :label="$t('Rejection Reason')" outlined dense hide-details
+    rows="1"></v-textarea>
+</v-col>
+</v-row>
+</v-col>
 
-                </v-row>
+<v-col cols="12" class="d-flex justify-end">
+    <!-- thêm nút xóa dữ liệu ra khỏi database -->
+    <v-btn color="error" @click="deleteData" class="mr-3" :loading="loading">
+        <v-icon left>mdi-delete</v-icon>
+        {{ $t('Delete') }}
+    </v-btn>
+    <v-spacer></v-spacer>
+    <v-btn color="primary" :to="{ name: 'index' }" class="mr-3">
+        <v-icon left>mdi-arrow-left</v-icon>
+        {{ $t('Back') }}
+    </v-btn>
+    <v-btn color="error" class="mr-3" @click="resetForm" :loading="loading">
+        <v-icon left>mdi-reload</v-icon>
+        {{ $t('Reset') }}
+    </v-btn>
+    <v-btn color="success" @click=saveDb :loading="loading">
+        <v-icon left>mdi-content-save</v-icon>
+        {{ $t('Submit') }}
+    </v-btn>
+</v-col>
+</v-row>
+<v-dialog v-model="dialogSourceRecuiting" width="1000">
+    <v-card>
+        <v-card-title class="text-h5" style="background-color: teal; color: white">
+            <v-icon color="white" left>mdi-cog-outline</v-icon>
+            <span>{{ $t("Source recruiting") }}</span>
+            <v-spacer></v-spacer>
+            <v-icon @click="dialogSourceRecuiting = false" color="white">mdi-close-box</v-icon>
+        </v-card-title>
+        <v-card-text>
+            <v-row>
+                <v-col cols="12">
+                    <v-row no-gutters align="center">
+                        <v-col cols="3" class="pr-2 mt-3">
+                            <v-text-field v-model="input_source.vi" :label="$t('Recruitment Source (VI)')"
+                            outlined dense clearable hide-details>
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="3" class="px-2 mt-3">
+                        <v-text-field v-model="input_source.en" :label="$t('Recruitment Source (EN)')"
+                        outlined dense clearable hide-details>
+                    </v-text-field>
+                </v-col>
+                <v-col cols="3" class="px-2 mt-3">
+                    <v-text-field v-model="input_source.cn" :label="$t('Recruitment Source (CN)')"
+                    outlined dense clearable hide-details>
+                </v-text-field>
             </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="1">
-                        <v-text-field v-model="empno_old" :label="$t('Old Employee No')" outlined dense
-                            hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="comp_return" :items="item_comp_return" :label="$t('Return Company')" dense
-                            outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="9">
-                        <v-textarea v-model="remark" :label="$t('Note')" outlined dense hide-details
-                            rows="1"></v-textarea>
-                    </v-col>
-                  
-                </v-row>
-            </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="2">
-                        <v-combobox v-model="nation" :items="item_nation" :label="$t('Country Code')" dense outlined
-                            hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="nationality" :items="item_nationality" :label="$t('Nationality Code')"
-                            dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-text-field v-model="empno_hrm" :label="$t('Empno HRM')" outlined dense
-                            hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="newDept" :items="item_newDept" item-text="name" item-value="code"
-                            :label="$t('Select dept')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="position" :items="item_position" :item-value="code"
-                            :item-text="item => item.name[this.$i18n.locale] || Object.values(item.name)[0]"
-                            :label="$t('Position')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="time_trial" :items="item_time_trial" :label="$t('Trial Period')" dense
-                            outlined hide-details></v-combobox>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="2">
-                        <v-combobox v-model="parameters" :items="item_parameters" :label="$t('Select Parameter')" dense
-                            outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="dantoc" :items="item_dantoc" :item-value="code" item-text="name"
-                            :label="$t('Select Ethnicity')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="deputy" :items="item_deputy" :label="$t('Select Rank')" dense outlined
-                            hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="level" :items="item_level" item-text="job_code" item-value="id"
-                            :label="$t('Job Level')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="code_mc" :items="item_code_mc" :label="$t('Factory Code')" dense outlined
-                            hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="loc_work" :items="item_loc_work" :label="$t('Work Area')" dense outlined
-                            hide-details></v-combobox>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="2">
-                        <v-combobox v-model="direct" :items="item_direct" item-value="id" item-text="name"
-                            :label="$t('Direct')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="married" :items="item_married" item-text="name" item-value="code"
-                            :label="$t('Marital Status')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="edu" :items="item_edu" :item-value="code" item-text="name"
-                            :label="$t('Education')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="birth_province" :items="item_birth_province" item-text="name"
-                            item-value="code" :label="$t('Birth Province')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-combobox v-model="province" :items="item_province" item-text="name" item-value="code"
-                            :label="$t('Province')" dense outlined hide-details></v-combobox>
-                    </v-col>
-                    <!-- <v-col cols="2">
-                        <v-combobox v-model="bus_info" :items="item_bus_info" :label="$t('Bus')" dense outlined
-                            hide-details></v-combobox>
-                    </v-col> -->
-                    <v-col cols="2">
-                        <v-text-field v-model="tmp_categoryid" :label="$t('Category ID')" outlined dense
-                            hide-details></v-text-field>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col cols="12" class="d-flex">
-                <v-row dense>
-                    <v-col cols="4">
-                        <v-text-field v-model="school_gra" :label="$t('Graduate School')" outlined dense
-                            hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="2">
-                        <v-menu v-model="change_date_acc" :close-on-content-click="true" transition="scale-transition"
-                            nudge-bottom="5" offset-y min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field hide-details="" dense outlined v-model="change_date" readonly
-                                    v-bind="attrs" v-on="on" :label="$t('Change Start Date')" clearable
-                                    @click:clear="change_date = null">
-                                    <template v-slot:prepend-inner>
-                                        <v-icon slot="append">mdi-calendar-today</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </template>
-                            <v-date-picker @input="dateAccInWork = false" v-model="change_date"
-                                :locale="$i18n.locale == 'cn' ? 'zh' : $i18n.locale"
-                                header-color="teal"></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="4">
-                        <v-textarea v-model="reason" :label="$t('Rejection Reason')" outlined dense hide-details
-                            rows="1"></v-textarea>
-                    </v-col>
-                    </v-row>
-            </v-col>
-
-            <v-col cols="12" class="d-flex justify-end">
-                <!-- thêm nút xóa dữ liệu ra khỏi database -->
-                <v-btn color="error" @click="deleteData" class="mr-3" :loading="loading">
-                    <v-icon left>mdi-delete</v-icon>
-                    {{ $t('Delete') }}
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" :to="{ name: 'candidate-listing' }" class="mr-3">
-                    <v-icon left>mdi-arrow-left</v-icon>
-                    {{ $t('Back') }}
-                </v-btn>
-                <v-btn color="error" class="mr-3" @click="resetForm" :loading="loading">
-                    <v-icon left>mdi-reload</v-icon>
+            <v-col cols="3" class="pl-2 d-flex align-center mt-3">
+                <v-btn color="primary" @click="resetSourceForm">
+                    <v-icon left>mdi-refresh</v-icon>
                     {{ $t('Reset') }}
                 </v-btn>
-                <v-btn color="success" @click=saveDb :loading="loading">
-                    <v-icon left>mdi-content-save</v-icon>
-                    {{ $t('Submit') }}
+                <v-btn color="success" class="ml-2" @click="saveSourceRecruiting">
+                    <v-icon left>mdi-plus</v-icon>
+                    {{ $t('Save') }}
                 </v-btn>
             </v-col>
         </v-row>
-        <v-dialog v-model="dialogSourceRecuiting" width="1000">
-            <v-card>
-                <v-card-title class="text-h5" style="background-color: teal; color: white">
-                    <v-icon color="white" left>mdi-cog-outline</v-icon>
-                    <span>{{ $t("Source recruiting") }}</span>
-                    <v-spacer></v-spacer>
-                    <v-icon @click="dialogSourceRecuiting = false" color="white">mdi-close-box</v-icon>
-                </v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <v-col cols="12">
-                            <v-row no-gutters align="center">
-                                <v-col cols="3" class="pr-2 mt-3">
-                                    <v-text-field v-model="input_source.vi" :label="$t('Recruitment Source (VI)')"
-                                        outlined dense clearable hide-details>
-                                    </v-text-field>
-                                </v-col>
-                                <v-col cols="3" class="px-2 mt-3">
-                                    <v-text-field v-model="input_source.en" :label="$t('Recruitment Source (EN)')"
-                                        outlined dense clearable hide-details>
-                                    </v-text-field>
-                                </v-col>
-                                <v-col cols="3" class="px-2 mt-3">
-                                    <v-text-field v-model="input_source.cn" :label="$t('Recruitment Source (CN)')"
-                                        outlined dense clearable hide-details>
-                                    </v-text-field>
-                                </v-col>
-                                <v-col cols="3" class="pl-2 d-flex align-center mt-3">
-                                    <v-btn color="primary" @click="resetSourceForm">
-                                        <v-icon left>mdi-refresh</v-icon>
-                                        {{ $t('Reset') }}
-                                    </v-btn>
-                                    <v-btn color="success" class="ml-2" @click="saveSourceRecruiting">
-                                        <v-icon left>mdi-plus</v-icon>
-                                        {{ $t('Save') }}
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-data-table :headers="headersThongKe" :items="dataList" :items-per-page="10"
-                                class="elevation-3" :footer-props="{
-                                    showFirstLastPage: true,
-                                    firstIcon: 'mdi-arrow-collapse-left',
-                                    lastIcon: 'mdi-arrow-collapse-right',
-                                    prevIcon: 'mdi-minus',
-                                    nextIcon: 'mdi-plus',
-                                    'items-per-page-text': $t('Rows per page'),
-                                    'items-per-page-options': [5, 10, 15],
-                                }">
-                                <template v-slot:[`item.en`]="{ item }">
-                                    {{ item.name.en }}
-                                </template>
-                                <template v-slot:[`item.cn`]="{ item }">
-                                    {{ item.name.cn }}
-                                </template>
-                                <template v-slot:[`item.vi`]="{ item }">
-                                    {{ item.name.vi }}
-                                </template>
-                                <template v-slot:[`item.action`]="{ item }">
-                                    <v-icon @click="edit_recruit(item)" color="error">mdi-square-edit-outline</v-icon>
-                                </template>
-                                <template v-slot:[`header.dem_dept`]="{ header }">
-                                    {{ $t("Dept") }}
-                                </template>
-                                <template v-slot:[`header.dem_position`]="{ header }">
-                                    {{ $t("Position") }}
-                                </template>
-                                <template v-slot:[`header.sub_position`]="{ header }">
-                                    {{ $t("Sub position") }}
-                                </template>
-                                <template v-slot:[`header.dem_amount`]="{ header }">
-                                    {{ $t("Amount") }}
-                                </template>
-                                <template v-slot:[`header.hired`]="{ header }">
-                                    {{ $t("Hired") }}
-                                </template>
-                                <template v-slot:[`header.dem_inputdate`]="{ header }">
-                                    {{ $t("Input date") }}
-                                </template>
-                                <template v-slot:[`header.dem_note`]="{ header }">
-                                    {{ $t("Note") }}
-                                </template>
-                                <template v-slot:[`header.action`]="{ header }">
-                                    {{ $t("Action") }}
-                                </template>
-                            </v-data-table>
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDemand" width="1200">
-            <v-card>
-                <v-card-title class="text-h5" style="background-color: teal; color: white">
-                    <v-icon color="white" left>mdi-cog-outline</v-icon>
-                    <span>{{ $t("Demand") }}</span>
-                    <v-spacer></v-spacer>
-                    <v-icon @click="dialogDemand = false" color="white">mdi-close-box</v-icon>
-                </v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <v-col cols="12" class="mt-5">
-                            <v-data-table :headers="headersDemand" :items="dataListDemand" :items-per-page="10"
-                                class="elevation-3" :footer-props="{
-                                    showFirstLastPage: true,
-                                    firstIcon: 'mdi-arrow-collapse-left',
-                                    lastIcon: 'mdi-arrow-collapse-right',
-                                    prevIcon: 'mdi-minus',
-                                    nextIcon: 'mdi-plus',
-                                    'items-per-page-text': $t('Rows per page'),
-                                    'items-per-page-options': [5, 10, 15],
-                                }">
-                                <template v-slot:[`item.department`]="{ item }">
-                                    {{ item.department }}
-                                </template>
-                                <template v-slot:[`item.dem_unit`]="{ item }">
-                                    {{ item.dem_unit }}
-                                </template>
-                                <template v-slot:[`item.dem_position`]="{ item }">
-                                    {{ item.dem_position }}
-                                </template>
-                                <template v-slot:[`item.dem_sub_position`]="{ item }">
-                                    {{ item.dem_sub_position }}
-                                </template>
-                                <template v-slot:[`item.quantity`]="{ item }">
-                                    {{ item.quantity }}
-                                </template>
-                                <template v-slot:[`item.hired`]="{ item }">
-                                    {{ item.hired }}
-                                </template>
-                                <!-- stocknumber -->
-                                 <template v-slot:[`item.stocknumber`]="{ item }">
-                                    {{ item.stocknumber }}
-                                </template>
-                                <template v-slot:[`item.dem_inputdate`]="{ item }">
-                                    {{ item.dem_inputdate }}
-                                </template>
-                                <template v-slot:[`item.content`]="{ item }">
-                                    {{ item.content }}
-                                </template>
-                                <template v-slot:[`item.dem_note`]="{ item }">
-                                    <div class="note-text" @click="showNoteDialog(item)">
-                                        {{ truncateText(item.dem_note) }}
-                                    </div>
-                                </template>
-                                <template v-slot:[`item.action`]="{ item }">
-                                    <v-btn @click="selectDemand(item)" color="success" small dark>
-                                        <v-icon left>mdi-check-bold</v-icon>
-                                        {{ $t('Select') }}
-                                    </v-btn>
-                                </template>
-                                 <template v-slot:[`header.department`]="{ header }">
-                                    {{ $t("Department") }}
-                                </template>
-                                   <!-- dem_unit -->
-                                <template v-slot:[`header.dem_unit`]="{ header }">
-                                    {{ $t("Unit") }}
-                                </template>
-                                <template v-slot:[`header.dem_position`]="{ header }">
-                                    {{ $t("Position") }}
-                                </template>
-                                <template v-slot:[`header.dem_sub_position`]="{ header }">
-                                    {{ $t("Sub position") }}
-                                </template>
-                                <template v-slot:[`header.dem_amount`]="{ header }">
-                                    {{ $t("Quantity") }}
-                                </template>
-                                <template v-slot:[`header.hired`]="{ header }">
-                                    {{ $t("Hired") }}
-                                </template>
-                                <template v-slot:[`header.stocknumber`]="{ header }">
-                                    {{ $t("Stock number") }}
-                                </template>
-                                <template v-slot:[`header.dem_inputdate`]="{ header }">
-                                    {{ $t("Input date") }}
-                                </template>
-                                <template v-slot:[`header.content`]="{ header }">
-                                    {{ $t("Content") }}
-                                </template>
-                                <template v-slot:[`header.dem_note`]="{ header }">
-                                    {{ $t("Note") }}
-                                </template>
-                                <template v-slot:[`header.action`]="{ header }">
-                                    {{ $t("Action") }}
-                                </template>
-
-                            </v-data-table>
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-        <v-overlay :value="loading">
-            <v-progress-circular indeterminate size="64"></v-progress-circular>
-        </v-overlay>
-        <v-dialog v-model="noteDialog" max-width="500">
-            <v-card>
-                <v-card-title class="text-h6" style="background-color: #424242; color: white">
-                    {{ $t('Note') }}
-                    <v-spacer></v-spacer>
-                    <v-icon @click="noteDialog = false" color="white">mdi-close</v-icon>
-                </v-card-title>
-                <v-card-text class="pt-4">
-                    <p style="white-space: pre-wrap;">{{ selectedNote }}</p>
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-        <v-dialog v-model="resignDialog" width="1200">
-            <v-card>
-                <v-card-title class="text-h5" style="background-color: teal; color: white">
-                    <v-icon color="white" left>mdi-account-off</v-icon>
-                    <span>{{ $t("Resignation History") }}</span>
-                    <v-spacer></v-spacer>
-                    <v-icon @click="resignDialog = false" color="white">mdi-close-box</v-icon>
-                </v-card-title>
-                <v-card-text>
-                    <v-data-table :headers="resignHeaders" :items="resignData" class="elevation-1 mt-4" :footer-props="{
+    </v-col>
+    <v-col cols="12">
+        <v-data-table :headers="headersThongKe" :items="dataList" :items-per-page="10"
+        class="elevation-3" :footer-props="{
+            showFirstLastPage: true,
+            firstIcon: 'mdi-arrow-collapse-left',
+            lastIcon: 'mdi-arrow-collapse-right',
+            prevIcon: 'mdi-minus',
+            nextIcon: 'mdi-plus',
+            'items-per-page-text': $t('Rows per page'),
+            'items-per-page-options': [5, 10, 15],
+        }">
+        <template v-slot:[`item.en`]="{ item }">
+            {{ item.name.en }}
+        </template>
+        <template v-slot:[`item.cn`]="{ item }">
+            {{ item.name.cn }}
+        </template>
+        <template v-slot:[`item.vi`]="{ item }">
+            {{ item.name.vi }}
+        </template>
+        <template v-slot:[`item.action`]="{ item }">
+            <v-icon @click="edit_recruit(item)" color="error">mdi-square-edit-outline</v-icon>
+        </template>
+        <template v-slot:[`header.dem_dept`]="{ header }">
+            {{ $t("Dept") }}
+        </template>
+        <template v-slot:[`header.dem_position`]="{ header }">
+            {{ $t("Position") }}
+        </template>
+        <template v-slot:[`header.sub_position`]="{ header }">
+            {{ $t("Sub position") }}
+        </template>
+        <template v-slot:[`header.dem_amount`]="{ header }">
+            {{ $t("Amount") }}
+        </template>
+        <template v-slot:[`header.hired`]="{ header }">
+            {{ $t("Hired") }}
+        </template>
+        <template v-slot:[`header.dem_inputdate`]="{ header }">
+            {{ $t("Input date") }}
+        </template>
+        <template v-slot:[`header.dem_note`]="{ header }">
+            {{ $t("Note") }}
+        </template>
+        <template v-slot:[`header.action`]="{ header }">
+            {{ $t("Action") }}
+        </template>
+    </v-data-table>
+</v-col>
+</v-row>
+</v-card-text>
+</v-card>
+</v-dialog>
+<v-dialog v-model="dialogDemand" width="1200">
+    <v-card>
+        <v-card-title class="text-h5" style="background-color: teal; color: white">
+            <v-icon color="white" left>mdi-cog-outline</v-icon>
+            <span>{{ $t("Demand") }}</span>
+            <v-spacer></v-spacer>
+            <v-icon @click="dialogDemand = false" color="white">mdi-close-box</v-icon>
+        </v-card-title>
+        <v-card-text>
+            <v-row>
+                <v-col cols="12" class="mt-5">
+                    <v-data-table :headers="headersDemand" :items="dataListDemand" :items-per-page="10"
+                    class="elevation-3" :footer-props="{
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus',
                         'items-per-page-text': $t('Rows per page'),
+                        'items-per-page-options': [5, 10, 15],
                     }">
-                        <template v-slot:[`item.er_gender`]="{ item }">
-                            {{ $t(item.er_gender) }}
+                    <template v-slot:[`item.department`]="{ item }">
+                        {{ item.department }}
+                    </template>
+                    <template v-slot:[`item.dem_unit`]="{ item }">
+                        {{ item.dem_unit }}
+                    </template>
+                    <template v-slot:[`item.dem_position`]="{ item }">
+                        {{ item.dem_position }}
+                    </template>
+                    <template v-slot:[`item.dem_sub_position`]="{ item }">
+                        {{ item.dem_sub_position }}
+                    </template>
+                    <template v-slot:[`item.quantity`]="{ item }">
+                        {{ item.quantity }}
+                    </template>
+                    <template v-slot:[`item.hired`]="{ item }">
+                        {{ item.hired }}
+                    </template>
+                    <!-- stocknumber -->
+                    <template v-slot:[`item.stocknumber`]="{ item }">
+                        {{ item.stocknumber }}
+                    </template>
+                    <template v-slot:[`item.dem_inputdate`]="{ item }">
+                        {{ item.dem_inputdate }}
+                    </template>
+                    <template v-slot:[`item.content`]="{ item }">
+                        {{ item.content }}
+                    </template>
+                    <template v-slot:[`item.dem_note`]="{ item }">
+                        <div class="note-text" @click="showNoteDialog(item)">
+                            {{ truncateText(item.dem_note) }}
+                        </div>
+                    </template>
+                    <template v-slot:[`item.action`]="{ item }">
+                        <v-btn @click="selectDemand(item)" color="success" small dark>
+                            <v-icon left>mdi-check-bold</v-icon>
+                            {{ $t('Select') }}
+                        </v-btn>
+                    </template>
+                    <template v-slot:[`header.department`]="{ header }">
+                        {{ $t("Department") }}
+                    </template>
+                    <!-- dem_unit -->
+                    <template v-slot:[`header.dem_unit`]="{ header }">
+                        {{ $t("Unit") }}
+                    </template>
+                    <template v-slot:[`header.dem_position`]="{ header }">
+                        {{ $t("Position") }}
+                    </template>
+                    <template v-slot:[`header.dem_sub_position`]="{ header }">
+                        {{ $t("Sub position") }}
+                    </template>
+                    <template v-slot:[`header.dem_amount`]="{ header }">
+                        {{ $t("Quantity") }}
+                    </template>
+                    <template v-slot:[`header.hired`]="{ header }">
+                        {{ $t("Hired") }}
+                    </template>
+                    <template v-slot:[`header.stocknumber`]="{ header }">
+                        {{ $t("Stock number") }}
+                    </template>
+                    <template v-slot:[`header.dem_inputdate`]="{ header }">
+                        {{ $t("Input date") }}
+                    </template>
+                    <template v-slot:[`header.content`]="{ header }">
+                        {{ $t("Content") }}
+                    </template>
+                    <template v-slot:[`header.dem_note`]="{ header }">
+                        {{ $t("Note") }}
+                    </template>
+                    <template v-slot:[`header.action`]="{ header }">
+                        {{ $t("Action") }}
+                    </template>
+                    
+                </v-data-table>
+            </v-col>
+        </v-row>
+    </v-card-text>
+</v-card>
+</v-dialog>
+<v-overlay :value="loading">
+    <v-progress-circular indeterminate size="64"></v-progress-circular>
+</v-overlay>
+<v-dialog v-model="noteDialog" max-width="500">
+    <v-card>
+        <v-card-title class="text-h6" style="background-color: #424242; color: white">
+            {{ $t('Note') }}
+            <v-spacer></v-spacer>
+            <v-icon @click="noteDialog = false" color="white">mdi-close</v-icon>
+        </v-card-title>
+        <v-card-text class="pt-4">
+            <p style="white-space: pre-wrap;">{{ selectedNote }}</p>
+        </v-card-text>
+    </v-card>
+</v-dialog>
+<v-dialog v-model="resignDialog" width="1200">
+    <v-card>
+        <v-card-title class="text-h5" style="background-color: teal; color: white">
+            <v-icon color="white" left>mdi-account-off</v-icon>
+            <span>{{ $t("Resignation History") }}</span>
+            <v-spacer></v-spacer>
+            <v-icon @click="resignDialog = false" color="white">mdi-close-box</v-icon>
+        </v-card-title>
+        <v-card-text>
+            <v-data-table :headers="resignHeaders" :items="resignData" class="elevation-1 mt-4" :footer-props="{
+                'items-per-page-text': $t('Rows per page'),
+            }">
+            <template v-slot:[`item.er_gender`]="{ item }">
+                {{ $t(item.er_gender) }}
+            </template>
+            <template v-slot:[`item.er_keyindate`]="{ item }">
+                {{ formatDate(item.er_keyindate) }}
+            </template>
+            <template v-slot:[`item.er_resigndate`]="{ item }">
+                {{ formatDate(item.er_resigndate) }}
+            </template>
+            <template v-slot:[`item.er_address`]="{ item }">
+                <div class="text-wrap">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <span class="truncated-text">
+                                {{ item.er_address }}
+                            </span>
                         </template>
-                        <template v-slot:[`item.er_keyindate`]="{ item }">
-                            {{ formatDate(item.er_keyindate) }}
+                        <span>{{ item.er_address }}</span>
+                    </v-tooltip>
+                </div>
+            </template>
+            <template v-slot:[`item.er_reason`]="{ item }">
+                <div class="text-wrap">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <span class="truncated-text">
+                                {{ getReason(item.er_reason) }}
+                            </span>
                         </template>
-                        <template v-slot:[`item.er_resigndate`]="{ item }">
-                            {{ formatDate(item.er_resigndate) }}
+                        <span>{{ getReason(item.er_reason) }}</span>
+                    </v-tooltip>
+                </div>
+            </template>
+            <template v-slot:[`item.er_note`]="{ item }">
+                <div class="text-wrap" v-if="item.er_note">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <span class="truncated-text">
+                                {{ item.er_note }}
+                            </span>
                         </template>
-                        <template v-slot:[`item.er_address`]="{ item }">
-                            <div class="text-wrap">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <span class="truncated-text">
-                                            {{ item.er_address }}
-                                        </span>
-                                    </template>
-                                    <span>{{ item.er_address }}</span>
-                                </v-tooltip>
-                            </div>
-                        </template>
-                        <template v-slot:[`item.er_reason`]="{ item }">
-                            <div class="text-wrap">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <span class="truncated-text">
-                                            {{ getReason(item.er_reason) }}
-                                        </span>
-                                    </template>
-                                    <span>{{ getReason(item.er_reason) }}</span>
-                                </v-tooltip>
-                            </div>
-                        </template>
-                        <template v-slot:[`item.er_note`]="{ item }">
-                            <div class="text-wrap" v-if="item.er_note">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <span class="truncated-text">
-                                            {{ item.er_note }}
-                                        </span>
-                                    </template>
-                                    <span>{{ item.er_note }}</span>
-                                </v-tooltip>
-                            </div>
-                            <span v-else>-</span>
-                        </template>
-                    </v-data-table>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="error" @click="resignDialog = false" outlined>
-                        <v-icon left>mdi-close</v-icon>
-                        {{ $t("CLOSE") }}
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-        <!-- Add this confirmation dialog -->
-        <v-dialog v-model="confirmDialog" max-width="400">
-            <v-card>
-                <v-card-title class="text-h5">{{ $t('Warning') }}</v-card-title>
-                <v-card-text>{{ $t('Do you want to delete the candidate?') }}</v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="grey darken-1" text @click="confirmDialog = false">Cancel</v-btn>
-                    <v-btn color="red darken-1" text @click="confirmDelete">OK</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </v-app>
+                        <span>{{ item.er_note }}</span>
+                    </v-tooltip>
+                </div>
+                <span v-else>-</span>
+            </template>
+        </v-data-table>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="error" @click="resignDialog = false" outlined>
+            <v-icon left>mdi-close</v-icon>
+            {{ $t("CLOSE") }}
+        </v-btn>
+    </v-card-actions>
+</v-card>
+</v-dialog>
+<!-- Add this confirmation dialog -->
+<v-dialog v-model="confirmDialog" max-width="400">
+    <v-card>
+        <v-card-title class="text-h5">{{ $t('Warning') }}</v-card-title>
+        <v-card-text>{{ $t('Do you want to delete the candidate?') }}</v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="grey darken-1" text @click="confirmDialog = false">Cancel</v-btn>
+            <v-btn color="red darken-1" text @click="confirmDelete">OK</v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+</v-app>
 </template>
 <script>
 import dayjs from "dayjs";
@@ -1005,7 +1005,7 @@ export default {
     data() {
         return {
             loading: false,
-            api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+            api: '/api/aw-recuitingReport/',
             id: '',
             today: dayjs().format('YYYY-MM-DD'),
             name: '',
@@ -1106,17 +1106,17 @@ export default {
             dialogDemand: false,
             dataListDemand: [],
             headersDemand: [
-                { text: 'Demand ID', sortable: false, value: 'dem_id' },
-                { text: 'Department', sortable: false, value: 'department' },
-                { text: 'Unit', sortable: false, value: 'dem_unit' },
-                { text: 'Position', value: 'dem_position', sortable: false, align: 'center' },
-                { text: 'Sub Position', value: 'dem_sub_position', sortable: false, align: 'center' },
-                { text: 'Quantity', value: 'dem_amount', sortable: false, align: 'center' },
-                { text: 'Hired', value: 'hired', sortable: false, align: 'center' },
-                { text: 'Still in need', value: 'stocknumber', sortable: false, align: 'center' },
-                { text: 'Dem Input Date', value: 'dem_inputdate', sortable: false },
-                { text: 'Content', value: 'dem_note', width: '150px', sortable: false },
-                { text: 'Action', value: 'action', sortable: false }
+            { text: 'Demand ID', sortable: false, value: 'dem_id' },
+            { text: 'Department', sortable: false, value: 'department' },
+            { text: 'Unit', sortable: false, value: 'dem_unit' },
+            { text: 'Position', value: 'dem_position', sortable: false, align: 'center' },
+            { text: 'Sub Position', value: 'dem_sub_position', sortable: false, align: 'center' },
+            { text: 'Quantity', value: 'dem_amount', sortable: false, align: 'center' },
+            { text: 'Hired', value: 'hired', sortable: false, align: 'center' },
+            { text: 'Still in need', value: 'stocknumber', sortable: false, align: 'center' },
+            { text: 'Dem Input Date', value: 'dem_inputdate', sortable: false },
+            { text: 'Content', value: 'dem_note', width: '150px', sortable: false },
+            { text: 'Action', value: 'action', sortable: false }
             ],
             dm_id: '',
             dm_Subpos: '',
@@ -1141,20 +1141,20 @@ export default {
             resignData: [],
             resignDialog: false,
             resignHeaders: [
-                { text: 'Employee ID', value: 'er_empid', align: 'start', width: '100px' },
-                { text: 'Name', value: 'er_name', width: '150px' },
-                { text: 'Department', value: 'er_deptname', width: '150px' },
-                { text: 'Job Level', value: 'er_joblevel', width: '100px' },
-                { text: 'Seniority', value: 'er_seniority', width: '80px' },
-                { text: 'Address', value: 'er_address', width: '200px', sortable: false },
-                { text: 'Resignation Date', value: 'er_resigndate', width: '120px' },
-                { text: 'Reason', value: 'er_reason', width: '200px', sortable: false },
-                { text: 'Note', value: 'er_note', width: '200px', sortable: false },
+            { text: 'Employee ID', value: 'er_empid', align: 'start', width: '100px' },
+            { text: 'Name', value: 'er_name', width: '150px' },
+            { text: 'Department', value: 'er_deptname', width: '150px' },
+            { text: 'Job Level', value: 'er_joblevel', width: '100px' },
+            { text: 'Seniority', value: 'er_seniority', width: '80px' },
+            { text: 'Address', value: 'er_address', width: '200px', sortable: false },
+            { text: 'Resignation Date', value: 'er_resigndate', width: '120px' },
+            { text: 'Reason', value: 'er_reason', width: '200px', sortable: false },
+            { text: 'Note', value: 'er_note', width: '200px', sortable: false },
             ],
             reasons: [],
             confirmDialog: false
         }
-
+        
     },
     watch: {
         tel(newVal) {
@@ -1172,14 +1172,14 @@ export default {
                     this.newDept = null;
                 }
             },
-            deep: true
+            immediate: true
         },
         loc_apply: {
             handler(newVal) {
                 if (newVal) {
                     // Find the matching position from item_position based on loc_apply
                     const matchingPosition = this.item_position.find(pos =>
-                        this.positionMapping[newVal]?.includes(pos.name[this.$i18n.locale] || pos.name)
+                    this.positionMapping[newVal]?.includes(pos.name[this.$i18n.locale] || pos.name)
                     );
                     if (matchingPosition) {
                         this.position = matchingPosition;
@@ -1239,7 +1239,7 @@ export default {
         },
         async fetchDemand() {
             let params = {
-                dem_dept: this.dept_apply.id,
+                dem_dept: this.dept_apply.name,
             };
             try {
                 const res = await this.$axios.post(this.api + 'getDemandByDept', params);
@@ -1261,13 +1261,13 @@ export default {
                 console.log(error);
             }
         },
-
+        
         getDataDemandByDept() {
             this.fetchDemand();
             this.dialogDemand = true;
         },
         selectDemand(item) {
-
+            
             this.dm_id = item.id;
             this.dm_Subpos = item.dem_sub_position;
             this.dialogDemand = false;
@@ -1297,7 +1297,7 @@ export default {
                 }
                 // Check if empno already exists
                 const existingIndex = candidates.findIndex(c => c.empno === this.empno_hrm);
-
+                
                 if (existingIndex !== -1) {
                     // Update existing candidate
                     candidates[existingIndex] = newCandidate;
@@ -1310,16 +1310,16 @@ export default {
                     // Add new candidate
                     candidates.push(newCandidate);
                 }
-
+                
                 let params = {
                     id: this.dm_id,
                     dem_fullfilldate: this.inDateAccWork,
                     stocknumber: stocknumber,
                     dem_candidates: candidates
                 };
-
+                
                 const res = await this.$axios.post(this.api + 'saveUpdateDemand', params);
-
+                
                 if (res.status === 200) {
                     this.$notify({
                         title: 'Success',
@@ -1351,12 +1351,12 @@ export default {
                 const processedData = this.processDepartmentData(rawData);
                 this.item_dept_apply = processedData.mainDepartments;
                 this.allDepartments = processedData.subDepartments;
-
+                
                 // Initialize sub-departments if department is already selected
                 if (this.dept_apply) {
                     this.updateNewDeptItems();
                 }
-
+                
             } catch (error) {
                 console.error('Error in getDeptCode:', error);
                 this.$notify({
@@ -1366,16 +1366,16 @@ export default {
                 });
             }
         },
-
+        
         processDepartmentData(data) {
             const mainDepartments = new Map();
             const subDepartments = {};
-
+            
             // First pass: collect all unique departments
             data.forEach(item => {
                 const dept = item.department;
                 const deptId = item.id;
-
+                
                 if (!mainDepartments.has(dept)) {
                     mainDepartments.set(dept, {
                         code: dept,
@@ -1384,12 +1384,12 @@ export default {
                         deptName_temp: dept
                     });
                 }
-
+                
                 // Initialize subDepartments array if not exists
                 if (!subDepartments[dept]) {
                     subDepartments[dept] = new Set();
                 }
-
+                
                 // Only add sub-division if end_date is null
                 if (item.sub_division && item.end_date === null) {
                     subDepartments[dept].add({
@@ -1399,19 +1399,19 @@ export default {
                     });
                 }
             });
-
+            
             // Convert Sets to Arrays and create final structure
             return {
                 mainDepartments: Array.from(mainDepartments.values()),
                 subDepartments: Object.fromEntries(
-                    Object.entries(subDepartments).map(([key, value]) => [
-                        key,
-                        Array.from(value)
-                    ])
+                Object.entries(subDepartments).map(([key, value]) => [
+                key,
+                Array.from(value)
+                ])
                 )
             };
         },
-
+        
         safeParseJSON(value) {
             try {
                 return typeof value === 'string' ? JSON.parse(value) : value;
@@ -1419,31 +1419,28 @@ export default {
                 return value;
             }
         },
-
+        
         updateNewDeptItems() {
-            if (!this.dept_apply?.code) {
+            if (!this.dept_apply) {
                 this.item_newDept = [];
                 this.newDept = null;
                 return;
             }
-
-            const deptCode = this.dept_apply.code;
+            
+            const deptCode = this.dept_apply.code || this.dept_apply;
             let subDepts = this.allDepartments[deptCode] || [];
-
-            // Filter out departments with end_date
             this.item_newDept = subDepts;
-
-            // Reset selection if invalid
             if (this.newDept && !subDepts.find(x => x.code === this.newDept.code)) {
                 this.newDept = null;
             }
-
+            
+            
         },
         async getAllDuty() {
             try {
                 const res = await this.$axios.get(this.api + 'getDataDutyHrm');
                 let _rData = res.data.dataDutyHrm;
-
+                
                 // First convert the data to the required format
                 const positions = _rData.map((x) => {
                     let name, code;
@@ -1467,16 +1464,16 @@ export default {
                         }
                     };
                 });
-
+                
                 // Sort positions with C02 and B09 at the top
                 this.item_position = positions.sort((a, b) => {
                     // Define priority order
                     const priorityOrder = ['C02', 'B09'];
-
+                    
                     // Get index in priority array (-1 if not found)
                     const indexA = priorityOrder.indexOf(a.code);
                     const indexB = priorityOrder.indexOf(b.code);
-
+                    
                     // If both items are in priority list, sort by priority order
                     if (indexA !== -1 && indexB !== -1) {
                         return indexA - indexB;
@@ -1488,19 +1485,19 @@ export default {
                     // For all other items, maintain original order
                     return 0;
                 });
-
+                
                 // If loc_apply is already set, update position accordingly
                 if (this.loc_apply) {
                     const matchingPosition = this.item_position.find(pos =>
-                        this.positionMapping[this.loc_apply]?.includes(
-                            pos.name[this.$i18n.locale] || Object.values(pos.name)[0]
-                        )
+                    this.positionMapping[this.loc_apply]?.includes(
+                    pos.name[this.$i18n.locale] || Object.values(pos.name)[0]
+                    )
                     );
                     if (matchingPosition) {
                         this.position = matchingPosition;
                     }
                 }
-
+                
             } catch (error) {
                 console.log(error);
             }
@@ -1509,7 +1506,7 @@ export default {
             try {
                 const res = await this.$axios.get(this.api + 'getDataNationHrm');
                 let _rData = res.data.dataNationHrm;
-
+                
                 this.item_dantoc = _rData.map((x) => {
                     let name, code;
                     try {
@@ -1535,7 +1532,7 @@ export default {
             try {
                 const res = await this.$axios.get(this.api + 'getDataEdu');
                 // this.item_edu = res.data.dataEdu.map(edu => edu.edu_name);
-
+                
                 let _rData = res.data.dataEdu;
                 this.item_edu = _rData.map((x) => {
                     let name, code;
@@ -1554,7 +1551,7 @@ export default {
                         name: name[this.$i18n.locale] || name
                     };
                 });
-
+                
             } catch (error) {
                 console.log(error);
             }
@@ -1563,7 +1560,7 @@ export default {
             try {
                 const res = await this.$axios.get(this.api + 'getDataBirthProvince');
                 let _rData = res.data.dataBirthProvince;
-
+                
                 const processProvinceData = (province) => {
                     let name, code;
                     try {
@@ -1581,10 +1578,10 @@ export default {
                         name: name[this.$i18n.locale] || name
                     };
                 };
-
+                
                 this.item_birth_province = _rData.map(processProvinceData);
                 this.item_province = _rData.map(processProvinceData);
-
+                
             } catch (error) {
                 console.log(error);
             }
@@ -1593,7 +1590,7 @@ export default {
             try {
                 const res = await this.$axios.get(this.api + 'getDataDirect');
                 let _rdata = res.data.dataDirect;
-
+                
                 this.item_direct = _rdata.map((x) => {
                     let name, code;
                     try {
@@ -1652,9 +1649,9 @@ export default {
                 this.focusNameField();
                 return;
             }
-
+            
             this.loading = true;
-            const currentUser = this.$session.get("recruiting-report").username;
+            const currentUser = this.$session.get("aw-recruiting-report").username;
             let params = {
                 id: this.id,
                 key_in_date: this.today,
@@ -1663,7 +1660,7 @@ export default {
                 gender: this.gender,
                 emp_id: this.cccd,
                 position: this.loc_apply,
-                apply_dp: this.dept_apply?.id || '', // Thay đổi để lưu id của department
+                apply_dp: this.dept_apply?.name || '', // Thay đổi để lưu id của department
                 hr_iv_date: this.date_hr_inter,
                 hr_ac_date: this.date_hr_review,
                 dp_iv_date: this.date_dept_inter,
@@ -1721,6 +1718,10 @@ export default {
                         type: 'success'
                     });
                     this.resetForm();
+                    this.$router.replace({
+                        path: this.$route.path,
+                        query: {} 
+                    });
                 }
             } catch (error) {
                 console.error('Error saving data:', error);
@@ -1735,6 +1736,7 @@ export default {
         },
         // reset form
         resetForm() {
+        this.id = '';
             this.name = '';
             this.gender = '0';
             this.dateBirth = '';
@@ -1790,26 +1792,32 @@ export default {
         },
         async getAllByQuery() {
             try {
+                // 1. Đầu tiên lấy dữ liệu phòng ban và đợi nó hoàn thành
                 await this.getDeptCode();
-
+                
+                // 2. Lấy dữ liệu của candidate
                 const res = await this.$axios.get(this.api + 'getDataById/' + this.id);
                 if (res.status === 200) {
                     let data = res.data;
-
-                    // Find department matching apply_dp
-                    this.dept_apply = this.item_dept_apply.find(dept => {
-                        return String(dept.id) === String(data.apply_dp);
-                    });
-                    if (!this.dept_apply) {
-                        // console.warn('Could not find matching department for apply_dp:', data.apply_dp);
+                    
+                    // 3. Thiết lập dept_apply trước
+                    const matchingDept = this.item_dept_apply.find(dept => dept.name === data.apply_dp);
+                    if (matchingDept) {
+                        this.dept_apply = matchingDept;
+                        
+                        // 4. Đợi Vue cập nhật DOM và các computed properties
+                        await this.$nextTick();
+                        
+                        // 5. Sau khi dept_apply đã được thiết lập và item_newDept đã được cập nhật
+                        // tìm và thiết lập newDept
+                        const subDepts = this.allDepartments[matchingDept.code] || [];
+                        const matchingSubDept = subDepts.find(x => x.code === data.tmp_departid);
+                        if (matchingSubDept) {
+                            this.newDept = matchingSubDept;
+                        }
                     }
-
-                    await this.$nextTick();
-
-                    // Set newDept after dept_apply is set
-                    this.newDept = this.item_newDept.find(x => String(x.code) === String(data.tmp_departid));
-
-                    // ...rest of your code...
+                    
+                    // 6. Thiết lập các trường dữ liệu khác
                     this.name = data.candidate_name;
                     this.gender = data.gender;
                     this.dateBirth = data.dateofbirth;
@@ -1861,8 +1869,9 @@ export default {
                     this.selectedDatecccd = data.datecccd;
                     this.reason = data.reason;
                     this.change_date = data.change_en_date;
+                    this.inVG = data.vg_work_times;
                 }
-
+                
             } catch (error) {
                 console.log(error);
             }
@@ -1878,7 +1887,7 @@ export default {
                         await this.getAllDataCandidate();
                         if (this.dataCadidates && Object.keys(this.dataCadidates).length > 0) {
                             const data = this.dataCadidates; // Sử dụng trực tiếp object
-
+                            
                             this.dept_apply = this.item_dept_apply.find(dept => {
                                 return String(dept.id) === String(data.apply_dp);
                             });
@@ -1935,7 +1944,7 @@ export default {
                         }
                     }
                     else {
-
+                        
                     }
                 }
             } catch (error) {
@@ -1947,7 +1956,7 @@ export default {
                 });
             }
         },
-
+        
         formatDate(dateString) {
             if (!dateString) return '';
             // Convert DD/MM/YYYY to YYYY-MM-DD
@@ -1957,7 +1966,7 @@ export default {
             }
             return dateString;
         },
-
+        
         async getAllSourceRecruiting() {
             try {
                 const res = await this.$axios.get(this.api + 'getSourceRecruiting');
@@ -1983,7 +1992,7 @@ export default {
                             code: code,
                             name: name,
                         };
-
+                        
                     });
                     this.dataList = this.item_source_recruit;
                 }
@@ -2016,7 +2025,7 @@ export default {
                 });
                 return;
             }
-
+            
             let params = {
                 id: this.id,
                 source: {
@@ -2091,8 +2100,8 @@ export default {
                 const foundReason = this.reasons.find(r => String(r.id) === String(reason));
                 if (foundReason) {
                     const reasonObj = typeof foundReason.reason === 'string' ?
-                        JSON.parse(foundReason.reason) :
-                        foundReason.reason;
+                    JSON.parse(foundReason.reason) :
+                    foundReason.reason;
                     return reasonObj[this.$i18n.locale] || reasonObj['en'] || reason;
                 }
                 return reason; // Return original value if no mapping found
@@ -2124,7 +2133,7 @@ export default {
                         type: 'success'
                     });
                     this.resetForm();
-                    this.$router.push({ name: 'candidate-listing' });
+                    this.$router.push({ name: 'index' });
                 }
             } catch (error) {
                 console.error('Error deleting data:', error);
@@ -2226,7 +2235,7 @@ export default {
     display: inline-block;
     max-width: 50x;
     white-space: nowrap;
-
+    
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -2281,39 +2290,3 @@ export default {
 .truncated-text:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
-</style>
-.truncate-text {
-display: inline-block;
-max-width: 50x;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.note-text {
-display: inline-block;
-max-width: 150px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-color: #1976d2;
-cursor: pointer;
-padding: 4px 8px;
-border-radius: 4px;
-display: inline-block;
-background-color: #e3f2fd;
-}
-
-.note-text:hover { background-color: #bbdefb;}</style>
-max-width: 150px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-color: #1976d2;
-cursor: pointer;
-padding: 4px 8px;
-border-radius: 4px;
-background-color: #e3f2fd;
-}
-
-.note-text:hover { background-color: #bbdefb;}</style>

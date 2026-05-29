@@ -25,7 +25,7 @@
                 </v-list-item-content>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list-item link @click="logout">
+            <!-- <v-list-item link @click="logout">
                 <v-list-item-action>
                     <v-icon>mdi-logout-variant</v-icon>
                 </v-list-item-action>
@@ -34,7 +34,7 @@
                         {{ { en: 'Logout', cn: '登出', vi: 'Đăng xuất' }[$i18n.locale] }}
                     </v-list-item-title>
                 </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
         </v-list>
     </v-navigation-drawer>
     <v-app-bar dense app absolute color="teal" dark>
@@ -50,14 +50,14 @@
         <v-btn @click="setLocale('vi')" text>VI</v-btn>
         <v-btn @click="setLocale('cn')" text>中文</v-btn>
         <v-btn @click="setLocale('en')" text>EN</v-btn>
-        <v-btn style="text-transform: capitalize" text @click="logout">
-            {{ $t('Welcome') }}: {{ $session.get('recruiting-report').name}} - {{ $session.get('recruiting-report').dept}}
-            <v-icon class="ml-3">mdi-logout-variant</v-icon>
+        <v-btn v-if="sessionLoaded" style="text-transform: capitalize" text >
+            {{ $t('Welcome') }}: {{ $session.get('aw-recruiting-report').name}} - {{ $session.get('aw-recruiting-report').dept}}
         </v-btn>
     </v-app-bar>
     <v-main>
         <v-container fluid>
             <auth></auth>
+            <AuthComp ref="authComp" app="aw-recruiting-report" @setUser="setUser" />
             <nuxt />
         </v-container>
     </v-main>
@@ -65,12 +65,15 @@
 </template>
 <script>
 import auth from '~/components/auth';
+import AuthComp from "../../../@global-component/auth-comp";
 export default {
     components: {
         auth,
+        AuthComp
     },
     data() {
         return {
+            sessionLoaded: false,
             drawer: false,
             activeUser: {
                 empno: null,
@@ -100,7 +103,7 @@ export default {
                         cn: '候选人名单',
                         vi: 'Danh sách ứng viên',
                     },
-                    to: '/candidate-listing',
+                    to: '/',
                 },
                 {
                     icon: 'mdi-file-chart', // Better represents reports with charts
@@ -129,31 +132,43 @@ export default {
                     },
                     to: '/deptcontrol',
                 },
-                {
-                    icon: 'mdi-account-arrow-right', // Better represents leaving/resignation
-                    title: {
-                        en: 'Resign',
-                        cn: '离职',
-                        vi: 'Thôi việc',
-                    },
-                    to: '/resign',
-                },
-                // resign-report
-                {
-                    icon: 'mdi-file-chart', // Better represents reports with charts
-                    title: {
-                        en: 'Resign Report',
-                        cn: '离职报告',
-                        vi: 'Báo cáo thôi việc',
-                    },
-                    to: '/resign-report',
-                },
+                // {
+                //     icon: 'mdi-account-arrow-right', // Better represents leaving/resignation
+                //     title: {
+                //         en: 'Resign',
+                //         cn: '离职',
+                //         vi: 'Thôi việc',
+                //     },
+                //     to: '/resign',
+                // },
+                // // resign-report
+                // {
+                //     icon: 'mdi-file-chart', // Better represents reports with charts
+                //     title: {
+                //         en: 'Resign Report',
+                //         cn: '离职报告',
+                //         vi: 'Báo cáo thôi việc',
+                //     },
+                //     to: '/resign-report',
+                // },
             ],
         };
     },
     methods: {
+        setUser(user) {
+            console.log("setUser triggered", user);
+            // console.log(user);
+            this.$session.set("aw-recruiting-report", {
+                username: user.username,
+                dept: user.dept,
+                empno: user.empno,
+                name: user.name,
+                location: user.location,
+            });
+            this.sessionLoaded = true;
+        },
         async logout() {
-            this.$session.remove('recruiting-report');
+            this.$session.remove('aw-recruiting-report');
             this.$session.remove('vg-portal');
             this.$router.push('./');
         },
@@ -164,7 +179,7 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
-            this.activeUser = this.$session.get('recruiting-report');
+            this.activeUser = this.$session.get('aw-recruiting-report');
         });
     },
 };

@@ -6,90 +6,71 @@
                     <v-toolbar-title class="d-flex align-center">
                         <v-icon class="mr-3">mdi-file-document-outline</v-icon>
                         <span class="text-h6 font-weight-medium">{{ $t("Demand management") }}</span>
-                    </v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" :label="$t('Search')" single-line
-                    hide-details filled rounded dense class="search-field mx-4" style="max-width: 300px"
-                    clearable></v-text-field>
-                    
-                    <v-btn color="error" @click="showDialog = true" class="elevation-1 animate-button"
-                    :loading="loading">
-                    <v-icon left dark>mdi-plus</v-icon>
-                    <span class="text-teal-darken-4">{{ $t("Add demand") }}</span>
-                </v-btn>
-                <v-menu offset-y :close-on-content-click="false" ref="menu">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn  v-bind="attrs" v-on="on" icon class="ml-2" title="Show/Hide Columns">
-                    <v-icon>mdi-cog-outline</v-icon>
-                </v-btn>
-                        </template>
-                        <v-card min-width="300">
-                            <v-card-title class="subtitle-1 font-weight-bold">
-                                {{ $t('Column Settings') }}
-                                <v-spacer></v-spacer>
-                                <v-btn icon x-small @click="saveColumnSettings">
-                                    <v-icon>mdi-content-save</v-icon>
-                                </v-btn>
-                                <v-btn icon x-small @click="closeMenu" class="ml-2">
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </v-card-title>
+                        <v-divider vertical dark class="ml-3"></v-divider>
+                        <v-chip-group v-model="selectedPositions" show-arrows multiple class="ml-10 chip-group-search">
+                            <v-chip v-for="pos in itemsPos" :key="pos.en" filter
+                            class="font-weight-medium" outlined label  :value="pos.en">
+                            {{ getLocalizedItem(itemsPos, pos.en) }}
+                        </v-chip>
+                    </v-chip-group>
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" :label="$t('Search')" single-line
+                hide-details filled rounded dense class="search-field mx-4" style="max-width: 300px"
+                clearable></v-text-field>
+                
+                <v-btn color="error" @click="showDialog = true" class="elevation-1 animate-button"
+                :loading="loading">
+                <v-icon left dark>mdi-plus</v-icon>
+                <span class="text-teal-darken-4">{{ $t("Add demand") }}</span>
+            </v-btn>
+            <v-menu offset-y :close-on-content-click="false" ref="menu">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn  v-bind="attrs" v-on="on" icon class="ml-2" title="Show/Hide Columns">
+                        <v-icon>mdi-cog-outline</v-icon>
+                    </v-btn>
+                </template>
+                <v-card min-width="300">
+                    <v-card-title class="subtitle-1 font-weight-bold">
+                        {{ $t('Column Settings') }}
+                        <v-spacer></v-spacer>
+                        <v-btn icon x-small @click="saveColumnSettings">
+                            <v-icon>mdi-content-save</v-icon>
+                        </v-btn>
+                        <v-btn icon x-small @click="closeMenu" class="ml-2">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                    </v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text class="pa-0">
+                        <v-list dense>
+                            <v-list-item>
+                                <v-checkbox v-model="selectAllColumns" :label="$t('Select All')" @change="toggleAllColumns" dense hide-details ></v-checkbox>
+                            </v-list-item>
                             <v-divider></v-divider>
-                            <v-card-text class="pa-0">
-                                <v-list dense>
-                                    <v-list-item>
-                                        <v-checkbox
-                                            v-model="selectAllColumns"
-                                            :label="$t('Select All')"
-                                            @change="toggleAllColumns"
-                                            dense
-                                            hide-details
-                                        ></v-checkbox>
-                                    </v-list-item>
-                                    <v-divider></v-divider>
-                                    <v-list-item v-for="header in headers" :key="header.value">
-                                        <v-checkbox
-                                            v-model="visibleColumns"
-                                            :value="header.value"
-                                            :label="$t(header.text)"
-                                            :disabled="header.value === 'actions'"
-                                            dense
-                                            hide-details
-                                        ></v-checkbox>
-                                    </v-list-item>
-                                </v-list>
-                            </v-card-text>
-                        </v-card>
-                    </v-menu>
-               
-            </v-app-bar>
+                            <v-list-item v-for="header in headers" :key="header.value">
+                                <v-checkbox v-model="visibleColumns" :value="header.value" :label="$t(header.text)" :disabled="header.value === 'actions'" dense hide-details ></v-checkbox>
+                            </v-list-item>
+                        </v-list>
+                    </v-card-text>
+                </v-card>
+            </v-menu>
             
-            <v-card-text class="pa-1">
-                <v-col cols="12">
-                    <v-row align="center" justify="start" class="grey lighten-5 pa-1 rounded-lg">
-                        <v-col cols="12" md="2">
-                            <v-autocomplete v-model="selectDept" :items="itemsSelectDept" :label="$t('Department')"
-                            hide-details outlined dense background-color="white" prepend-inner-icon="mdi-domain"
-                            class="rounded-lg" clearable @change="filterData"></v-autocomplete>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <p class="font-weight-medium teal--text text--darken-4 mb-1">{{ $t('Position Apply') }}
-                            </p>
-                            <v-chip-group v-model="selectedPositions" show-arrows multiple>
-                                <v-chip v-for="position in itemsPos" :key="position" filter
-                                class="font-weight-medium" outlined color="teal darken-4" :value="position"
-                                :input-value="selectedPositions.includes(position)"
-                                :class="{ 'v-chip--selected': selectedPositions.includes(position) }"
-                                @click="handlePositionSelect(position)">
-                                {{ position }}
-                            </v-chip>
-                        </v-chip-group>
+        </v-app-bar>
+        
+        <v-card-text class="pa-1">
+            <v-col cols="12">
+                <v-row align="center" justify="start" class="grey lighten-5 pa-1 rounded-lg">
+                    <v-col cols="12" md="2">
+                        <v-autocomplete v-model="selectDept" :items="itemstDept" :label="$t('Department')"
+                        hide-details outlined dense background-color="white" prepend-inner-icon="mdi-domain"
+                        class="rounded-lg" clearable @change="filterData"></v-autocomplete>
                     </v-col>
+                    
                 </v-row>
             </v-col>
             <v-data-table :headers="visibleHeaders" :items="mappedDemandData" :items-per-page="10" :loading="loading"
             :search="search" class="elevation-1 rounded-lg data-table"  :footer-props="{
-                'items-per-page-options': [10, 15, 30, 100],
                 'show-current-page': true,
                 'show-first-last-page': true
             }" >
@@ -103,24 +84,18 @@
                 </div>
             </template>
             <template v-slot:[`item.dem_fulfilled`]="{ item }">
-                <v-chip
-                x-small
-                :color="item.dem_fulfilled === 'yes' ? 'success' : 'error'"
-                :text-color="item.dem_fulfilled === 'yes' ? 'white' : 'white'"
-                label
-                >
+                <span :style="{
+                    color: item.dem_fulfilled === 'yes' ? '#388e3c' : '#d32f2f',
+                    fontWeight: 'bold'
+                }">
                 {{ item.dem_fulfilled === 'yes' ? $t('Yes') : $t('No') }}
-            </v-chip>
+            </span>
         </template>
         <template v-slot:[`item.dem_fullfilldate`]="{ item }">
-            <v-chip v-if="item.dem_fullfilldate" x-small outlined color="success" class="table-chip" label>
-                {{ item.dem_fullfilldate }}
-            </v-chip>
+            {{ item.dem_fullfilldate }}
         </template>
         <template v-slot:[`item.dem_inputdate`]="{ item }">
-            <v-chip x-small outlined color="error" class="table-chip" label>
-                {{ item.dem_inputdate || '' }}
-            </v-chip>
+            {{ item.dem_inputdate || '' }}
         </template>
         <template v-slot:[`item.dem_note`]="{ item }">
             <v-tooltip bottom>
@@ -133,16 +108,15 @@
             </v-tooltip>
         </template>
         <template v-slot:[`item.dem_candidates`]="{ item }">
-            <div class="d-flex align-center">
-                <v-chip small color="orange" outlined class="table-chip" label dark
-                @click="showCandidatesDialog(item.dem_candidates)" >
-                {{ getCandidatesCount(item.dem_candidates) }}
-            </v-chip>
+            <div class="d-flex align-center candidates-text-truncate"
+            @click="showCandidatesDialog(item.dem_candidates)"
+            style="cursor: pointer;">
+            {{ getCandidatesCount(item.dem_candidates) }}
         </div>
     </template>
     <template v-slot:[`item.dem_recruited`]="{ item }">
         <nuxt-link
-        :to="{ path: '../candidate-listing', query: { id: item.id, act_en_date: item.dem_fullfilldate } }"
+        :to="{ path: '/', query: { id: item.id, act_en_date: item.dem_fullfilldate } }"
         class="candidate-link">
         {{ item.dem_recruited || '' }}
     </nuxt-link>
@@ -239,8 +213,7 @@
 </v-card-text>
 </v-card>
 </v-col>
-
-<v-dialog v-model="showDialog" max-width="800" transition="dialog-bottom-transition">
+<v-dialog v-model="showDialog" max-width="900" transition="dialog-bottom-transition">
     <v-card class="form-card">
         <v-card-title class="teal darken-4 white--text px-6 py-4">
             <v-icon dark class="mr-2">{{ id ? 'mdi-pencil' : 'mdi-plus' }}</v-icon>
@@ -260,8 +233,8 @@
                         <div class="text-subtitle-1 font-weight-bold mb-3 primary--text">{{ $t("Basic Information") }}
                         </div>
                         <v-row>
-                         <v-col cols="12" md="3">
-                            <v-text-field 
+                            <v-col cols="12" md="3">
+                                <v-text-field 
                                 v-model="demand.dem_id" 
                                 :label="$t('Demand ID') + '*'" 
                                 :error-messages="demIdError"
@@ -269,41 +242,51 @@
                                 outlined 
                                 dense 
                                 :rules="[rules.required]"
-                                prepend-inner-icon="mdi-identifier"
-                            ></v-text-field>
-                        </v-col>
+                                hide-details
+                                ></v-text-field>
+                            </v-col>
                             <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.department" :items="itemsSelectDept"
                                 :label="$t('Division') + '*'" :rules="[rules.required]" outlined dense
-                                hide-details class="mb-3" prepend-inner-icon="mdi-domain"></v-autocomplete>
+                                hide-details class="mb-3" ></v-autocomplete>
                             </v-col>
                             <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.sub_department" :items="filteredUnits"
                                 :label="$t('Department') + '*'" :rules="[rules.required]" outlined dense
-                                hide-details class="mb-3" prepend-inner-icon="mdi-domain"></v-autocomplete>
+                                hide-details class="mb-3" ></v-autocomplete>
                             </v-col>
                             <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.sub_division" :items="itemsDiv"
                                 :label="$t('Unit') + '*'" :rules="[rules.required]" outlined dense
-                                hide-details class="mb-3" prepend-icon="mdi-domain"></v-autocomplete>
+                                hide-details class="mb-3" ></v-autocomplete>
                             </v-col>
-                            <v-col cols="12" md="3">
+                            <!-- <v-col cols="12" md="3">
                                 <v-autocomplete v-model="demand.position" :items="itemsPos"
                                 :label="$t('Position') + '*'" :rules="[rules.required]" outlined dense
                                 hide-details class="mb-3"
-                                prepend-inner-icon="mdi-account-tie"></v-autocomplete>
+                                ></v-autocomplete>
+                            </v-col> -->
+                            <v-col cols="12" md="3">
+                                <v-autocomplete
+                                v-model="demand.position"
+                                :items="itemsPos"
+                                :item-text="posText"  
+                                return-object     
+                                :label="$t('Position') + '*'"
+                                :rules="[rules.required]"
+                                outlined dense hide-details class="mb-3"
+                                />
                             </v-col>
                             <v-col cols="12" md="4">
                                 <v-autocomplete v-model="demand.sub_position" :items="getSubPositionItems"
                                 :label="$t('Sub Position') + '*'" outlined dense hide-details="auto"
-                                prepend-inner-icon="mdi-account-details"
                                 :disabled="!['Staff', 'Staff (lang)', 'Translator'].includes(demand.position)"
-                                :hint="getSubPositionHint" persistent-hint></v-autocomplete>
+                                :hint="getSubPositionHint"></v-autocomplete>
                             </v-col>
                             <v-col cols="12" md="4">
                                 <v-text-field v-model="demand.quantity" :label="$t('Quantity') + '*'"
                                 :rules="[rules.required, rules.number]" outlined dense hide-details
-                                type="number" min="1" prepend-inner-icon="mdi-numeric"></v-text-field>
+                                type="number" min="1" ></v-text-field>
                             </v-col>
                         </v-row>
                     </v-col>
@@ -364,7 +347,7 @@
                     </template>
                     <v-date-picker v-model="fullfilldate" @input="s_fullfiledate = false"
                     color="teal darken-4"></v-date-picker>
-                    </v-menu>
+                </v-menu>
             </v-col>
         </v-row>
     </v-col>
@@ -421,11 +404,11 @@
         </v-card-title>
         <v-card-text class="pt-4">
             <v-data-table :headers="candidateHeaders" :items="parsedCandidates" :items-per-page="10" :loading="loading"
-          fixed-header class="elevation-4 rounded-lg" :footer-props="{
-            'items-per-page-options': [10, 15, 30, 100],
-            'show-current-page': true,
-            'show-first-last-page': true
-          }">
+            fixed-header class="elevation-4 rounded-lg" :footer-props="{
+                'items-per-page-options': [10, 15, 30, 100],
+                'show-current-page': true,
+                'show-first-last-page': true
+            }">
             <template v-slot:[`item.empno`]="{ item }">
                 <div class="d-flex align-center">
                     <v-icon small class="mr-1">mdi-card-account-details</v-icon>
@@ -470,726 +453,770 @@
 </template>
 
 <script>
-    import dayjs from 'dayjs';
-    import * as XLSX from 'xlsx';
-        import DSFilter from '@/components/DsFilter.vue'
-    
-    export default {
-        components: { DSFilter },
-        data() {
-            return {
-                api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
-                demand: {
-                    department: '',
-                    sub_department: '',
-                    sub_division: '',
-                    position: '',
-                    sub_position: '',
-                    quantity: '',
-                    content: ''
-                },
-                itemsPos: ['All', 'Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Engineer'],
-                itemsSub_staff: ['HR Assistant', 'Prod assistant', 'Maintenace', 'Technical', 'Officer'],
-                itemsSub_Pos: ['HR Assistant', 'Prod assistant', 'Maintenace', 'Technical', 'Officer'],
-                itemsSub_Pos_cn: ['Chinese 2 Skills', 'Chinese 4 Skills', 'English 2 Skills', 'English 4 Skills'],
-                headers: [
-                { text: 'ID', value: 'dem_id',sortable:false },
-                { text: 'Division', value: 'dem_dept',sortable:false},
-                { text: 'Dept', value: 'dem_sub_department' ,sortable:false},
-                { text: 'Unit', value: 'dem_unit' ,sortable:false},
-                { text: 'Position', value: 'dem_position' ,sortable:false},
-                { text: 'Sub Position', value: 'dem_sub_position' ,sortable:false},
-                { text: 'Amount', value: 'dem_amount' ,sortable:false, align: 'center'},
-                { text: 'Request date', value: 'dem_inputdate' ,sortable:false},
-                { text: 'Recruited', value: 'dem_recruited' ,sortable:false,align: 'center'},
-                { text: 'Full filled', value: 'dem_fulfilled' ,sortable:false},
-                { text: 'Full filled date', value: 'dem_fullfilldate' ,sortable:false},
-                { text: 'Still in need', value: 'stocknumber' ,sortable:false,align: 'center'},
-                { text: 'Note', value: 'dem_note', sortable: false },
-                { text: 'Candidates', value: 'dem_candidates' ,sortable:false,align: 'center'},
-                { text: 'On hold start', value: 'dem_pause_start_at' ,sortable:false},
-                { text: 'On hold end', value: 'dem_pause_end_at' ,sortable:false},
-                { text: 'Actions', value: 'actions' }
-                ],
-                showDialog: false,
-                date: false,
-                dateTo: false,
-                fromDate: '',
-                toDate: '',
-                loading: false,
-                search: '',
-                demandRules: {
-                    required: v => !!v || 'This field is required',
-                    number: v => Number.isInteger(Number(v)) && Number(v) > 0 || 'Must be a positive number'
-                },
-                createoDate: dayjs().format('YYYY-MM-DD'),
-                dateCreate: false,
-                demandData: [],
-                dept: [],
-                id: '',
-                noteDialog: false,
-                selectedNote: '',
-                candidatesDialog: false,
-                selectedCandidates: '',
-                selectDept: '',
-                itemsSelectDept: [], // giữ nguyên để tương thích với code cũ
-                itemsSelectUnit: [], // giữ nguyên để tương thích với code cũ
-                departmentData: [], // thêm mới để lưu trữ cấu trúc dữ liệu phòng ban
-                itemsDiv: [], // thêm mới để lưu trữ cấu trúc dữ liệu đơn vị
-                selectedPositions: [],
-                originalDemandData: [],
-                parsedCandidates: [],
-                candidateHeaders: [
-                { text: 'Empno', value: 'empno', align: 'start' },
-                { text: 'Name', value: 'name' },
-                { text: 'In date', value: 'date' }
-                ],
-                formValid: false,
-                rules: {
-                    required: v => !!v || this.$t('This field is required'),
-                    number: v => (!!v && Number(v) > 0) || this.$t('Must be greater than 0')
-                },
-                fullfilldate: '',
-                s_fullfiledate: false,
-                confirmDialog: false,
-                selectedItem: null,
-                filters: {
-                    dem_dept: [],
-                    dem_sub_department: [],
-                    dem_unit: [],
-                    dem_position: [],
-                    dem_sub_position: [],
-                    dem_amount: [],
-                    dem_inputdate: [],
-                    dem_recruited: [],
-                    dem_fulfilled: [],
-                    dem_fullfilldate: [],
-                    stocknumber: [],
-                    dem_note: [],
-                    dem_candidates: [],
-                    dem_pause_start_at: [],
-                    dem_pause_end_at: []
-                },
-                filterItems: {
-                    dem_dept: [],
-                    dem_sub_department: [],
-                    dem_unit: [],
-                    dem_position: [],
-                    dem_sub_position: [],
-                    dem_amount: [],
-                    dem_inputdate: [],
-                    dem_recruited: [],
-                    dem_fulfilled: [],
-                    dem_fullfilldate: [],
-                    stocknumber: [],
-                    dem_note: [],
-                    dem_candidates: [],
-                    dem_pause_start_at: [],
-                    dem_pause_end_at: []
-                },
-                visibleColumns: [], // Store visible column values
-                selectAllColumns: true,
-                selectedColumns: [], // Add this for multiple selection tracking
-                demIdError: '', // Add this for ID validation error message
-                requiredFields: [
-                    {field: 'dem_id', label: 'Demand ID'},
-                    {field: 'dem_dept', label: 'Division'},
-                    {field: 'dem_sub_department', label: 'Department'},
-                    {field: 'dem_unit', label: 'Unit'},
-                    {field: 'dem_position', label: 'Position'},
-                    {field: 'dem_amount', label: 'Amount'}
-                ]
-            }
-        },
-        computed: {
-            totalSum() {
-                const totals = this.headers.reduce((acc, header) => {
-                    acc[header.value] = 0;
-                    return acc;
-                }, {});
-                
-                this.mappedDemandData.forEach(item => {
-                    Object.keys(totals).forEach(key => {
-                        if (key === 'dem_candidates') {
-                            totals[key] += this.getCandidatesCount(item[key]);
-                        } else if (key === 'dem_fulfilled') {
-                        } else {
-                            totals[key] += parseInt(item[key]) || 0;
-                        }
-                    });
-                });
-                totals['dem_fulfilled'] = {
-                    yes: this.countFulfilled(this.mappedDemandData, 'yes'),
-                    no: this.countFulfilled(this.mappedDemandData, 'no')
-                };
-                return totals;
+import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
+import DSFilter from '@/components/DsFilter.vue'
+
+export default {
+    components: { DSFilter },
+    data() {
+        return {
+            api: '/api/aw-recuitingReport/',
+            demand: {
+                department: '',
+                sub_department: '',
+                sub_division: '',
+                position: '',
+                sub_position: '',
+                quantity: '',
+                content: ''
             },
-            mappedDemandData() {
-                let filteredData = [...this.demandData];
-                if (this.selectDept) {
-                    const deptId = this.getDepartmentId(this.selectDept);
+            // itemsPos: ['All', 'Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Engineer'],
+            itemsSub_staff: ['HR Assistant', 'Prod assistant', 'Maintenace', 'Technical', 'Officer'],
+            itemsSub_Pos: ['HR Assistant', 'Prod assistant', 'Maintenace', 'Technical', 'Officer'],
+            itemsSub_Pos_cn: ['Chinese 2 Skills', 'Chinese 4 Skills', 'English 2 Skills', 'English 4 Skills'],
+            headers: [
+            { text: 'ID', value: 'dem_id',sortable:false },
+            { text: 'Division', value: 'dem_dept',sortable:false},
+            { text: 'Dept', value: 'dem_sub_department' ,sortable:false},
+            { text: 'Unit', value: 'dem_unit' ,sortable:false},
+            { text: 'Position', value: 'dem_position' ,sortable:false},
+            { text: 'Sub Position', value: 'dem_sub_position' ,sortable:false},
+            { text: 'Amount', value: 'dem_amount' ,sortable:false, align: 'center'},
+            { text: 'Request date', value: 'dem_inputdate' ,sortable:false},
+            { text: 'Recruited', value: 'dem_recruited' ,sortable:false,align: 'center'},
+            { text: 'Full filled', value: 'dem_fulfilled' ,sortable:false},
+            { text: 'Full filled date', value: 'dem_fullfilldate' ,sortable:false},
+            { text: 'Still in need', value: 'stocknumber' ,sortable:false,align: 'center'},
+            { text: 'Note', value: 'dem_note', sortable: false },
+            { text: 'Candidates', value: 'dem_candidates' ,sortable:false,align: 'center'},
+            { text: 'On hold start', value: 'dem_pause_start_at' ,sortable:false},
+            { text: 'On hold end', value: 'dem_pause_end_at' ,sortable:false},
+            { text: 'Actions', value: 'actions' }
+            ],
+            showDialog: false,
+            date: false,
+            dateTo: false,
+            fromDate: '',
+            toDate: '',
+            loading: false,
+            search: '',
+            demandRules: {
+                required: v => !!v || 'This field is required',
+                number: v => Number.isInteger(Number(v)) && Number(v) > 0 || 'Must be a positive number'
+            },
+            createoDate: dayjs().format('YYYY-MM-DD'),
+            dateCreate: false,
+            demandData: [],
+            dept: [],
+            id: '',
+            noteDialog: false,
+            selectedNote: '',
+            candidatesDialog: false,
+            selectedCandidates: '',
+            selectDept: '', // Giữ nguyên tên biến nhưng sẽ lưu sub_division
+            itemstDept: [], // Sẽ chứa danh sách sub_division
+            itemsSelectDept: [], 
+            itemsSelectUnit: [], 
+            departmentData: [], 
+            itemsDiv: [], 
+            selectedPositions: [],
+            originalDemandData: [],
+            parsedCandidates: [],
+            candidateHeaders: [
+            { text: 'Empno', value: 'empno', align: 'start' },
+            { text: 'Name', value: 'name' },
+            { text: 'In date', value: 'date' }
+            ],
+            formValid: false,
+            rules: {
+                required: v => !!v || this.$t('This field is required'),
+                number: v => (!!v && Number(v) > 0) || this.$t('Must be greater than 0')
+            },
+            fullfilldate: '',
+            s_fullfiledate: false,
+            confirmDialog: false,
+            selectedItem: null,
+            filters: {
+                dem_dept: [],
+                dem_sub_department: [],
+                dem_unit: [],
+                dem_position: [],
+                dem_sub_position: [],
+                dem_amount: [],
+                dem_inputdate: [],
+                dem_recruited: [],
+                dem_fulfilled: [],
+                dem_fullfilldate: [],
+                stocknumber: [],
+                dem_note: [],
+                dem_candidates: [],
+                dem_pause_start_at: [],
+                dem_pause_end_at: []
+            },
+            filterItems: {
+                dem_dept: [],
+                dem_sub_department: [],
+                dem_unit: [],
+                dem_position: [],
+                dem_sub_position: [],
+                dem_amount: [],
+                dem_inputdate: [],
+                dem_recruited: [],
+                dem_fulfilled: [],
+                dem_fullfilldate: [],
+                stocknumber: [],
+                dem_note: [],
+                dem_candidates: [],
+                dem_pause_start_at: [],
+                dem_pause_end_at: []
+            },
+            visibleColumns: [], // Store visible column values
+            selectAllColumns: true,
+            selectedColumns: [], // Add this for multiple selection tracking
+            demIdError: '', // Add this for ID validation error message
+            requiredFields: [
+            {field: 'dem_id', label: 'Demand ID'},
+            {field: 'dem_dept', label: 'Division'},
+            {field: 'dem_sub_department', label: 'Department'},
+            {field: 'dem_unit', label: 'Unit'},
+            {field: 'dem_position', label: 'Position'},
+            {field: 'dem_amount', label: 'Amount'}
+            ],
+            itemsPos: [
+            { vi: 'Tất cả', en: 'All', cn: '所有' },
+            { vi: 'Công nhân', en: 'Worker', cn: '工人' },
+            { vi: 'Nhân viên', en: 'Staff', cn: '科员' },
+            { vi: 'Nhân viên (ngôn ngữ)', en: 'Staff (lang)', cn: '语言科员' },
+            { vi: 'Cán bộ', en: 'Leader', cn: '干部' },
+            { vi: 'Phiên dịch', en: 'Translator', cn: '翻译' },
+            { vi: 'Kỹ sư', en: 'Engineer', cn: '工程师' }
+            ],
+        }
+    },
+    computed: {
+        totalSum() {
+            const totals = this.headers.reduce((acc, header) => {
+                acc[header.value] = 0;
+                return acc;
+            }, {});
+            
+            this.mappedDemandData.forEach(item => {
+                Object.keys(totals).forEach(key => {
+                    if (key === 'dem_candidates') {
+                        totals[key] += this.getCandidatesCount(item[key]);
+                    } else if (key === 'dem_fulfilled') {
+                    } else {
+                        totals[key] += parseInt(item[key]) || 0;
+                    }
+                });
+            });
+            totals['dem_fulfilled'] = {
+                yes: this.countFulfilled(this.mappedDemandData, 'yes'),
+                no: this.countFulfilled(this.mappedDemandData, 'no')
+            };
+            return totals;
+        },
+        mappedDemandData() {
+            let filteredData = [...this.demandData];
+            
+            // Sửa lại logic lọc theo sub_division
+            if (this.selectDept) {
+                filteredData = filteredData.filter(item =>
+                item.dem_unit === this.selectDept
+                );
+            }
+            
+            // ...rest of existing filtering logic...
+            if (this.selectedPositions.length > 0) {
+                if (this.selectedPositions.includes('All')) {
+                    this.selectedPositions = ['All'];
+                    
+                } else {
                     filteredData = filteredData.filter(item =>
-                    parseInt(item.dem_dept) === deptId
+                    this.selectedPositions.includes(item.dem_position)
                     );
                 }
-                if (this.selectedPositions.length > 0) {
-                    if (this.selectedPositions.includes('All')) {
-                        this.selectedPositions = ['All'];
-                        
-                    } else {
-                        filteredData = filteredData.filter(item =>
-                        this.selectedPositions.includes(item.dem_position)
-                        );
-                    }
+            }
+            Object.entries(this.filters).forEach(([key, values]) => {
+                if (values && values.length > 0) {
+                    filteredData = filteredData.filter(item => {
+                        if (key === 'dem_dept') {
+                            return values.includes(this.getDepartmentName(item[key]));
+                        }
+                        if (key === 'dem_candidates') {
+                            return values.includes(this.getCandidatesCount(item[key]).toString());
+                        }
+                        if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
+                            return values.includes(item[key]?.toString());
+                        }
+                        return values.includes(item[key]);
+                    });
                 }
-                Object.entries(this.filters).forEach(([key, values]) => {
-                    if (values && values.length > 0) {
-                        filteredData = filteredData.filter(item => {
-                            if (key === 'dem_dept') {
-                                return values.includes(this.getDepartmentName(item[key]));
-                            }
-                            if (key === 'dem_candidates') {
-                                return values.includes(this.getCandidatesCount(item[key]).toString());
-                            }
-                            if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
-                                return values.includes(item[key]?.toString());
-                            }
-                            return values.includes(item[key]);
+            });
+            
+            return filteredData.map(item => ({
+                ...item,
+                dem_dept_raw: item.dem_dept, // Store the original department ID
+                dem_dept: this.getDepartmentName(item.dem_dept) // Map the department name for display
+            }));
+        },
+        getSubPositionItems() {
+            switch (this.demand.position) {
+                case 'Staff':
+                return this.itemsSub_staff;
+                case 'Staff (lang)':
+                return this.itemsSub_Pos;
+                case 'Translator':
+                return this.itemsSub_Pos_cn;
+                default:
+                return [];
+            }
+        },
+        getSubPositionHint() {
+            if (!['Staff', 'Staff (lang)', 'Translator'].includes(this.demand.position)) {
+                return this.$t('Only available for Staff, Staff (lang) and Translator');
+            }
+            return '';
+        },
+        // Sửa computed property filteredUnits
+        filteredUnits() {
+            if (!this.demand.department) return [];
+            
+            const selectedDept = this.departmentData.find(
+            dept => dept.department === this.demand.department
+            );
+            // Trả về mảng tên của các units thay vì object
+            return selectedDept ? selectedDept.units.map(unit => unit.name) : [];
+        },
+        // Add new computed property for sub_division options
+        filteredSubUnits() {
+            if (!this.demand.department || !this.demand.sub_department) return [];
+            
+            const selectedDept = this.departmentData.find(
+            dept => dept.department === this.demand.department
+            );
+            
+            if (!selectedDept) return [];
+            
+            const selectedUnit = selectedDept.units.find(
+            unit => unit.name === this.demand.sub_department
+            );
+            
+            return selectedUnit ? selectedUnit.sub_units : [];
+        },
+        visibleHeaders() {
+            return this.headers.filter(header => 
+            this.visibleColumns.includes(header.value) || header.value === 'actions'
+            );
+        },
+        
+    },
+    methods: {
+        posText(item) {
+            if (!item) return ''
+            const loc = this.$i18n.locale || 'en'
+            return item[loc] || item.en || ''
+        },
+        getLocalizedItem(arr, value) {
+            const currentLocale = this.$i18n.locale;
+            const item = arr.find(i => i.en === value || i.vi === value || i.cn === value);
+            if (item) {
+                return item[currentLocale] || item.en; 
+            }
+            return value; 
+        },
+        countFulfilled(data, value) {
+            return data.filter(item => item.dem_fulfilled === value).length;
+        },
+        getDepartmentName(deptId) {
+            const department = this.dept.find(d => d.id === parseInt(deptId));
+            return department ? department.department : deptId;
+        },
+        getDepartmentId(deptName) {
+            const department = this.dept.find(d => d.department === deptName);
+            return department ? department.id : null;
+        },
+        getCandidatesCount(candidates) {
+            try {
+                const parsedCandidates = JSON.parse(candidates || '[]');
+                return parsedCandidates.length;
+            } catch (error) {
+                console.error("Error parsing candidates:", error);
+                return 0;
+            }
+        },
+        async fetchDemand() {
+            this.loading = true;
+            try {
+                const res = await this.$axios.get(this.api + 'getAllDemandData');
+                this.demandData = res.data;
+                this.originalDemandData = [...res.data];
+                this.updateFilterItems(); // Update filter options after fetching data
+            } catch (err) {
+                console.log(err);
+            } finally {
+                this.loading = false;
+            }
+        },
+        async editItem(item) {
+            this.id = item.id;
+            this.demand.department = this.getDepartmentName(item.dem_dept);
+            await this.$nextTick();
+            this.demand.sub_department = item.dem_sub_department;
+            await this.$nextTick();
+            
+            
+            this.demand = {
+                ...this.demand,
+                dem_id: item.dem_id,
+                position: item.dem_position,
+                sub_position: item.dem_sub_position,
+                quantity: item.dem_amount,
+                content: item.dem_note,
+                sub_division: item.dem_unit
+            };
+            
+            this.fromDate = item.dem_pause_start_at;
+            this.toDate = item.dem_pause_end_at;
+            this.createoDate = dayjs(item.dem_inputdate).format('YYYY-MM-DD');
+            this.fullfilldate = item.dem_fullfilldate;
+            
+            this.showDialog = true;
+        },
+        async deleteItem(item) {
+            this.selectedItem = item;
+            this.confirmDialog = true;
+        },
+        
+        async confirmDelete() {
+            if (!this.selectedItem) return;
+            
+            try {
+                this.loading = true;
+                this.confirmDialog = false;
+                const res = await this.$axios.post(this.api + 'deleteDemandById', {
+                    id: this.selectedItem.id
+                });
+                
+                if (res.status === 200) {
+                    this.$notify({
+                        title: 'Success',
+                        text: this.$t('Demand deleted successfully'),
+                        type: 'success'
+                    });
+                    this.fetchDemand();
+                }
+            } catch (error) {
+                console.error("Error deleting demand:", error);
+                this.$notify({
+                    title: 'Error',
+                    text: error.response?.data?.message || this.$t('Failed to delete demand'),
+                    type: 'error' 
+                });
+            } finally {
+                this.loading = false;
+                this.selectedItem = null;
+            }
+        },
+        updateFulfilled(value, item) {
+            item.dem_fulfilled = value ? 'yes' : 'no';
+        },
+        async getAllDept() {
+            try {
+                const response = await this.$axios.get(this.api + 'getDataDeptCode');
+                this.dept = response.data.dataDeptCode;
+                
+                const deptMap = new Map();
+                const subDivisionSet = new Set(); // Add this to track unique sub_divisions
+                
+                this.dept.forEach(item => {
+                    // Add sub_division to the set if it exists
+                    if (item.sub_division) {
+                        subDivisionSet.add(item.sub_division);
+                    }
+                    
+                    if (!deptMap.has(item.department)) {
+                        deptMap.set(item.department, {
+                            department: item.department,
+                            units: new Map(),
                         });
+                    }
+                    
+                    const deptData = deptMap.get(item.department);
+                    if (!deptData.units.has(item.sub_department)) {
+                        deptData.units.set(item.sub_department, new Set());
+                    }
+                    
+                    if (!item.end_date && item.sub_division) {
+                        deptData.units.get(item.sub_department).add(item.sub_division);
                     }
                 });
                 
-                return filteredData.map(item => ({
-                    ...item,
-                    dem_dept_raw: item.dem_dept, // Store the original department ID
-                    dem_dept: this.getDepartmentName(item.dem_dept) // Map the department name for display
+                this.departmentData = Array.from(deptMap.values()).map(dept => ({
+                    department: dept.department,
+                    sub_division: dept.sub_division,
+                    units: Array.from(dept.units.entries()).map(([unitName, subUnits]) => ({
+                        name: unitName,
+                        sub_units: Array.from(subUnits)
+                    })),
                 }));
-            },
-            getSubPositionItems() {
-                switch (this.demand.position) {
-                    case 'Staff':
-                    return this.itemsSub_staff;
-                    case 'Staff (lang)':
-                    return this.itemsSub_Pos;
-                    case 'Translator':
-                    return this.itemsSub_Pos_cn;
-                    default:
-                    return [];
+                
+                // Update itemsSelectDept with departments
+                this.itemsSelectDept = this.departmentData.map(dept => dept.department);
+                
+                // Update itemstDept with sub_divisions
+                this.itemstDept = Array.from(subDivisionSet);
+                
+            } catch (error) {
+                console.error("Error fetching department data:", error);
+            }
+        },
+        updateSubUnits() {
+            if (this.demand.department && this.demand.sub_department) {
+                const dept = this.departmentData.find(d => d.department === this.demand.department);
+                if (dept) {
+                    const unit = dept.units.find(u => u.name === this.demand.sub_department);
+                    if (unit) {
+                        this.itemsDiv = unit.sub_units;
+                        return;
+                    }
                 }
-            },
-            getSubPositionHint() {
-                if (!['Staff', 'Staff (lang)', 'Translator'].includes(this.demand.position)) {
-                    return this.$t('Only available for Staff, Staff (lang) and Translator');
-                }
-                return '';
-            },
-            // Sửa computed property filteredUnits
-            filteredUnits() {
-                if (!this.demand.department) return [];
-                
-                const selectedDept = this.departmentData.find(
-                dept => dept.department === this.demand.department
-                );
-                // Trả về mảng tên của các units thay vì object
-                return selectedDept ? selectedDept.units.map(unit => unit.name) : [];
-            },
-            // Add new computed property for sub_division options
-            filteredSubUnits() {
-                if (!this.demand.department || !this.demand.sub_department) return [];
-                
-                const selectedDept = this.departmentData.find(
-                dept => dept.department === this.demand.department
-                );
-                
-                if (!selectedDept) return [];
-                
-                const selectedUnit = selectedDept.units.find(
-                unit => unit.name === this.demand.sub_department
-                );
-                
-                return selectedUnit ? selectedUnit.sub_units : [];
-            },
-            visibleHeaders() {
-                return this.headers.filter(header => 
-                    this.visibleColumns.includes(header.value) || header.value === 'actions'
-                );
-            },
+            }
+            this.itemsDiv = [];
+        },
+        resetForm() {
+            // Reset demand object
+            this.demand = {
+                department: '',
+                sub_department: '',
+                sub_division: '',
+                position: '',
+                sub_position: '',
+                quantity: '',
+                content: ''
+            };
+            
+            // Reset dates
+            this.fromDate = '';
+            this.toDate = '';
+            this.createoDate = dayjs().format('YYYY-MM-DD');
+            this.fullfilldate = '';
+            
+            // Reset ID
+            this.id = '';
+            
+            // Reset form validation
+            if (this.$refs.form) {
+                this.$refs.form.reset();
+            }
+        },
+        
+        async saveDemand() {
+           if (!this.validateRequiredFields()) {
+        return;
+    }
+
+    if (this.demIdError) {
+        this.$notify({
+            title: 'Error',
+            text: this.demIdError,
+            type: 'error'
+        });
+        return;
+    }
+
+    // Convert position object to string value
+    const positionValue = typeof this.demand.position === 'object' 
+        ? this.demand.position.en  // Use English value from position object
+        : this.demand.position;    // Use direct value if it's already a string
+
+    let data = {
+        id: this.id,
+        dem_id: this.demand.dem_id,
+        dem_dept: this.demand.department,
+        dem_sub_department: this.demand.sub_department,
+        dem_unit: this.demand.sub_division,
+        dem_position: positionValue, // Use converted position value
+        dem_sub_position: this.demand.sub_position,
+        dem_amount: this.demand.quantity,
+        dem_inputdate: this.createoDate,
+        dem_pause_start_at: this.fromDate,
+        dem_pause_end_at: this.toDate,
+        dem_note: this.demand.content,
+        dem_fullfilldate: this.fullfilldate,
+      //  stocknumber: this.demand.quantity, // Add stocknumber equal to quantity
+      //  dem_fulfilled: 'no' // Add default fulfilled status
+    };
+
+    try {
+        this.loading = true;
+        const res = await this.$axios.post(this.api + 'addDemand', data);
+        if (res.status === 200) {
+            this.$notify({
+                title: 'Success',
+                text: this.$t('Demand saved successfully'),
+                type: 'success'
+            });
+            this.showDialog = false;
+            this.fetchDemand();
+            this.resetForm();
+        }
+    } catch (error) {
+        console.error("Error saving demand:", error);
+        this.$notify({
+            title: 'Error',
+            text: error.response?.data?.message || this.$t('Error saving demand'),
+            type: 'error'
+        });
+    } finally {
+        this.loading = false;
+    }
             
         },
-        methods: {
-            countFulfilled(data, value) {
-                return data.filter(item => item.dem_fulfilled === value).length;
-            },
-            getDepartmentName(deptId) {
-                const department = this.dept.find(d => d.id === parseInt(deptId));
-                return department ? department.department : deptId;
-            },
-            getDepartmentId(deptName) {
-                const department = this.dept.find(d => d.department === deptName);
-                return department ? department.id : null;
-            },
-            getCandidatesCount(candidates) {
-                try {
-                    const parsedCandidates = JSON.parse(candidates || '[]');
-                    return parsedCandidates.length;
-                } catch (error) {
-                    console.error("Error parsing candidates:", error);
-                    return 0;
-                }
-            },
-            async fetchDemand() {
-                this.loading = true;
-                try {
-                    const res = await this.$axios.get(this.api + 'getAllDemandData');
-                    this.demandData = res.data;
-                    this.originalDemandData = [...res.data];
-                    this.updateFilterItems(); // Update filter options after fetching data
-                } catch (err) {
-                    console.log(err);
-                } finally {
-                    this.loading = false;
-                }
-            },
-            async editItem(item) {
-                console.log(item);
-                this.id = item.id;
-                this.demand.department = this.getDepartmentName(item.dem_dept);
-                await this.$nextTick();
-                this.demand.sub_department = item.dem_sub_department;
-                await this.$nextTick();
-                
-                
-                this.demand = {
-                    ...this.demand,
-                    dem_id: item.dem_id,
-                    position: item.dem_position,
-                    sub_position: item.dem_sub_position,
-                    quantity: item.dem_amount,
-                    content: item.dem_note,
-                    sub_division: item.dem_unit
-                };
-                
-                this.fromDate = item.dem_pause_start_at;
-                this.toDate = item.dem_pause_end_at;
-                this.createoDate = dayjs(item.dem_inputdate).format('YYYY-MM-DD');
-                this.fullfilldate = item.dem_fullfilldate;
-                
-                this.showDialog = true;
-            },
-            async deleteItem(item) {
-                this.selectedItem = item;
-                this.confirmDialog = true;
-            },
+        async validateDemId() {
+            if (!this.demand.dem_id) return;
             
-            async confirmDelete() {
-                if (!this.selectedItem) return;
-                
-                try {
-                    this.loading = true;
-                    this.confirmDialog = false;
-                    const res = await this.$axios.post(this.api + 'deleteDemandById', {
-                        id: this.selectedItem.id
-                    });
-                    
-                    if (res.status === 200) {
-                        this.$notify({
-                            title: 'Success',
-                            text: this.$t('Demand deleted successfully'),
-                            type: 'success'
-                        });
-                        this.fetchDemand();
-                    }
-                } catch (error) {
-                    console.error("Error deleting demand:", error);
-                    this.$notify({
-                        title: 'Error',
-                        text: error.response?.data?.message || this.$t('Failed to delete demand'),
-                        type: 'error' 
-                    });
-                } finally {
-                    this.loading = false;
-                    this.selectedItem = null;
-                }
-            },
-            updateFulfilled(value, item) {
-                item.dem_fulfilled = value ? 'yes' : 'no';
-            },
-            async getAllDept() {
-                try {
-                    const response = await this.$axios.get(this.api + 'getDataDeptCode');
-                    this.dept = response.data.dataDeptCode;
-                    
-                    const deptMap = new Map();
-                    
-                    // Bước 1: Thu thập tất cả departments, bất kể end_date
-                    this.dept.forEach(item => {
-                        if (!deptMap.has(item.department)) {
-                            deptMap.set(item.department, {
-                                department: item.department,
-                                units: new Map(),
-                            });
-                        }
-                        
-                        // Khởi tạo unit nếu chưa tồn tại
-                        const deptData = deptMap.get(item.department);
-                        if (!deptData.units.has(item.sub_department)) {
-                            deptData.units.set(item.sub_department, new Set());
-                        }
-                        
-                        // Chỉ thêm sub_division khi end_date là null
-                        if (!item.end_date && item.sub_division) {
-                            deptData.units.get(item.sub_department).add(item.sub_division);
-                        }
-                    });
-                    
-                    // Chuyển đổi cấu trúc dữ liệu để sử dụng
-                    this.departmentData = Array.from(deptMap.values()).map(dept => ({
-                        department: dept.department,
-                        units: Array.from(dept.units.entries()).map(([unitName, subUnits]) => ({
-                            name: unitName,
-                            sub_units: Array.from(subUnits)
-                        })),
-                    }));
-                    
-                    // Cập nhật danh sách departments cho select box
-                    this.itemsSelectDept = this.departmentData.map(dept => dept.department);
-                    
-                } catch (error) {
-                    console.error("Error fetching department data:", error);
-                }
-            },
-            updateSubUnits() {
-                if (this.demand.department && this.demand.sub_department) {
-                    const dept = this.departmentData.find(d => d.department === this.demand.department);
-                    if (dept) {
-                        const unit = dept.units.find(u => u.name === this.demand.sub_department);
-                        if (unit) {
-                            this.itemsDiv = unit.sub_units;
-                            return;
-                        }
-                    }
-                }
-                this.itemsDiv = [];
-            },
-            resetForm() {
-                // Reset demand object
-                this.demand = {
-                    department: '',
-                    sub_department: '',
-                    sub_division: '',
-                    position: '',
-                    sub_position: '',
-                    quantity: '',
-                    content: ''
-                };
-                
-                // Reset dates
-                this.fromDate = '';
-                this.toDate = '';
-                this.createoDate = dayjs().format('YYYY-MM-DD');
-                this.fullfilldate = '';
-                
-                // Reset ID
-                this.id = '';
-                
-                // Reset form validation
-                if (this.$refs.form) {
-                    this.$refs.form.reset();
-                }
-            },
-            
-            async saveDemand() {
-                if (!this.validateRequiredFields()) {
-                    return;
-                }
-                
-                // await this.validateDemId();
-                if (this.demIdError) {
-                    this.$notify({
-                        title: 'Error',
-                        text: this.demIdError,
-                        type: 'error'
-                    });
-                    return;
-                }
-                
-                let data = {
-                    id: this.id,
+            try {
+                const res = await this.$axios.post(this.api + 'checkDemandId', {
                     dem_id: this.demand.dem_id,
-                    dem_dept: this.getDepartmentId(this.demand.department),
-                    dem_sub_department: this.demand.sub_department,
-                    dem_unit: this.demand.sub_division,
-                    dem_position: this.demand.position,
-                    dem_sub_position: this.demand.sub_position,
-                    dem_amount: this.demand.quantity,
-                    dem_inputdate: this.createoDate,
-                    dem_pause_start_at: this.fromDate,
-                    dem_pause_end_at: this.toDate,
-                    dem_note: this.demand.content,
-                    dem_fullfilldate: this.fullfilldate,
-                };
-                try {
-                    this.loading = true;
-                    const res = await this.$axios.post(this.api + 'addDemand', data);
-                    if (res.status === 200) {
-                        this.$notify({
-                            title: 'Demand',
-                            text: 'Demand saved successfully',
-                            type: 'success'
-                        });
-                        this.showDialog = false;
-                        this.fetchDemand();
-                        this.resetForm(); // Add this line to reset the form
-                    }
-                } catch (error) {
-                    console.error("Error saving demand:", error);
-                } finally {
-                    this.loading = false;
-                }
+                });
                 
-            },
-            async validateDemId() {
-                if (!this.demand.dem_id) return;
-                
-                try {
-                    const res = await this.$axios.post(this.api + 'checkDemandId', {
-                        dem_id: this.demand.dem_id,
-                    });
-        
-                    if (res.data.exists) {
-                        this.demIdError = this.$t('This ID already exists');
-                    } else {
-                        this.demIdError = '';
-                    }
-                } catch (error) {
-                    console.error('Error checking demand ID:', error);
-                    this.demIdError = this.$t('Error checking ID');
-                }
-            },
-            showNoteDialog(item) {
-                this.selectedNote = item.dem_note;
-                this.noteDialog = true;
-            },
-            formatDate(date) {
-                return date ? dayjs(date).format('YYYY-MM-DD') : '';
-            },
-            filterData() {
-                if (!this.selectDept && this.selectedPositions.length === 0) {
-                    this.demandData = [...this.originalDemandData];
-                }
-            },
-            handlePositionSelect(position) {
-                if (position === 'All') {
-                    this.selectedPositions = ['All'];
+                if (res.data.exists) {
+                    this.demIdError = this.$t('This ID already exists');
                 } else {
-                    this.selectedPositions = this.selectedPositions.filter(p => p !== 'All');
-                    
-                    if (this.selectedPositions.includes(position)) {
-                        this.selectedPositions = this.selectedPositions.filter(p => p !== position);
-                    } else {
-                        this.selectedPositions.push(position);
-                    }
+                    this.demIdError = '';
                 }
-            },
-            exportToExcel() {
-                const exportData = this.mappedDemandData.map(item => ({
-                    'ID': item.dem_id,
-                    'Division': item.dem_dept,
-                    'Dept': item.dem_sub_department,
-                    'Unit': item.dem_unit,
-                    'Position': item.dem_position,
-                    'Sub Position': item.dem_sub_position,
-                    'Amount': item.dem_amount,
-                    'Request Date': item.dem_inputdate,
-                    'Recruited': item.dem_recruited,
-                    'Fulfilled': item.dem_fulfilled,
-                    'Fulfilled Date': item.dem_fullfilldate,
-                    'Still in Need': item.stocknumber,
-                    'Candidates': this.getCandidatesCount(item.dem_candidates),
-                    'Note': item.dem_note,
-                    'On hold start': item.dem_pause_start_at,
-                    'On hold end': item.dem_pause_end_at
-                }));
+            } catch (error) {
+                console.error('Error checking demand ID:', error);
+                this.demIdError = this.$t('Error checking ID');
+            }
+        },
+        showNoteDialog(item) {
+            this.selectedNote = item.dem_note;
+            this.noteDialog = true;
+        },
+        formatDate(date) {
+            return date ? dayjs(date).format('YYYY-MM-DD') : '';
+        },
+        filterData() {
+            if (!this.selectDept && this.selectedPositions.length === 0) {
+                this.demandData = [...this.originalDemandData];
+            }
+            // Không cần thêm logic ở đây vì đã xử lý trong computed mappedDemandData
+        },
+        handlePositionSelect(position) {
+            if (position === 'All') {
+                this.selectedPositions = ['All'];
+            } else {
+                this.selectedPositions = this.selectedPositions.filter(p => p !== 'All');
                 
-                const ws = XLSX.utils.json_to_sheet(exportData);
-                
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Demand Report');
-                
-                const fileName = `demand_report_${dayjs().format('YYYY-MM-DD')}.xlsx`;
-                XLSX.writeFile(wb, fileName);
-                
-                this.$notify({
-                    title: 'Successfully',
-                    text: 'Excel file exported successfully',
-                    type: 'success'
-                });
-            },
-            showCandidatesDialog(candidates) {
-                try {
-                    this.parsedCandidates = JSON.parse(candidates || '[]');
-                    if (this.parsedCandidates.length > 0) {
-                        this.candidatesDialog = true;
-                    } else {
-                        this.$notify({
-                            title: 'No Candidates',
-                            text: 'No candidates data available',
-                            type: 'info'
-                        });
-                    }
-                } catch (error) {
+                if (this.selectedPositions.includes(position)) {
+                    this.selectedPositions = this.selectedPositions.filter(p => p !== position);
+                } else {
+                    this.selectedPositions.push(position);
+                }
+            }
+        },
+        exportToExcel() {
+            const exportData = this.mappedDemandData.map(item => ({
+                'ID': item.dem_id,
+                'Division': item.dem_dept,
+                'Dept': item.dem_sub_department,
+                'Unit': item.dem_unit,
+                'Position': item.dem_position,
+                'Sub Position': item.dem_sub_position,
+                'Amount': item.dem_amount,
+                'Request Date': item.dem_inputdate,
+                'Recruited': item.dem_recruited,
+                'Fulfilled': item.dem_fulfilled,
+                'Fulfilled Date': item.dem_fullfilldate,
+                'Still in Need': item.stocknumber,
+                'Candidates': this.getCandidatesCount(item.dem_candidates),
+                'Note': item.dem_note,
+                'On hold start': item.dem_pause_start_at,
+                'On hold end': item.dem_pause_end_at
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Demand Report');
+            
+            const fileName = `demand_report_${dayjs().format('YYYY-MM-DD')}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            this.$notify({
+                title: 'Successfully',
+                text: 'Excel file exported successfully',
+                type: 'success'
+            });
+        },
+        showCandidatesDialog(candidates) {
+            try {
+                this.parsedCandidates = JSON.parse(candidates || '[]');
+                if (this.parsedCandidates.length > 0) {
+                    this.candidatesDialog = true;
+                } else {
                     this.$notify({
-                        title: 'Error',
-                        text: 'Error loading candidates data',
-                        type: 'error'
+                        title: 'No Candidates',
+                        text: 'No candidates data available',
+                        type: 'info'
                     });
                 }
-            },
-            updateFilter(field, values) {
-                this.filters[field] = values;
-            },
+            } catch (error) {
+                this.$notify({
+                    title: 'Error',
+                    text: 'Error loading candidates data',
+                    type: 'error'
+                });
+            }
+        },
+        updateFilter(field, values) {
+            this.filters[field] = values;
+        },
         
-            updateFilterItems() {
-                Object.keys(this.filterItems).forEach(key => {
-                    const uniqueValues = new Set();
+        updateFilterItems() {
+            Object.keys(this.filterItems).forEach(key => {
+                const uniqueValues = new Set();
+                
+                this.demandData.forEach(item => {
+                    let value;
                     
-                    this.demandData.forEach(item => {
-                        let value;
-                        
-                        if (key === 'dem_dept') {
-                            value = this.getDepartmentName(item[key]);
-                        } else if (key === 'dem_candidates') {
-                            value = this.getCandidatesCount(item[key]).toString();
-                        } else if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
-                            value = item[key]?.toString();
-                        } else {
-                            value = item[key];
-                        }
-        
-                        if (value !== undefined && value !== null && value !== '') {
-                            uniqueValues.add(value);
-                        }
-                    });
-        
-                    this.filterItems[key] = Array.from(uniqueValues).sort();
+                    if (key === 'dem_dept') {
+                        value = this.getDepartmentName(item[key]);
+                    } else if (key === 'dem_candidates') {
+                        value = this.getCandidatesCount(item[key]).toString();
+                    } else if (['dem_amount', 'stocknumber', 'dem_recruited'].includes(key)) {
+                        value = item[key]?.toString();
+                    } else {
+                        value = item[key];
+                    }
+                    
+                    if (value !== undefined && value !== null && value !== '') {
+                        uniqueValues.add(value);
+                    }
                 });
-            },
+                
+                this.filterItems[key] = Array.from(uniqueValues).sort();
+            });
+        },
         
-            resetFilters() {
-                Object.keys(this.filters).forEach(key => {
-                    this.filters[key] = [];
-                });
-                this.selectDept = '';
-                this.selectedPositions = [];
-            },
-            updateVisibleColumns() {
+        resetFilters() {
+            Object.keys(this.filters).forEach(key => {
+                this.filters[key] = [];
+            });
+            this.selectDept = '';
+            this.selectedPositions = [];
+        },
+        updateVisibleColumns() {
+            this.visibleColumns = [...this.selectedColumns];
+            this.selectAllColumns = this.selectedColumns.length === this.headers.length - 1;
+        },
+        toggleAllColumns(value) {
+            if (value) {
+                this.selectedColumns = this.headers
+                .filter(h => h.value !== 'actions')
+                .map(h => h.value);
+            } else {
+                this.selectedColumns = [];
+            }
+            this.updateVisibleColumns();
+        },
+        initializeVisibleColumns() {
+            this.selectedColumns = this.headers
+            .filter(h => h.value !== 'actions')
+            .map(h => h.value);
+            this.visibleColumns = [...this.selectedColumns];
+            this.selectAllColumns = true;
+        },
+        loadColumnSettings() {
+            const savedColumns = localStorage.getItem('tableColumns');
+            if (savedColumns) {
+                this.selectedColumns = JSON.parse(savedColumns);
                 this.visibleColumns = [...this.selectedColumns];
                 this.selectAllColumns = this.selectedColumns.length === this.headers.length - 1;
-            },
-            toggleAllColumns(value) {
-                if (value) {
-                    this.selectedColumns = this.headers
-                        .filter(h => h.value !== 'actions')
-                        .map(h => h.value);
-                } else {
-                    this.selectedColumns = [];
-                }
-                this.updateVisibleColumns();
-            },
-            initializeVisibleColumns() {
-                this.selectedColumns = this.headers
-                    .filter(h => h.value !== 'actions')
-                    .map(h => h.value);
-                this.visibleColumns = [...this.selectedColumns];
-                this.selectAllColumns = true;
-            },
-            loadColumnSettings() {
-                const savedColumns = localStorage.getItem('tableColumns');
-                if (savedColumns) {
-                    this.selectedColumns = JSON.parse(savedColumns);
-                    this.visibleColumns = [...this.selectedColumns];
-                    this.selectAllColumns = this.selectedColumns.length === this.headers.length - 1;
-                } else {
-                    this.initializeVisibleColumns();
-                }
-            },
+            } else {
+                this.initializeVisibleColumns();
+            }
+        },
         
-            saveColumnSettings() {
-                localStorage.setItem('tableColumns', JSON.stringify(this.visibleColumns));
+        saveColumnSettings() {
+            localStorage.setItem('tableColumns', JSON.stringify(this.visibleColumns));
+            this.$notify({
+                title: 'Success',
+                text: this.$t('Column settings saved'),
+                type: 'success'
+            });
+        },
+        closeMenu() {
+            this.$refs.menu.isActive = false;
+        },
+        validateRequiredFields() {
+            const missingFields = [];
+            
+            if (!this.demand.dem_id) missingFields.push(this.$t('Demand ID'));
+            if (!this.demand.department) missingFields.push(this.$t('Division'));
+            if (!this.demand.sub_department) missingFields.push(this.$t('Department'));
+            if (!this.demand.sub_division) missingFields.push(this.$t('Unit'));
+            if (!this.demand.position) missingFields.push(this.$t('Position'));
+            if (!this.demand.quantity) missingFields.push(this.$t('Amount'));
+            
+            if (missingFields.length > 0) {
                 this.$notify({
-                    title: 'Success',
-                    text: this.$t('Column settings saved'),
-                    type: 'success'
-                });
-            },
-            closeMenu() {
-                this.$refs.menu.isActive = false;
-            },
-            validateRequiredFields() {
-                const missingFields = [];
-                
-                if (!this.demand.dem_id) missingFields.push(this.$t('Demand ID'));
-                if (!this.demand.department) missingFields.push(this.$t('Division'));
-                if (!this.demand.sub_department) missingFields.push(this.$t('Department'));
-                if (!this.demand.sub_division) missingFields.push(this.$t('Unit'));
-                if (!this.demand.position) missingFields.push(this.$t('Position'));
-                if (!this.demand.quantity) missingFields.push(this.$t('Amount'));
-      
-                if (missingFields.length > 0) {
-                  this.$notify({
                     title: this.$t('Error'),
                     text: this.$t('Please fill in the following required fields:') + ' ' + missingFields.join(', '),
                     type: 'error'
-                  });
-                  return false;
-                }
-      
-                return true;
-              }
+                });
+                return false;
+            }
+            
+            return true;
+        }
+    },
+    watch: {
+        'demand.department': {
+            handler(newDept) {
+                const dept = this.departmentData.find(d => d.department === newDept);
+                this.itemsSelectUnit = dept ? dept.units.map(u => u.name) : [];
+                this.demand.sub_department = '';
+                this.demand.sub_division = '';
+                this.itemsDiv = [];
+            },
+            immediate: true
         },
-        watch: {
-            'demand.department': {
-                handler(newDept) {
-                    const dept = this.departmentData.find(d => d.department === newDept);
-                    this.itemsSelectUnit = dept ? dept.units.map(u => u.name) : [];
-                    this.demand.sub_department = '';
-                    this.demand.sub_division = '';
-                    this.itemsDiv = [];
-                },
-                immediate: true
-            },
-            'demand.sub_department': {
-                handler(newUnit) {
-                    this.updateSubUnits();
-                    this.demand.sub_division = '';
-                }
-            },
-            demandData: {
-                handler() {
-                    this.updateFilterItems();
-                },
-                deep: true
-            },
-            visibleColumns: {
-                handler(newVal) {
-                    this.selectAllColumns = newVal.length === this.headers.length - 1;
-                },
-                deep: true
-            },
-            selectedColumns: {
-                handler(newVal) {
-                    this.selectAllColumns = newVal.length === this.headers.length - 1;
-                },
-                deep: true
+        'demand.sub_department': {
+            handler(newUnit) {
+                this.updateSubUnits();
+                this.demand.sub_division = '';
             }
         },
-      async  mounted() {
-          await  this.getAllDept();
-            this.fetchDemand();
-            this.initializeVisibleColumns();
-            this.loadColumnSettings();
+        demandData: {
+            handler() {
+                this.updateFilterItems();
+            },
+            deep: true
+        },
+        visibleColumns: {
+            handler(newVal) {
+                this.selectAllColumns = newVal.length === this.headers.length - 1;
+            },
+            deep: true
+        },
+        selectedColumns: {
+            handler(newVal) {
+                this.selectAllColumns = newVal.length === this.headers.length - 1;
+            },
+            deep: true
         }
+    },
+    async  mounted() {
+        await  this.getAllDept();
+        this.fetchDemand();
+        this.initializeVisibleColumns();
+        this.loadColumnSettings();
     }
+}
 </script>
 
 <i18n>
@@ -1383,181 +1410,202 @@
 </i18n>
 
 <style scoped>
-    .demand-card {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: #f8f9fa;
-    }
-    
-    .search-field {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        transition: all 0.3s ease;
-    }
-    
-    .search-field:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
-    .form-card {
-        border-radius: 12px !important;
-        overflow: hidden;
-    }
-    
-    .animate-button {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .animate-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 96, 100, 0.2) !important;
-    }
-    
-    .action-icon {
-        transition: all 0.2s ease;
-        color: #546E7A;
-    }
-    
-    .action-icon:hover {
-        color: #004D40;
-        transform: scale(1.2);
-    }
-    
-    .dialog-bottom-transition-enter-active,
-    .dialog-bottom-transition-leave-active {
-        transition: transform 0.3s ease-in-out;
-    }
-    
-    .dialog-bottom-transition-enter,
-    .dialog-bottom-transition-leave-to {
-        transform: translateY(100%);
-    }
-    
-    .note-icon {
-        cursor: pointer;
-        color: #1976D2;
-        /* Use blue color to indicate clickable/viewable content */
-        transition: all 0.2s ease;
-    }
-    
-    .note-icon:hover {
-        transform: scale(1.2);
-        opacity: 0.8;
-    }
-    
-    /* Remove old note-text-truncate styles if not used elsewhere */
-    
-    .note-content {
-        white-space: pre-wrap;
-        font-size: 14px;
-        line-height: 1.6;
-        padding: 16px;
-        background: #ffffff;
-        border-radius: 4px;
-        max-height: 400px;
-        overflow-y: auto;
-        color: #000000;
-    }
-    
-    .candidates-text-truncate {
-        display: block;
-        max-width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer;
-        
-        &:hover {
-            color: #00796b;
-        }
-    }
-    
-    .candidates-content {
-        white-space: pre-wrap;
-        font-size: 14px;
-        line-height: 1.6;
-        padding: 16px;
-        background: #ffffff;
-        border-radius: 4px;
-        max-height: 400px;
-        overflow-y: auto;
-        color: #000000;
-    }
-    
-    .v-chip--selected {
-        background-color: #00796b !important;
-        color: white !important;
-    }
-    
+.demand-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
 
+.search-field {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.search-field:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+.form-card {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+.animate-button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.animate-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 96, 100, 0.2) !important;
+}
+
+.action-icon {
+    transition: all 0.2s ease;
+    color: #546E7A;
+}
+
+.action-icon:hover {
+    color: #004D40;
+    transform: scale(1.2);
+}
+
+.dialog-bottom-transition-enter-active,
+.dialog-bottom-transition-leave-active {
+    transition: transform 0.3s ease-in-out;
+}
+
+.dialog-bottom-transition-enter,
+.dialog-bottom-transition-leave-to {
+    transform: translateY(100%);
+}
+
+.note-icon {
+    cursor: pointer;
+    color: #1976D2;
+    /* Use blue color to indicate clickable/viewable content */
+    transition: all 0.2s ease;
+}
+
+.note-icon:hover {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+/* Remove old note-text-truncate styles if not used elsewhere */
+
+.note-content {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    color: #000000;
+}
+
+.candidates-text-truncate {
+    display: block;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
     
-    .gap-1 {
-        gap: 4px;
+    &:hover {
+        color: #00796b;
     }
-    
-    .table-chip {
-        font-weight: 500;
-        height: 20px !important;
-        transition: all 0.2s ease;
-        cursor: pointer !important;
-        /* Thêm cursor pointer */
-    }
-    
-    .table-chip:hover {
-        background-color: var(--v-primary-base) !important;
-        color: white !important;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .v-data-table {
-        border: 1px solid #e0e0e0;
-    }
-    .v-data-table ::v-deep .v-data-table__wrapper {
-        overflow-y: auto;
-    }
-    
-    .v-data-table ::v-deep thead th {
-        font-weight: 600 !important;
-        color: #004D40 !important;
-        background: white;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        text-transform: uppercase;
-    }
-    .v-data-table ::v-deep tbody tr:not(.total-row):hover {
-        background-color: #f3fd99 !important;
-    }
-    .total-row {
-        background-color: #004D40 !important; /* teal darken-4 */
-    }
-    
-    .total-row td {
-        color: white !important;
-        font-size: 1.1em !important;
-        border-top: 2px solid #004D40 !important; /* teal darken-3 for border */
-        border-bottom: none !important;
-        text-align: left !important;
-    }
-    
-    .total-row td:first-child {
-        background-color: #004D40 !important; /* slightly lighter for first column */
-        text-align: center !important;
-        position: sticky;
-        left: 0;
-        z-index: 2;
-    }
-    .total-row td span {
-        display: block;
-    }
-    .action-buttons {
-        display: flex;
-        align-items: center;
-    }
-    .v-list-item {
-        min-height: 35px;
-    }
-    .v-list-item__content {
-        padding: 4px 0;
-    }
+}
+
+.candidates-content {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    color: #000000;
+}
+
+.v-chip--selected {
+    background-color: #00796b !important;
+    color: white !important;
+}
+
+
+
+.gap-1 {
+    gap: 4px;
+}
+
+.table-chip {
+    font-weight: 500;
+    height: 20px !important;
+    transition: all 0.2s ease;
+    cursor: pointer !important;
+    /* Thêm cursor pointer */
+}
+
+.table-chip:hover {
+    background-color: var(--v-primary-base) !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.v-data-table {
+    border: 1px solid #e0e0e0;
+}
+.v-data-table ::v-deep .v-data-table__wrapper {
+    overflow-y: auto;
+}
+
+.v-data-table ::v-deep thead th {
+    font-weight: 600 !important;
+    color: #004D40 !important;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.v-data-table ::v-deep tbody tr:not(.total-row):hover {
+    background-color: #f3fd99 !important;
+}
+.total-row {
+    background-color: #004D40 !important; /* teal darken-4 */
+}
+
+.total-row td {
+    color: white !important;
+    font-size: 1.1em !important;
+    border-top: 2px solid #004D40 !important; /* teal darken-3 for border */
+    border-bottom: none !important;
+    text-align: left !important;
+}
+
+.total-row td:first-child {
+    background-color: #004D40 !important; /* slightly lighter for first column */
+    text-align: center !important;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+.total-row td span {
+    display: block;
+}
+.action-buttons {
+    display: flex;
+    align-items: center;
+}
+.v-list-item {
+    min-height: 35px;
+}
+.v-list-item__content {
+    padding: 4px 0;
+}
+.v-data-table ::v-deep .select .v-input__slot {
+    margin-bottom: 0;
+}
+.v-data-table ::v-deep thead th,
+.v-data-table ::v-deep tbody td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.chip-group-search .v-chip:hover {
+    background-color: #f0f4ff; /* màu nền khi hover */
+    color: #ffe600; /* màu chữ khi hover */
+    border-color: #ffe600; /* viền khi hover */
+    cursor: pointer;
+}
+
+/* Chip khi được chọn */
+.chip-group-search .v-chip.v-chip--active {
+    background-color: #0180ff !important; /* màu nền khi chọn */
+    color: white !important; /* chữ trắng khi chọn */
+    border-color: #0180ff;
+}
 </style>

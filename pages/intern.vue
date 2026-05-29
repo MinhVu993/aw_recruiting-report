@@ -413,7 +413,7 @@ import * as XLSX from 'xlsx';
 export default {
     data() {
         return {
-            api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+            api: '/api/aw-recuitingReport/',
             dialog: false,
             menu: false,
             loading: false,

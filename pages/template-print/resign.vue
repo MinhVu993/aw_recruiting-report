@@ -108,7 +108,7 @@ export default {
     data() {
         return {
             resignData: [],
-            storageUrl: 'http://gmo021.cansportsvg.com/api/',
+            storageUrl: '/api/',
             tokenApi: 'vg-recuitingReport/getphoto/epm/',
             photos: {},
             photoUrls: {},
@@ -146,13 +146,13 @@ export default {
             try {
                 const printKey = this.$route.query.key;
                 if (!printKey) {
-                    console.error('No print key provided');
+                    // console.error('No print key provided');
                     return;
                 }
                 const data = localStorage.getItem(printKey);
                 if (data) {
                     this.resignData = JSON.parse(data);
-                    console.log('Data loaded:', this.resignData);
+                    // console.log('Data loaded:', this.resignData);
                     
                     await Promise.all(
                         this.resignData.map(item => this.getPhoto(item.er_empid))

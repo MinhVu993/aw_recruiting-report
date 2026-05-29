@@ -1,91 +1,104 @@
 <template>
     <div>
-        <!-- add button back candidate-listing -->
+        <!-- Add no-print class to button -->
+        <v-btn
+            color="primary"
+            class="mb-3 no-print"
+            @click="downloadPDF"
+            :loading="isProcessing"
+            :disabled="!pdfBlob"
+        >
+            <v-icon left>mdi-download</v-icon>
+            Tải xuống PDF
+        </v-btn>
 
-        <table class="table table-bordered no-bottom-border" style="margin-bottom: 0">
-            <tr>
-                <td rowspan="2" class="align-middle text-header" style="width: 12%">
-                    <img width="75px;" :src="`./logo.png`" class="img-fluid mx-auto mt-1" alt="" ref="logoImage" />
-                </td>
-                <td rowspan="3" class="text-center align-middle text-header_title">
-                    DANH SÁCH BÙ QUẸT THẺ CÔNG NHÂN MỚI
-                    <br>
-                    新進員工補刷卡名單
-                </td>
-                <td>
-                    Ngày thiết lập (sửa đổi) <br />
-                    (修)訂日期
-                </td>
-                <td>15.04.2024</td>
-            </tr>
-            <tr>
-                <td>
-                    Mã số tài liệu <br />
-                    文件編號
-                </td>
-                <td>
-                    HR02-SP001-11<br />
-                </td>
-            </tr>
-            <tr>
-                <td class="colum3 align-middle">
-                    Bộ phận soạn thảo <br />
-                    編訂部門 <br />
-                    Tài Nguyên Nhân Lực <br />
-                    人力資源部 <br />
-                </td>
-                <td class="colum3 align-middle">
-                    Phiên bản 版本<br />
-                    2
-                </td>
-                <td class="colum3 align-middle">
-                    Trang 頁次 <br />
-                    1
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4" style="text-align: left;">Ngày điền biểu/填表日期: {{ today }}</td>
-            </tr>
-        </table>
-    
-        <table class="table table-bordered no-top-border">
-            <tr>
-                <th> STT <br /> 序號 </th>
-                <th> Số thẻ <br /> 工號 </th>
-                <th> Họ và tên <br /> 姓名 </th>
-                <th> BỘ PHẬN <br /> 部門 </th>
-                <th> CHỨC VỤ <br /> 職務 </th>
-                <th> GHI CHÚ <br /> 備註 </th>
-            </tr>
-            <tr v-for="(item, index) in printData" :key="index">
-                <td>{{ index + 1 }}</td>
-                <td>{{ item.empno }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.dept_name }}</td>
-                <td>{{ item.duty }}</td>
-                <td>{{ item.note }}</td>
-            </tr>
-        </table>
-        <table class="signature-table">
-            <tr>
-                <td class="signature-cell">
-                    Chủ quản BP Tài Nguyên Nhân Lực <br />人力資源部
-                </td>
-                <td class="signature-cell">
-                    Người lập biểu <br />填表人
-                </td>
-            </tr>
-            <tr>
-                <td class="signature-space"></td>
-                <td class="signature-space"></td>
-            </tr>
-            <tr>
-                <td colspan="2" class="signature-note">
-                    Chú ý: Người lập biểu ➜ Chủ quản BP Tài Nguyên Nhân Lực <br>
-                    表單流程：填表人 ➜ 人力資源部
-                </td>
-            </tr>
-        </table>
+        <!-- Printable content -->
+        <div ref="printContent">
+            <table class="table table-bordered no-bottom-border" style="margin-bottom: 0">
+                <tr>
+                    <td rowspan="2" class="align-middle text-header" style="width: 12%">
+                        <img width="75px;" :src="`./logo.png`" class="img-fluid mx-auto mt-1" alt="" ref="logoImage" />
+                    </td>
+                    <td rowspan="3" class="text-center align-middle text-header_title">
+                        DANH SÁCH BÙ QUẸT THẺ CÔNG NHÂN MỚI
+                        <br>
+                        新進員工補刷卡名單
+                    </td>
+                    <td>
+                        Ngày thiết lập (sửa đổi) <br />
+                        (修)訂日期
+                    </td>
+                    <td>15.04.2024</td>
+                </tr>
+                <tr>
+                    <td>
+                        Mã số tài liệu <br />
+                        文件編號
+                    </td>
+                    <td>
+                        HR02-SP001-11<br />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="colum3 align-middle">
+                        Bộ phận soạn thảo <br />
+                        編訂部門 <br />
+                        Tài Nguyên Nhân Lực <br />
+                        人力資源部 <br />
+                    </td>
+                    <td class="colum3 align-middle">
+                        Phiên bản 版本<br />
+                        2
+                    </td>
+                    <td class="colum3 align-middle">
+                        Trang 頁次 <br />
+                        1
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: left;">Ngày điền biểu/填表日期: {{ today }}</td>
+                </tr>
+            </table>
+        
+            <table class="table table-bordered no-top-border">
+                <tr>
+                    <th> STT <br /> 序號 </th>
+                    <th> Số thẻ <br /> 工號 </th>
+                    <th> Họ và tên <br /> 姓名 </th>
+                    <th> BỘ PHẬN <br /> 部門 </th>
+                    <th> CHỨC VỤ <br /> 職務 </th>
+                    <th> GHI CHÚ <br /> 備註 </th>
+                </tr>
+                <tr v-for="(item, index) in formattedData" :key="index">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ item.empno }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.dept_name }}</td>
+                    <td>{{ item.duty }}</td>
+                    <td>{{ item.note }}</td>
+                </tr>
+            </table>
+            <table class="signature-table">
+                <tr>
+                    <td class="signature-cell">
+                        Chủ quản BP Tài Nguyên Nhân Lực <br />人力資源部
+                    </td>
+                    <td class="signature-cell">
+                        Người lập biểu <br />填表人
+                    </td>
+                </tr>
+                <tr>
+                    <td class="signature-space"></td>
+                    <td class="signature-space"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="signature-note">
+                        Chú ý: Người lập biểu ➜ Chủ quản BP Tài Nguyên Nhân Lực <br>
+                        表單流程：填表人 ➜ 人力資源部
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 <script>
@@ -96,41 +109,71 @@ export default {
     layout: "print",
     data() {
         return {
-
+            api: '/api/aw-recuitingReport/',
             printData: [],
             today: dayjs().format("YYYY-MM-DD"),
             imageLoaded: false,
             isProcessing: false,
-            pdfBlob: null
+            pdfBlob: null,
         };
     },
-    mounted() {
-        if (this.$route.query.data) {
-            try {
-                this.printData = JSON.parse(this.$route.query.data);
-                this.printData.sort((a, b) => {
-                    return a.empno.localeCompare(b.empno, undefined, { numeric: true });
-                });
-                const img = new Image();
-                img.src = './logo.png';
-                img.onload = () => {
-                    this.imageLoaded = true;
-                    this.tryPrint();
+    computed: {
+        formattedData() {
+            return this.printData.map(item => {
+                const deptName = item.name ? JSON.parse(item.name) : {};
+                const dutyName = item.duty_name ? JSON.parse(item.duty_name) : {};
+                
+                return {
+                    empno: item.newEmpno,
+                    name: item.candidate_name,
+                    dept_name: deptName.vi || '',
+                    duty: dutyName.vi || '',
+                    note: ''
                 };
-            } catch (e) {
-                console.error('Error parsing print data:', e);
-                this.printData = [];
-            }
+            });
         }
     },
+    watch: {
+        formattedData: {
+            handler(newData) {
+                if (newData && newData.length > 0) {
+                    this.$nextTick(() => {
+                        this.tryPrint();
+                    });
+                }
+            },
+            immediate: false
+        }
+    },
+    mounted() {
+        // Load image first
+        const img = new Image();
+        img.src = './logo.png';
+        img.onload = () => {
+            this.imageLoaded = true;
+            this.getDateCandidate();
+        };
+    },
     methods: {
+        async getDateCandidate() {
+            try {
+                const res = await this.$axios.post(this.api + 'printUnswiped', {
+                    act_en_date: this.$route.query.data,
+                });
+                this.printData = res.data;
+                
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },  
         async tryPrint() {
             if (!this.imageLoaded || this.printData.length === 0) return;
             
             this.isProcessing = true;
             try {
+                // Use ref to target only printable content
+                const element = this.$refs.printContent;
                 // Generate PDF first
-                const element = document.querySelector('div');
                 const opt = {
                     margin: [10, 10, 10, 10],
                     filename: `BQT-${dayjs().format('YYYYMMDD')}.pdf`,
@@ -153,25 +196,6 @@ export default {
                 const pdf = await html2pdf().from(element).set(opt).outputPdf('blob');
                 this.pdfBlob = pdf;
 
-                const pdfUrl = URL.createObjectURL(pdf);
-                const printWindow = window.open(pdfUrl, '_blank');
-                if (printWindow) {
-                    printWindow.onload = () => {
-                        printWindow.print();
-                    };
-                }
-
-                // Auto download
-                const link = document.createElement('a');
-                link.href = pdfUrl;
-                link.download = opt.filename;
-                link.click();
-
-                // Cleanup
-                setTimeout(() => {
-                    URL.revokeObjectURL(pdfUrl);
-                }, 1000);
-
             } catch (error) {
                 console.error('Error in PDF generation/printing:', error);
                 alert('Có lỗi xảy ra khi tạo PDF. Vui lòng thử lại.');
@@ -180,10 +204,29 @@ export default {
             }
         },
 
-        // Optional: Separate method for just printing
-        async printDocument() {
+        downloadPDF() {
             if (!this.pdfBlob) return;
             
+            try {
+                const pdfUrl = URL.createObjectURL(this.pdfBlob);
+                const link = document.createElement('a');
+                link.href = pdfUrl;
+                link.download = `BQT-${dayjs().format('YYYYMMDD')}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    URL.revokeObjectURL(pdfUrl);
+                }, 1000);
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                alert('Có lỗi xảy ra khi tải PDF. Vui lòng thử lại.');
+            }
+        },
+
+        async printDocument() {
+            if (!this.pdfBlob) return;
             try {
                 const pdfUrl = URL.createObjectURL(this.pdfBlob);
                 const printWindow = window.open(pdfUrl, '_blank');
@@ -323,16 +366,6 @@ img.img-fluid {
     vertical-align: middle !important;
     text-align: center !important;
 }
-
-/* Remove or comment out these classes as they're no longer needed */
-/*.signature-left {
-    text-align: left !important;
-}
-
-.signature-right {
-    text-align: right !important;
-}*/
-
 .signature-title {
     font-size: 14px;
     font-weight: bold;
@@ -404,5 +437,17 @@ img.img-fluid {
 .processing {
     opacity: 0.7;
     pointer-events: none;
+}
+
+/* Add button style */
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+/* Add print media query to hide elements */
+@media print {
+    .no-print {
+        display: none !important;
+    }
 }
 </style>

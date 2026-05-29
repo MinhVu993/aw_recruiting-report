@@ -5,7 +5,7 @@ export default {
     return {};
   },
   beforeMount() {
-    if (!this.$session.has("recruiting-report")) {
+    if (!this.$session.has("aw-recruiting-report")) {
       this.$router.push("./");
     }
   }

@@ -446,7 +446,7 @@ export default {
     data() {
         return {
             search: '', 
-            api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+            api: '/api/aw-recuitingReport/',
             today: dayjs().format('YYYY-MM-DD'),
             dialog: false,
             saving: false,

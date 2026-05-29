@@ -1,74 +1,74 @@
 [
   {
-    "name": "candidate-listing",
-    "path": "/candidate-listing",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\candidate-listing.vue",
-    "chunkName": "pages/candidate-listing"
-  },
-  {
     "name": "create-candidate",
     "path": "/create-candidate",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\create-candidate.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/create-candidate.vue",
     "chunkName": "pages/create-candidate"
   },
   {
     "name": "demand",
     "path": "/demand",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\demand.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/demand.vue",
     "chunkName": "pages/demand"
   },
   {
     "name": "deptcontrol",
     "path": "/deptcontrol",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\deptcontrol.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/deptcontrol.vue",
     "chunkName": "pages/deptcontrol"
+  },
+  {
+    "name": "index_old",
+    "path": "/index_old",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/index_old.vue",
+    "chunkName": "pages/index_old"
   },
   {
     "name": "intern",
     "path": "/intern",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\intern.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/intern.vue",
     "chunkName": "pages/intern"
   },
   {
     "name": "recruiting-report",
     "path": "/recruiting-report",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\recruiting-report.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/recruiting-report.vue",
     "chunkName": "pages/recruiting-report"
   },
   {
     "name": "resign",
     "path": "/resign",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\resign.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/resign.vue",
     "chunkName": "pages/resign"
   },
   {
     "name": "resign-report",
     "path": "/resign-report",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\resign-report.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/resign-report.vue",
     "chunkName": "pages/resign-report"
   },
   {
     "name": "template-print-bqt",
     "path": "/template-print/bqt",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\bqt.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/bqt.vue",
     "chunkName": "pages/template-print/bqt"
   },
   {
     "name": "template-print-hires",
     "path": "/template-print/hires",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\hires.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/hires.vue",
     "chunkName": "pages/template-print/hires"
   },
   {
     "name": "template-print-resign",
     "path": "/template-print/resign",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\resign.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/resign.vue",
     "chunkName": "pages/template-print/resign"
   },
   {
     "name": "index",
     "path": "/",
-    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\index.vue",
+    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/index.vue",
     "chunkName": "pages/index"
   }
 ]

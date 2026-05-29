@@ -5,15 +5,14 @@ import cn from "vuetify/es5/locale/zh-Hant";
 
 export default {
   publicRuntimeConfig: {
-   
-    api: process.env.API || "http://gmo021.cansportsvg.com/api/vg-transport/",
-   
+    isDev: process.env.NODE_ENV !== "production",
+    api: process.env.API || "/api/vg-transport/",
     globalUserApi:
       process.env.GLOBAL_USER_API ||
-      "http://gmo021.cansportsvg.com/api/global-user/",
+      "/api/global-user/",
     storageUrl:
       process.env.STORAGE_URL ||
-      "http://gmo021.cansportsvg.com/api/storage/app/",
+      "/api/storage/app/",
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   loading: {
@@ -22,13 +21,14 @@ export default {
   },
   ssr: false,
   server: {
-    host: process.env.HOST || "gmo021.cansportsvg.com",
+    host: process.env.HOST || "0.0.0.0",
     port: 3040,
   },
   // Target: https://go.nuxtjs.dev/config-target
   target: "static",
   router: {
     base: "/aw/hr/recruiting-report",
+    // base: "/exp/aw-recruiting-report",
   },
   generate: {
     dir: "./dist",
@@ -84,6 +84,9 @@ export default {
     "nuxtjs-mdi-font",
   ],
   axios: {
+    baseURL: "/",
+    browserBaseURL: "/",
+    proxy: true,
     headers: {
       common: {
         http_x_vg_authentication: "vg-serect-token",
@@ -91,7 +94,14 @@ export default {
     },
   },
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios", "nuxt-i18n"],
+  modules: ["@nuxtjs/axios", "@nuxtjs/proxy", "nuxt-i18n"],
+  proxy: {
+    "/api/": {
+      target: process.env.BACKEND_URL || "http://gmo021.cansportsvg.com",
+      pathRewrite: { "^/api/": "/api/" },
+      changeOrigin: true,
+    },
+  },
   i18n: {
     defaultLocale: "en",
     vueI18nLoader: true,
@@ -124,5 +134,13 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    filenames: {
+      app: ({ isDev }) => isDev ? '[name].js' : 'app.[contenthash].js',
+      chunk: ({ isDev }) => isDev ? '[name].js' : '[name].[contenthash].js',
+      css: ({ isDev }) => isDev ? '[name].css' : '[name].[contenthash].css',
+      img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
+      font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]'
+    }
+  },
 };

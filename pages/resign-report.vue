@@ -242,7 +242,7 @@ import * as XLSX from 'xlsx';
 export default {
     data() {
         return {
-            api: 'http://gmo021.cansportsvg.com/api/aw-recuitingReport/',
+            api: '/api/aw-recuitingReport/',
             today: dayjs().format('YYYY-MM-DD'),
             fromDate: dayjs().startOf('month').format('YYYY-MM-DD'),
             toDate: dayjs().endOf('month').format('YYYY-MM-DD'),
