@@ -46,6 +46,9 @@
                 </h3>
             </v-btn>
         </v-toolbar-title>
+        <v-chip class="ma-2" color="white" label small outlined @click:close="chip4 = false">
+                V.2.0
+            </v-chip>
         <v-spacer />
         <v-btn @click="setLocale('vi')" text>VI</v-btn>
         <v-btn @click="setLocale('cn')" text>中文</v-btn>

@@ -116,7 +116,7 @@
     </template>
     <template v-slot:[`item.dem_recruited`]="{ item }">
         <nuxt-link
-        :to="{ path: '/', query: { id: item.id, act_en_date: item.dem_fullfilldate } }"
+        :to="{ path: '/', query: { dem_id: item.dem_id } }"
         class="candidate-link">
         {{ item.dem_recruited || '' }}
     </nuxt-link>
@@ -152,7 +152,7 @@
     @changed="updateFilter('dem_amount', $event)" />
 </template>
 <template #[`header.dem_inputdate`]>
-    <DsFilter :name="$t('Request date')" :in-items="filterItems.dem_inputdate"
+    <DsFilter :name="$t('Approval date')" :in-items="filterItems.dem_inputdate"
     @changed="updateFilter('dem_inputdate', $event)" />
 </template>
 <template #[`header.dem_recruited`]>
@@ -476,14 +476,14 @@ export default {
             itemsSub_Pos: ['HR Assistant', 'Prod assistant', 'Maintenace', 'Technical', 'Officer'],
             itemsSub_Pos_cn: ['Chinese 2 Skills', 'Chinese 4 Skills', 'English 2 Skills', 'English 4 Skills'],
             headers: [
-            { text: 'ID', value: 'dem_id',sortable:false },
-            { text: 'Division', value: 'dem_dept',sortable:false},
-            { text: 'Dept', value: 'dem_sub_department' ,sortable:false},
+            { text: 'ID', value: 'dem_id',sortable:true },
+            { text: 'Division', value: 'dem_dept',sortable: true},
+            { text: 'Dept', value: 'dem_sub_department' ,sortable:true},
             { text: 'Unit', value: 'dem_unit' ,sortable:false},
             { text: 'Position', value: 'dem_position' ,sortable:false},
             { text: 'Sub Position', value: 'dem_sub_position' ,sortable:false},
             { text: 'Amount', value: 'dem_amount' ,sortable:false, align: 'center'},
-            { text: 'Request date', value: 'dem_inputdate' ,sortable:false},
+            { text: 'Approval date', value: 'dem_inputdate' ,sortable:false},
             { text: 'Recruited', value: 'dem_recruited' ,sortable:false,align: 'center'},
             { text: 'Full filled', value: 'dem_fulfilled' ,sortable:false},
             { text: 'Full filled date', value: 'dem_fullfilldate' ,sortable:false},
@@ -1027,7 +1027,7 @@ export default {
                 'Position': item.dem_position,
                 'Sub Position': item.dem_sub_position,
                 'Amount': item.dem_amount,
-                'Request Date': item.dem_inputdate,
+                'Approval Date': item.dem_inputdate,
                 'Recruited': item.dem_recruited,
                 'Fulfilled': item.dem_fulfilled,
                 'Fulfilled Date': item.dem_fullfilldate,
@@ -1233,7 +1233,7 @@ export default {
             "Position": "Position",
             "Sub Position": "Sub Position",
             "Amount": "Amount",
-            "Request date": "Request Date",
+            "Approval date": "Approval Date",
             "Recruited": "Recruited",
             "Full filled": "Fulfilled",
             "Full filled date": "Fulfilled Date",
@@ -1295,7 +1295,7 @@ export default {
             "Position": "Vị trí",
             "Sub Position": "Vị trí phụ",
             "Amount": "Số lượng",
-            "Request date": "Ngày yêu cầu",
+            "Approval date": "Ngày phê duyệt",
             "Recruited": "Đã tuyển",
             "Full filled": "Hoàn thành",
             "Full filled date": "N.hoàn thành",
@@ -1357,7 +1357,7 @@ export default {
             "Position": "职位",
             "Sub Position": "子职位",
             "Amount": "数量",
-            "Request date": "申请日期",
+            "Approval date": "申请核准日",
             "Recruited": "已招聘",
             "Full filled": "已完成",
             "Full filled date": "完成日期",

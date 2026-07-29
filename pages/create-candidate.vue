@@ -798,7 +798,7 @@ header-color="teal"></v-date-picker>
 </v-card-text>
 </v-card>
 </v-dialog>
-<v-dialog v-model="dialogDemand" width="1200">
+<v-dialog v-model="dialogDemand" width="1300">
     <v-card>
         <v-card-title class="text-h5" style="background-color: teal; color: white">
             <v-icon color="white" left>mdi-cog-outline</v-icon>
@@ -1268,7 +1268,7 @@ export default {
         },
         selectDemand(item) {
             
-            this.dm_id = item.id;
+            this.dm_id = item.dem_id;
             this.dm_Subpos = item.dem_sub_position;
             this.dialogDemand = false;
         },

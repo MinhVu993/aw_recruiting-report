@@ -42,8 +42,11 @@
                   <!-- Position Filter -->
                   <v-col cols="12" sm="6" md="8" lg="9">
                     <v-chip-group v-model="selectedPositions" multiple show-arrows>
-                      <v-chip v-for="(item, i) in loc_apply" :key="i" filter small outlined color="teal darken-4"
-                      class="font-weight-medium">
+                      <v-chip filter outlined color="teal darken-4" class="font-weight-medium" label value="All">
+                        {{ $t('All') }}
+                      </v-chip>
+                      <v-chip v-for="(item, i) in loc_apply" :key="i" filter outlined color="teal darken-4"
+                      class="font-weight-medium" label :value="item">
                       {{ item }}
                     </v-chip>
                   </v-chip-group>
@@ -95,9 +98,9 @@
             {{ item.demand }}
           </template>
           <template v-slot:[`item.position`]="{ item }">
-            <v-chip x-small outlined color="warning" class="font-weight-medium">
-              {{ item.position }}
-            </v-chip>
+            {{ item.position }}
+            <!-- <v-chip small outlined color="warning" class="font-weight-medium" label>
+            </v-chip> -->
           </template>
           <template v-slot:[`item.totalRecruitedUntilToday`]="{ item }">
             {{ item.totalRecruitedUntilToday }}
@@ -198,15 +201,17 @@
         <template v-slot:header.actualVacancies="{ header }">
           {{ $t("Actual Vacancies") }}
         </template>
-        <template v-slot:body.append>
-          <tr class="total-row">
-            <td colspan="5" class="text-center"> {{$t('Total')}}</td>
-            <td v-for="header in headers.slice(5)" :key="header.value">
-              <span v-if="!['dem_unit', 'dem_sub_department', 'dem_dept', 'dem_note', 'position'].includes(header.value)">
-                {{ totalSum[header.value] || 0 }}
-              </span>
-            </td>
-          </tr>  
+        <template v-slot:foot>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="5" class="text-center font-weight-bold"> {{$t('Total')}}</td>
+              <td v-for="header in sumHeaders" :key="header.value" class="text-center font-weight-bold">
+                <span v-if="!['dem_unit', 'dem_sub_department', 'dem_dept', 'dem_note', 'position'].includes(header.value)">
+                  {{ totalSum[header.value] || 0 }}
+                </span>
+              </td>
+            </tr>  
+          </tfoot>
         </template>
       </v-data-table>
       
@@ -246,7 +251,7 @@
         selectUnit: [], // Add this new property
         itemsDiv: [],
         headers: [
-        { text: this.$t('ID'), value: 'id', },
+        { text: this.$t('ID'), value: 'dem_id', width: '180px' },
         { text: this.$t('Unit'), value: 'dem_unit'},
         { text: this.$t('Dept'), value: 'dem_sub_department'},
         { text: this.$t('Division'), value: 'dem_dept'},
@@ -254,14 +259,11 @@
         { text: this.$t('Demand'), value: 'demand', sortable: false, align: 'center' },
         { text: this.$t('Position'), value: 'position'}, // Update header to singular 'Position'
         { text: this.$t('Come To Interview'), value: 'comeToInterview', align: 'center' },
-        // { text: this.$t('Come By Bus'), value: 'comeByBus', align: 'center' },
         { text: this.$t('Acc. By HR'), value: 'accByHR', align: 'center' },
         { text: this.$t('Acc. By Dept.'), value: 'accByDept', align: 'center' },
         { text: this.$t('Exp. To Enroll'), value: 'expectedEnrollDate', align: 'center' },
         { text: this.$t('Today Enrolled'), value: 'actualEnrollDate', align: 'center' },
         { text: this.$t('Total Recruited'), value: 'totalRecruitedUntilToday', align: 'center' },
-        // { text: this.$t('Total Recruited By Bus'), value: 'totalRecruitedByBusToday', align: 'center' },
-        // { text: this.$t('Total Reg For Bus'), value: 'totalRegForBusToday', align: 'center' },
         { text: this.$t('Still In Need'), value: 'stillInNeedUntilToday', align: 'center' },
         { text: this.$t('Actual Vacancies'), value: 'actualVacancies', align: 'center' }
         ],
@@ -270,7 +272,7 @@
         exporting: false,
         loc_apply: ['Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Engineer'],
         item_dept: [],
-        selectedPositions: [], // Add this line
+        selectedPositions: ['All'],
         dataCadidates: [],
         fromDate: dayjs().subtract(1, 'month').format('YYYY-MM-DD'),
         toDate: dayjs().format('YYYY-MM-DD'),
@@ -281,6 +283,9 @@
       }
     },
     computed: {
+      sumHeaders() {
+        return this.headers.slice(5);
+      },
       totalSum() {
         const totals = this.headers.reduce((acc, header) => {
           acc[header.value] = 0;
@@ -368,8 +373,8 @@
       },
       filteredReportData() {
         return this.reportData.filter(item => {
-          const positionMatch = !this.selectedPositions.length ||
-          this.selectedPositions.map(index => this.loc_apply[index]).includes(item.position);
+          const positionMatch = this.selectedPositions.includes('All') ||
+          this.selectedPositions.includes(item.position);
           
           const deptMatch = !this.selectDept.length ||
           this.selectDept.some(deptId => {
@@ -397,6 +402,15 @@
       },
       selectDiv() {
         this.selectUnit = [];
+      },
+      selectedPositions(newVal, oldVal) {
+        if (newVal.includes('All') && !oldVal.includes('All')) {
+          this.selectedPositions = ['All'];
+        } else if (newVal.includes('All') && newVal.length > 1) {
+          this.selectedPositions = newVal.filter(item => item !== 'All');
+        } else if (newVal.length === 0) {
+          this.selectedPositions = ['All'];
+        }
       }
     },
     methods: {
@@ -493,7 +507,6 @@
       async getDataReport() {
         let params = {
           key_in_date: this.today,
-          // tmp_departid: this.dataCadidates.map(item => item.tmp_departid),
           dem_dept: this.selectDept.length ? this.selectDept : this.item_dept.map(dept => dept.department),
           fromdate: this.fromDate,
           todate: this.toDate
@@ -552,7 +565,8 @@
       "Still In Need": "Still In Need",
       "Actual Vacancies": "Actual Vacancies",
       "Unit": "Unit",
-      "Note": "Note"
+      "Note": "Note",
+      "All": "All"
     },
     "vi": {
       "Total": "Tổng",
@@ -580,7 +594,8 @@
       "Still In Need": "Còn thiếu",
       "Actual Vacancies": "Số Lượng Thực Tế",
       "Unit": "Đơn Vị",
-      "Note": "Ghi chú"
+      "Note": "Ghi chú",
+      "All": "Tất cả"
     },
     "cn": {
       "Total": "总计",
@@ -608,7 +623,8 @@
       "Still In Need": "仍需人数",
       "Actual Vacancies": "实际空缺",
       "Unit": "单位",
-      "Note": "备注"
+      "Note": "备注",
+      "All": "全部"
     }
   }
 </i18n>
@@ -680,11 +696,11 @@
   .cursor-pointer:hover {
     opacity: 0.8;
   }  
-  .total-row {
+  ::v-deep .total-row {
     background-color: #004D40 !important; /* teal darken-4 */
   }
   
-  .total-row td {
+  ::v-deep .total-row td {
     color: white !important;
     font-size: 1.1em !important;
     border-top: 2px solid #004D40 !important; /* teal darken-3 for border */
@@ -692,13 +708,13 @@
     text-align: center !important;
   }
   
-  .total-row td:first-child {
+  ::v-deep .total-row td:first-child {
     background-color: #004D40 !important; /* slightly lighter for first column */
     position: sticky;
     left: 0;
     z-index: 2;
   }
-  .total-row td span {
+  ::v-deep .total-row td span {
     display: block;
   }
 </style>

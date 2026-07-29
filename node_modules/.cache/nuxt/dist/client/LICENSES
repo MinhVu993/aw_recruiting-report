@@ -31,13 +31,6 @@ PERFORMANCE OF THIS SOFTWARE.
  */
 
 
-/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
-
-/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
-
-/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
-
-
 /*!
 
 JSZip v3.10.1 - A JavaScript class for generating and reading zip files
@@ -101,6 +94,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
  * @copyright Louis-Dominique Dubeau
  */
 
+
+/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
 
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
 

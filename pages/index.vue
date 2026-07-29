@@ -67,7 +67,8 @@
                         </div>
                     </template>
                     <template v-slot:[`item.emp_demandid`]="{ item }">
-                        {{ getDemandId (item.emp_demandid) }}
+                        <!-- {{ getDemandId (item.emp_demandid) }} -->
+                        {{ item.emp_demandid }}
                     </template>
                     <template v-slot:[`item.reg`]="{ item }">
                         <div class="checkbox-center">
@@ -618,7 +619,7 @@ export default {
                 return {
                     'No': index + 1,
                     'Key in': item.key_in_date,
-                    'Demand ID': this.getDemandId(item.emp_demandid),
+                    'Demand ID': item.emp_demandid,//this.getDemandId(item.emp_demandid),
                     'Name': item.candidate_name,
                     'Birth day': item.dateofbirth,
                     'Sex': item.gender,
@@ -763,95 +764,7 @@ export default {
             }
         },
        
-        // async saveDbDemand(demandIdFromSetNewEmpno = null) {
-        //     try {
-        //         const filteredData = this.filteredData.filter(item => {
-        //             return item.reg === 'yes' && 
-        //             item.newEmpno && 
-        //             (demandIdFromSetNewEmpno ? item.emp_demandid === demandIdFromSetNewEmpno : true);
-        //         });
-                
-        //         const groupedData = filteredData.reduce((acc, item) => {
-        //             const demandId = demandIdFromSetNewEmpno || item.emp_demandid;
-        //             if (!acc[demandId]) {
-        //                 acc[demandId] = [];
-        //             }
-        //             acc[demandId].push(item);
-        //             return acc;
-        //         }, {});
-                
-        //         for (const [demandId, items] of Object.entries(groupedData)) {
-        //             if (!demandId) continue;
-                    
-        //             const demandRes = await this.$axios.get(this.api + 'getDemandById/' + demandId);
-        //             if (!demandRes.data) continue;
-        //             const existingData = demandRes.data;
-                    
-        //             const firstItem = items[0];
-        //             const actualDate = this.dateAcctual || firstItem.act_en_date;
-        //             const deptConfig = this.newDeptCongif || firstItem.tmp_departid;
-                    
-        //             const countRes = await this.$axios.get(
-        //             `${this.api}countDemandById/${demandId}/${actualDate}/${deptConfig}`
-        //             );
-        //             const dem_recruited = countRes.data;
-                    
-        //             let candidates = [];
-        //             if (existingData.dem_candidates) {
-        //                 candidates = typeof existingData.dem_candidates === 'string'
-        //                 ? JSON.parse(existingData.dem_candidates)
-        //                 : existingData.dem_candidates;
-        //             }
-        //             items.forEach(data => {
-        //                 const newCandidate = {
-        //                     empno: data.newEmpno,
-        //                     date: data.act_en_date,
-        //                     name: data.candidate_name,
-        //                 };
-                        
-        //                 const existingIndex = candidates.findIndex(c => c.empno === data.newEmpno);
-        //                 if (existingIndex !== -1) {
-        //                     candidates[existingIndex] = newCandidate;
-        //                 } else {
-        //                     candidates.push(newCandidate);
-        //                 }
-        //             });
-                    
-        //             const params = {
-        //                 id: demandId,
-        //                 dem_id: existingData.dem_id,
-        //                 dem_fullfilldate: candidates.reduce((latest, current) => {
-        //                     return !latest || new Date(current.date) > new Date(latest)
-        //                     ? current.date
-        //                     : latest;
-        //                 }, null),
-        //                 dem_recruited: dem_recruited,
-        //                 dem_candidates: candidates,
-        //                 dem_amount: existingData.dem_amount,
-        //                 dem_unit: existingData.tmp_departid,
-        //             };
-                    
-        //             await this.$axios.post(this.api + 'saveUpdateDemand', params);
-        //         }
-                
-        //         this.$notify({
-        //             title: 'Success',
-        //             text: 'Demand data updated successfully',
-        //             type: 'success'
-        //         });
-        //         this.dialogSetEmpno = false;
-        //         this.newEmpno = '';
-        //         this.dateAcctual = '';
-        //         this.newDeptCongif = '';
-                
-        //     } catch (error) {
-        //         this.$notify({
-        //             title: 'Error',
-        //             text: 'Failed to save demand data: ' + (error.message || 'Unknown error'),
-        //             type: 'error'
-        //         });
-        //     }
-        // },
+        
         async saveDbDemand(demandIdFromSetNewEmpno = null) {
             try {
                 const filteredData = this.filteredData.filter(item => {
@@ -997,14 +910,15 @@ export default {
         },
         
         async handleDemandFilter() {
-            if (this.$route.query.id ) {
-                this.demandDept = this.$route.query.id;
+            if (this.$route.query.dem_id ) {
+                this.demandDept = this.$route.query.dem_id;
                 this.loading = true;
                 let params = {
                     emp_demandid: this.demandDept.toString(),
                     reg: 'yes',
-                    act_en_date:this.$route.query.act_en_date,
+                    // act_en_date:this.$route.query.act_en_date,
                 };
+                console.log(params);
                 try {
                     const response = await this.$axios.post(this.api + 'getDataDeptFromDemand', params);
                     this.dataCadidates = response.data;
@@ -1093,7 +1007,7 @@ export default {
                         // const deptName = this.findeptCode(item.apply_dp);
                         const genderText = this.getGenderText(item.gender);
                         return (!this.filter.key_in_date.length || this.filter.key_in_date.includes(item.key_in_date)) &&
-                        (!this.filter.emp_demandid.length || this.filter.emp_demandid.includes(this.getDemandId(item.emp_demandid))) &&
+                        (!this.filter.emp_demandid.length || this.filter.emp_demandid.includes((item.emp_demandid))) &&
                         (!this.filter.candidate_name.length || this.filter.candidate_name.includes(item.candidate_name)) &&
                         (!this.filter.dateofbirth.length || this.filter.dateofbirth.includes(item.dateofbirth)) &&
                         (!this.filter.gender.length || this.filter.gender.includes(genderText)) &&
@@ -1160,7 +1074,7 @@ export default {
             
             data.forEach(item => {
                 filterData.key_in_date.add(item.key_in_date);
-                filterData.emp_demandid.add(this.getDemandId(item.emp_demandid));
+                filterData.emp_demandid.add((item.emp_demandid));
                 filterData.candidate_name.add(item.candidate_name);
                 filterData.dateofbirth.add(item.dateofbirth);
                 filterData.gender.add(this.getGenderText(item.gender));
