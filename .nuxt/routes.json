@@ -2,78 +2,78 @@
   {
     "name": "create-candidate",
     "path": "/create-candidate",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/create-candidate.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\create-candidate.vue",
     "chunkName": "pages/create-candidate",
-    "_name": "_589b6bf0"
+    "_name": "_7f12b97e"
   },
   {
     "name": "demand",
     "path": "/demand",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/demand.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\demand.vue",
     "chunkName": "pages/demand",
-    "_name": "_750f9b49"
+    "_name": "_2210d84c"
   },
   {
     "name": "deptcontrol",
     "path": "/deptcontrol",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/deptcontrol.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\deptcontrol.vue",
     "chunkName": "pages/deptcontrol",
-    "_name": "_ee514c2c"
+    "_name": "_509913f9"
   },
   {
     "name": "intern",
     "path": "/intern",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/intern.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\intern.vue",
     "chunkName": "pages/intern",
-    "_name": "_23082c90"
+    "_name": "_c61fb5be"
   },
   {
     "name": "recruiting-report",
     "path": "/recruiting-report",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/recruiting-report.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\recruiting-report.vue",
     "chunkName": "pages/recruiting-report",
-    "_name": "_71085baf"
+    "_name": "_04940e7e"
   },
   {
     "name": "resign",
     "path": "/resign",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/resign.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\resign.vue",
     "chunkName": "pages/resign",
-    "_name": "_47b09e24"
+    "_name": "_560fa97f"
   },
   {
     "name": "resign-report",
     "path": "/resign-report",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/resign-report.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\resign-report.vue",
     "chunkName": "pages/resign-report",
-    "_name": "_615b0ea3"
+    "_name": "_3f9680f2"
   },
   {
     "name": "template-print-bqt",
     "path": "/template-print/bqt",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/bqt.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\bqt.vue",
     "chunkName": "pages/template-print/bqt",
-    "_name": "_503828e4"
+    "_name": "_ec3c25a8"
   },
   {
     "name": "template-print-hires",
     "path": "/template-print/hires",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/hires.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\hires.vue",
     "chunkName": "pages/template-print/hires",
-    "_name": "_c6276f70"
+    "_name": "_711f4b34"
   },
   {
     "name": "template-print-resign",
     "path": "/template-print/resign",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/template-print/resign.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\template-print\\\\resign.vue",
     "chunkName": "pages/template-print/resign",
-    "_name": "_64ce8df7"
+    "_name": "_ea6680ce"
   },
   {
     "name": "index",
     "path": "/",
-    "component": "/home/psserver/vgg-source/AW/aw-recruiting-report/pages/index.vue",
+    "component": "D:\\\\source\\\\aw-recruiting-report\\\\pages\\\\index.vue",
     "chunkName": "pages/index",
-    "_name": "_1e50f1c4"
+    "_name": "_3fa1b9da"
   }
 ]

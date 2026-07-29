@@ -4,17 +4,17 @@ import { normalizeURL, decode } from 'ufo'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _589b6bf0 = () => interopDefault(import('../pages/create-candidate.vue' /* webpackChunkName: "pages/create-candidate" */))
-const _750f9b49 = () => interopDefault(import('../pages/demand.vue' /* webpackChunkName: "pages/demand" */))
-const _ee514c2c = () => interopDefault(import('../pages/deptcontrol.vue' /* webpackChunkName: "pages/deptcontrol" */))
-const _23082c90 = () => interopDefault(import('../pages/intern.vue' /* webpackChunkName: "pages/intern" */))
-const _71085baf = () => interopDefault(import('../pages/recruiting-report.vue' /* webpackChunkName: "pages/recruiting-report" */))
-const _47b09e24 = () => interopDefault(import('../pages/resign.vue' /* webpackChunkName: "pages/resign" */))
-const _615b0ea3 = () => interopDefault(import('../pages/resign-report.vue' /* webpackChunkName: "pages/resign-report" */))
-const _503828e4 = () => interopDefault(import('../pages/template-print/bqt.vue' /* webpackChunkName: "pages/template-print/bqt" */))
-const _c6276f70 = () => interopDefault(import('../pages/template-print/hires.vue' /* webpackChunkName: "pages/template-print/hires" */))
-const _64ce8df7 = () => interopDefault(import('../pages/template-print/resign.vue' /* webpackChunkName: "pages/template-print/resign" */))
-const _1e50f1c4 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _7f12b97e = () => interopDefault(import('..\\pages\\create-candidate.vue' /* webpackChunkName: "pages/create-candidate" */))
+const _2210d84c = () => interopDefault(import('..\\pages\\demand.vue' /* webpackChunkName: "pages/demand" */))
+const _509913f9 = () => interopDefault(import('..\\pages\\deptcontrol.vue' /* webpackChunkName: "pages/deptcontrol" */))
+const _c61fb5be = () => interopDefault(import('..\\pages\\intern.vue' /* webpackChunkName: "pages/intern" */))
+const _04940e7e = () => interopDefault(import('..\\pages\\recruiting-report.vue' /* webpackChunkName: "pages/recruiting-report" */))
+const _560fa97f = () => interopDefault(import('..\\pages\\resign.vue' /* webpackChunkName: "pages/resign" */))
+const _3f9680f2 = () => interopDefault(import('..\\pages\\resign-report.vue' /* webpackChunkName: "pages/resign-report" */))
+const _ec3c25a8 = () => interopDefault(import('..\\pages\\template-print\\bqt.vue' /* webpackChunkName: "pages/template-print/bqt" */))
+const _711f4b34 = () => interopDefault(import('..\\pages\\template-print\\hires.vue' /* webpackChunkName: "pages/template-print/hires" */))
+const _ea6680ce = () => interopDefault(import('..\\pages\\template-print\\resign.vue' /* webpackChunkName: "pages/template-print/resign" */))
+const _3fa1b9da = () => interopDefault(import('..\\pages\\index.vue' /* webpackChunkName: "pages/index" */))
 
 const emptyFn = () => {}
 
@@ -29,47 +29,47 @@ export const routerOptions = {
 
   routes: [{
     path: "/create-candidate",
-    component: _589b6bf0,
+    component: _7f12b97e,
     name: "create-candidate"
   }, {
     path: "/demand",
-    component: _750f9b49,
+    component: _2210d84c,
     name: "demand"
   }, {
     path: "/deptcontrol",
-    component: _ee514c2c,
+    component: _509913f9,
     name: "deptcontrol"
   }, {
     path: "/intern",
-    component: _23082c90,
+    component: _c61fb5be,
     name: "intern"
   }, {
     path: "/recruiting-report",
-    component: _71085baf,
+    component: _04940e7e,
     name: "recruiting-report"
   }, {
     path: "/resign",
-    component: _47b09e24,
+    component: _560fa97f,
     name: "resign"
   }, {
     path: "/resign-report",
-    component: _615b0ea3,
+    component: _3f9680f2,
     name: "resign-report"
   }, {
     path: "/template-print/bqt",
-    component: _503828e4,
+    component: _ec3c25a8,
     name: "template-print-bqt"
   }, {
     path: "/template-print/hires",
-    component: _c6276f70,
+    component: _711f4b34,
     name: "template-print-hires"
   }, {
     path: "/template-print/resign",
-    component: _64ce8df7,
+    component: _ea6680ce,
     name: "template-print-resign"
   }, {
     path: "/",
-    component: _1e50f1c4,
+    component: _3fa1b9da,
     name: "index"
   }],
 
