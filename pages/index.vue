@@ -407,27 +407,28 @@ export default {
             const wb = XLSX.utils.book_new();
             
             const headers = [
-            ['人員基本資料'],
+            ['Hồ sơ cơ bản CNV'],
             [
             'USERNO', 'SYS_VIEWID', 'SYS_NAME', 'SYS_ENGNAME', 'IDNO', 'TMP_IDYCLASSID', 'TMP_DEPARTID',
-            'TMP_DUTYID', 'TMP_CATEGORYID', 'TMP_LEVELID', 'TMP_RANKID', 'ONBOARDDATE', 'TMP_COUNTRYID',
-            'BIRTHDATE', 'SEX', 'MARRAGE', 'TMP_OTHER_BIRTHPLAID', 'TMP_PROVINCID', 'TMP_EDUBGID',
-            'REGTEL', 'REGADDRESS', 'COMMTEL', 'COMMADDRESS', 'TMP_SITEID', 'TMP_WORKAREAID',
-            'TMP_ETHNICID', 'ISDIRECT', 'CONT_DATE', 'TMP_C_ADDRID'
+            'TMP_DECCOMPANYID', 'TMP_DUTYID', 'TMP_CATEGORYID', 'TMP_LEVELID', 'TMP_RANKID', 'ONBOARDDATE',
+            'TMP_COUNTRYID', 'IDTYPE', 'BIRTHDATE', 'SEX', 'MARRAGE', 'TMP_OTHER_BIRTHPLAID',
+            'TMP_PROVINCID', 'TMP_EDUBGID', 'REGADDRESS', 'MOIBLE', 'COMMTEL', 'TMP_ETHNICID', 'CONT_DATE',
+            'TMP_C_ADDRID', 'EMAIL1'
             ],
             [
-            '自訂序號', '員工工號', '姓名(本地文)', '姓名(英文)', '身分證號', '參數設定', '帳務部門',
-            '職務', '職類', '職等', '職級', '預計到職日', '國籍', '生日', '性別', '婚姻',
-            '其他出生地', '省份', '學歷', '戶籍電話', '戶籍住址', '通訊電話', '通訊地址',
-            '廠別', '工作區域', '族群身份', 'D/I/O', '身份證簽證日期', '身分證簽發地址編號'
+            'STT tùy chỉnh', 'Số thẻ CNV', 'Họ tên(Việt)', 'Họ tên(Anh)', 'Số CMND/CC',
+            'Cài thông số', 'BP Kế toán', 'Cty đăng ký', 'Chức vụ', 'Loại CV', 'Bậc CV', 'Cấp CV',
+            'Ngày dự nhận việc', 'Quốc tịch', 'Số chứng nhận', 'Ngày sinh', 'Giới tính',
+            'Hôn nhân', 'Nơi sinh khác', 'Tỉnh thành', 'Học vấn', 'ĐC hộ khẩu', 'ĐT di động', 'Điện thoại',
+            'Dân tộc', 'Ngày cấp', 'Nơi cấp', 'EMAIL1'
             ],
             [
-            '欄位說明', '', '', '', '', '', '', '', '', '', '', '', '', '',
-            '99:\n0:男\n1:女',
-            '99:\n0:未婚\n1:已婚\n2:離婚\n3:鰥寡',
-            '', '', '', '', '', '', '', '', '', '',
-            '0:D\n1:I\n3:O',
-            '', ''
+            'Hướng dẫn cột', '', '', '', '', '', '', '', '', '', '', '', '', '',
+            '0:0:Cá nhân trong nước1:1:Đoàn thể DN3:3:Ngoại kiều hoặc công dân TQ có mặt tại ĐL đủ 183 ngày5:5:Công dân TQ có mặt tại ĐL chưa đủ 183 ngày6:6:ĐV tại nước TQ7:7:Ngoại kiều có mặt tại ĐL chưa đủ 183 ngày8:8:Pháp nhân,Đoàn thể hoặc TC khác của tổng tổ chức ngoài lãnh thổ ĐL9:9:Người chịu thuế là cá nhân trong nước có mặt tại ĐL chưa đủ 183 ngày nhưng đã đóng tài khoản10:A:Người chịu thuế là ngoại kiều hoặc công dân TQ làm CV trên tàu đánh cá ĐL có mặt tại ĐL đủ 183 ngày và không thẻ tạm trú.',
+            '',
+            '99:0:Nam1:Nữ',
+            '99:0:Chưa kết hôn1:Đã kết hôn',
+            '', '', '', '', '', '', '', '', '', ''
             ]
             ];
             
@@ -435,39 +436,37 @@ export default {
             '',
             preserveLeadingZeros(item.newEmpno),
             item.candidate_name,
-            item.candidate_name,  // Changed this line to use candidate_name instead of empty string
+            item.candidate_name,
             preserveLeadingZeros(item.emp_id),
-            // ...rest of the mapping remains the same...
             preserveLeadingZeros(item.tmp_idyclass),
             preserveLeadingZeros(item.tmp_departid),
+            item.tmp_siteid,
             preserveLeadingZeros(item.tmp_dutyid),
             preserveLeadingZeros(item.tmp_categoryid),
             preserveLeadingZeros(item.tmp_levelid),
             preserveLeadingZeros(item.tmp_rankid),
             formatDate(item.ex_en_date),
             item.national || 'VN',
+            '',
             formatDate(item.dateofbirth),
             item.gender,
             item.marrage || '0',
             preserveLeadingZeros(item.birth_province),
             preserveLeadingZeros(item.province),
             preserveLeadingZeros(item.edu),
-            preserveLeadingZeros(item.regTel),
             item.regAddress,
+            preserveLeadingZeros(item.regTel),
             preserveLeadingZeros(item.commTel),
-            item.commAddress,
-            item.tmp_siteid || 'VG',
-            item.tmp_workareaid || 'VG',
             item.ethnic || 'A',
-            item.isdirect || '1',
             formatDate(item.datecccd),
-            preserveLeadingZeros(item.birth_province)
+            preserveLeadingZeros(item.birth_province),
+            item.email || ''
             ]);
             
             const wsData = [...headers, ...exportData];
             const ws = XLSX.utils.aoa_to_sheet(wsData);
             
-            const numFmtCols = [1, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 21, 28];
+            const numFmtCols = [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26];
             
             numFmtCols.forEach(col => {
                 const range = XLSX.utils.decode_range(ws['!ref']);
@@ -479,9 +478,9 @@ export default {
                 }
             });
             
-            ws['!cols'] = Array(29).fill({ wch: 15 });
+            ws['!cols'] = Array(28).fill({ wch: 15 });
             
-            const wrapColumns = [14, 15, 26];
+            const wrapColumns = [14, 16, 17];
             
             wrapColumns.forEach(col => {
                 const cell_ref = XLSX.utils.encode_cell({ r: 3, c: col });
