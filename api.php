@@ -428,7 +428,7 @@ class awRecruitingReportCtrl extends Controller
     }
     public function recruitReport(Request $req)
     {
-        $key_in_date = $req->key_in_date;
+         $key_in_date = $req->key_in_date;
         $dem_depts = $req->dem_dept;
         $fromdate = $req->fromdate;
         $todate = $req->todate;

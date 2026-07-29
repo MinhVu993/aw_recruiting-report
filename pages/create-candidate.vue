@@ -678,9 +678,12 @@ header-color="teal"></v-date-picker>
         header-color="teal"></v-date-picker>
     </v-menu>
 </v-col>
-<v-col cols="4">
+<v-col cols="4" v-show="false">
     <v-textarea v-model="reason" :label="$t('Rejection Reason')" outlined dense hide-details
     rows="1"></v-textarea>
+</v-col>
+<v-col cols="4">
+    <v-text-field v-model="email" :label="$t('Email')" outlined dense hide-details></v-text-field>
 </v-col>
 </v-row>
 </v-col>
@@ -1032,6 +1035,7 @@ export default {
             comp_return: '',
             remark: '',
             reason: '',
+            email: '',
             date_cv: '',
             date_salary: '',
             tel: '',
@@ -1707,6 +1711,7 @@ export default {
                 // bus_info: this.bus_info,
                 datecccd: this.selectedDatecccd,
                 reason: this.reason,
+                email: this.email,
                 change_en_date: this.change_date,
             }
             try {
@@ -1786,6 +1791,7 @@ export default {
             // this.bus_info = '';
             this.selectedDatecccd = '';
             this.reason = '';
+            this.email = '';
             this.change_date = '';
             this.dm_id = '';
             this.dm_Subpos = '';
@@ -1868,6 +1874,7 @@ export default {
                     // this.bus_info = data.bus_info;
                     this.selectedDatecccd = data.datecccd;
                     this.reason = data.reason;
+                    this.email = data.email || '';
                     this.change_date = data.change_en_date;
                     this.inVG = data.vg_work_times;
                 }
@@ -1940,6 +1947,7 @@ export default {
                             // this.bus_info = data.bus_info;
                             this.selectedDatecccd = this.formatDate(data.datecccd);
                             this.reason = data.reason;
+                            this.email = data.email || '';
                             this.change_date = this.formatDate(data.change_en_date);
                         }
                     }
