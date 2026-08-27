@@ -520,7 +520,7 @@ export default {
             itemsSelectUnit: [], 
             departmentData: [], 
             itemsDiv: [], 
-            selectedPositions: [],
+            selectedPositions: ['All'],
             originalDemandData: [],
             parsedCandidates: [],
             candidateHeaders: [
@@ -590,7 +590,7 @@ export default {
             { vi: 'Nhân viên (ngôn ngữ)', en: 'Staff (lang)', cn: '语言科员' },
             { vi: 'Cán bộ', en: 'Leader', cn: '干部' },
             { vi: 'Phiên dịch', en: 'Translator', cn: '翻译' },
-            { vi: 'Kỹ sư', en: 'Engineer', cn: '工程师' }
+            { vi: 'Thực tập sinh', en: 'Intern', cn: '實習生' }
             ],
         }
     },
@@ -628,15 +628,11 @@ export default {
             }
             
             // ...rest of existing filtering logic...
-            if (this.selectedPositions.length > 0) {
-                if (this.selectedPositions.includes('All')) {
-                    this.selectedPositions = ['All'];
-                    
-                } else {
-                    filteredData = filteredData.filter(item =>
-                    this.selectedPositions.includes(item.dem_position)
-                    );
-                }
+            if (this.selectedPositions.length > 0 && !this.selectedPositions.includes('All')) {
+                const selectedLower = this.selectedPositions.map(p => String(p).toLowerCase());
+                filteredData = filteredData.filter(item =>
+                    item.dem_position && selectedLower.includes(String(item.dem_position).toLowerCase())
+                );
             }
             Object.entries(this.filters).forEach(([key, values]) => {
                 if (values && values.length > 0) {
@@ -1206,6 +1202,34 @@ export default {
         selectedColumns: {
             handler(newVal) {
                 this.selectAllColumns = newVal.length === this.headers.length - 1;
+            },
+            deep: true
+        },
+        selectedPositions: {
+            handler(newVal, oldVal) {
+                if (!newVal || newVal.length === 0) {
+                    this.selectedPositions = ['All'];
+                    return;
+                }
+
+                const hadAllBefore = oldVal && oldVal.includes('All');
+                const hasAllNow = newVal.includes('All');
+                const specificPositions = this.itemsPos.map(p => p.en).filter(p => p !== 'All');
+
+                if (!hadAllBefore && hasAllNow) {
+                    this.selectedPositions = ['All'];
+                    return;
+                }
+
+                if (hadAllBefore && hasAllNow && newVal.length > 1) {
+                    this.selectedPositions = newVal.filter(p => p !== 'All');
+                    return;
+                }
+
+                const selectedSpecifics = newVal.filter(p => p !== 'All');
+                if (selectedSpecifics.length === specificPositions.length) {
+                    this.selectedPositions = ['All'];
+                }
             },
             deep: true
         }

@@ -270,7 +270,7 @@
         reportData: [],
         loading: false,
         exporting: false,
-        loc_apply: ['Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Engineer'],
+        loc_apply: ['Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Intern'],
         item_dept: [],
         selectedPositions: ['All'],
         dataCadidates: [],
@@ -374,7 +374,7 @@
       filteredReportData() {
         return this.reportData.filter(item => {
           const positionMatch = this.selectedPositions.includes('All') ||
-          this.selectedPositions.includes(item.position);
+          this.selectedPositions.some(p => String(p).toLowerCase() === String(item.position).toLowerCase());
           
           const deptMatch = !this.selectDept.length ||
           this.selectDept.some(deptId => {
@@ -404,11 +404,15 @@
         this.selectUnit = [];
       },
       selectedPositions(newVal, oldVal) {
+        if (!newVal || newVal.length === 0) {
+          this.selectedPositions = ['All'];
+          return;
+        }
         if (newVal.includes('All') && !oldVal.includes('All')) {
           this.selectedPositions = ['All'];
         } else if (newVal.includes('All') && newVal.length > 1) {
           this.selectedPositions = newVal.filter(item => item !== 'All');
-        } else if (newVal.length === 0) {
+        } else if (newVal.filter(item => item !== 'All').length === this.loc_apply.length) {
           this.selectedPositions = ['All'];
         }
       }

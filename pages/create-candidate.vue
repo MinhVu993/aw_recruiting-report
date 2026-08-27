@@ -1064,7 +1064,7 @@ export default {
             school_gra: '',
             change_date: '',
             tmp_categoryid: '00001',
-            item_loc_apply: ['Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Engineer'],
+            item_loc_apply: ['Worker', 'Staff', 'Staff (lang)', 'Leader', 'Translator', 'Intern'],
             item_dept_apply: [],
             item_source_recruit: [],
             item_comp_return: companies.companies,
@@ -1141,7 +1141,8 @@ export default {
                 'Staff (lang)': ['Staff (lang)', 'Nhân viên tiếng', '语言员工'],
                 'Leader': ['Leader', 'Chủ quản', '组长'],
                 'Translator': ['Translator', 'Phiên dịch', '翻译'],
-                'Engineer': ['Engineer', 'Kỹ sư', '工程师']
+                'Intern': ['Intern', 'intern', 'Thực tập sinh', '實習生'],
+                'intern': ['Intern', 'intern', 'Thực tập sinh', '實習生']
             },
             resignData: [],
             resignDialog: false,
