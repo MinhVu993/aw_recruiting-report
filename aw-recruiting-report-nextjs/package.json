@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "tsx --test tests/*.test.js tests/*.test.ts",
     "migrate:dump": "node scripts/migrate-aw-from-dump.js",
+    "sync:mysql": "node scripts/sync-from-mysql.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "node prisma/seed.js"
@@ -24,6 +25,7 @@
     "jspdf": "^4.2.1",
     "lucide-react": "^0.460.0",
     "motion": "^14.9.0",
+    "mysql2": "^3.24.6",
     "next": "15.0.3",
     "nextstepjs": "^2.3.0",
     "pg": "^8.13.1",
