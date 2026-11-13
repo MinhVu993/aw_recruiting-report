@@ -5,7 +5,6 @@ import Link from "next/link";
 import { TabNav } from "./TabNav";
 import { useSession } from "@/context/SessionContext";
 import { useTranslation } from "@/hooks/useTranslation";
-import { ScannerStatusBadge } from "@/components/scanner/ScannerStatusBadge";
 import { TourTriggerButton } from "@/components/tour/TourTriggerButton";
 
 export const Header: React.FC = () => {
@@ -49,11 +48,6 @@ export const Header: React.FC = () => {
           {/* Tour Interactive Guide Button */}
           <div className="mr-3 sm:mr-4">
             <TourTriggerButton />
-          </div>
-
-          {/* Scanner Status Badge with right margin */}
-          <div className="mr-4 sm:mr-6" id="tour-scanner-status">
-            <ScannerStatusBadge />
           </div>
 
           {/* Language Switcher: VI / 中文 / EN */}

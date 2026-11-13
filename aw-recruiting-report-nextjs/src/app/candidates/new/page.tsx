@@ -1853,33 +1853,6 @@ const FALLBACK_DEMANDS = [
               <span>{t("resignationHistory", "Lịch sử")} ({historyResult.count})</span>
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={() => {
-              setQrModalOpen(true);
-              setQrModalInput("");
-            }}
-            className="h-9 px-3.5 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold inline-flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer"
-            title="Mở cửa sổ quét mã QR CCCD chuyên dụng bằng máy quét MC-9103 hoặc dán mã"
-          >
-            <QrCode className="w-4 h-4 text-white" />
-            <span>{t("scanId", "Quét QR CCCD")}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={isConnected ? disconnect : connect}
-            className={`h-9 px-3.5 rounded-md text-xs font-bold border transition-colors inline-flex items-center space-x-1.5 shadow-xs ${
-              isConnected
-                ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
-                : "bg-white hover:bg-zinc-50 dark:bg-[#202025] dark:hover:bg-[#2a2a32] text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-[#383842]"
-            }`}
-            title="Kết nối trực tiếp qua cổng COM ảo (Web Serial)"
-          >
-            <Cpu className="w-4 h-4" />
-            <span>{isConnected ? `${t("connected", "Đã kết nối")}` : t("connectCom", "Quét COM")}</span>
-          </button>
         </div>
       </div>
 
