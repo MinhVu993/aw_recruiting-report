@@ -1,0 +1,741 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #eaedf0;
+  --foreground: #09090b;
+  --card-bg: rgba(255, 255, 255, 0.98);
+  --card-border: #d8dce2;
+  --muted-text: #475569;
+}
+
+html.dark,
+.dark {
+  color-scheme: dark;
+  --background: #121214;
+  --foreground: #f1f2f4;
+  --card-bg: rgba(24, 24, 28, 0.95);
+  --card-border: rgba(38, 38, 44, 0.9);
+  --muted-text: #8e929b;
+}
+
+html.light,
+.light {
+  color-scheme: light;
+  --background: #eaedf0;
+  --foreground: #09090b;
+  --card-bg: #ffffff;
+  --card-border: #d8dce2;
+  --muted-text: #475569;
+}
+
+html {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (pointer: coarse) {
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents iOS Safari unwanted zoom on input focus */
+  }
+}
+
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Hide scrollbar for clean touch carousels and slicers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html, body {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Enforce unified font and tabular numbers across all tables and data cells */
+table, th, td, .tabular-nums {
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+table th {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
+}
+
+table td {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.15rem;
+}
+
+table code, table pre, table .font-mono {
+  font-family: inherit !important;
+}
+
+
+/* Craft Floor: Themed Browser Surfaces */
+::selection {
+  background-color: rgba(16, 185, 129, 0.28);
+  color: inherit;
+}
+
+input, textarea {
+  caret-color: #10b981;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.6);
+  outline-offset: 1px;
+}
+
+/* Typographic Hierarchy & Optical Sizing */
+h1, h2, h3, h4 {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Unified Table Typography - Eliminate 2-font discrepancy in data tables */
+table, table *, table .font-mono {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.font-mono {
+  font-family: inherit;
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Dynamic Radial Background Glows */
+.dark body,
+html.dark body {
+  background-color: #121214 !important;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(225, 29, 72, 0.02) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.02) 0px, transparent 40%),
+    radial-gradient(at 50% 50%, rgba(18, 18, 20, 0.98) 0px, transparent 100%);
+  background-attachment: fixed;
+}
+
+html:not(.dark) body,
+html.light body {
+  background-color: #eaedf0 !important;
+  background-image: none !important;
+}
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Emil Kowalski Design Engineering: Tactile Button & Press Feedback */
+button, a[role="button"], .btn-interactive {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), opacity 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+button:active:not(:disabled), a[role="button"]:active {
+  transform: scale(0.97);
+}
+
+/* Modal scale(0.95) to scale(1) - Never scale(0) */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-modal-enter {
+  animation: modalEnter 180ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  transform-origin: center;
+}
+
+.animate-card-stagger {
+  animation: fadeInStagger 220ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  button:active:not(:disabled), a[role="button"]:active {
+    transform: none !important;
+  }
+  .animate-modal-enter, .animate-card-stagger {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Bento Card Glassmorphism and Hover */
+.bento-card {
+  @apply relative overflow-hidden rounded-lg border border-zinc-200/80 dark:border-[#26262C] bg-white/90 dark:bg-[#18181C] backdrop-blur-xl;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.08);
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.dark .bento-card,
+html.dark .bento-card {
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.5);
+}
+
+.bento-card:hover {
+  @apply border-emerald-500/40 shadow-emerald-500/10;
+}
+
+/* Full Page Cockpit Container & Viewport Utilities */
+.full-page-viewport {
+  width: 100%;
+  height: 100%;
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.full-page-panel {
+  @apply relative rounded-lg border border-zinc-200/80 dark:border-[#26262C] bg-white/90 dark:bg-[#18181C] backdrop-blur-xl shadow-md dark:shadow-xl transition-colors duration-200;
+}
+
+/* Sleek, Thin & Sharper Enterprise Corner Radii for Cards & Modals */
+.rounded-2xl {
+  border-radius: 0.5rem !important; /* 8px */
+}
+
+.rounded-xl {
+  border-radius: 0.375rem !important; /* 6px */
+}
+
+.rounded-3xl {
+  border-radius: 0.625rem !important; /* 10px */
+}
+
+/* ==========================================================================
+   Light Mode Theme Adapters for Slate & Zinc Containers
+   ========================================================================== */
+html:not(.dark) .bento-card,
+html:not(.dark) .full-page-panel,
+html.light .bento-card,
+html.light .full-page-panel,
+html:not(.dark) .bg-slate-900\/60,
+html:not(.dark) .bg-zinc-900\/60,
+html:not(.dark) .bg-slate-900\/80,
+html:not(.dark) .bg-zinc-900\/80,
+html.light .bg-slate-900\/60,
+html.light .bg-zinc-900\/60,
+html.light .bg-slate-900\/80,
+html.light .bg-zinc-900\/80 {
+  background-color: #ffffff !important;
+  border-color: #d8dce2 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: none !important;
+}
+
+html:not(.dark) .bg-slate-950,
+html:not(.dark) .bg-slate-950\/80,
+html:not(.dark) .bg-slate-950\/60,
+html:not(.dark) .bg-slate-950\/40,
+html:not(.dark) .bg-slate-950\/50,
+html:not(.dark) .bg-slate-950\/95,
+html:not(.dark) .bg-zinc-950,
+html:not(.dark) .bg-zinc-950\/80,
+html:not(.dark) .bg-zinc-950\/50,
+html:not(.dark) .bg-zinc-950\/60,
+html.light .bg-slate-950,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/40,
+html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/95,
+html.light .bg-zinc-950,
+html.light .bg-zinc-950\/80,
+html.light .bg-zinc-950\/50,
+html.light .bg-zinc-950\/60 {
+  background-color: #f1f3f6 !important;
+  border-color: #d8dce2 !important;
+  backdrop-filter: none !important;
+}
+
+html:not(.dark) .bg-slate-900,
+html:not(.dark) .bg-zinc-900,
+html:not(.dark) .bg-zinc-900\/90,
+html.light .bg-slate-900,
+html.light .bg-zinc-900,
+html.light .bg-zinc-900\/90 {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .bg-slate-800,
+html:not(.dark) .bg-zinc-800,
+html:not(.dark) .bg-slate-800\/80,
+html:not(.dark) .bg-zinc-800\/80,
+html:not(.dark) .bg-slate-800\/40,
+html.light .bg-slate-800,
+html.light .bg-zinc-800,
+html.light .bg-slate-800\/80,
+html.light .bg-zinc-800\/80,
+html.light .bg-slate-800\/40 {
+  background-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .border-slate-800,
+html:not(.dark) .border-slate-800\/80,
+html:not(.dark) .border-slate-800\/60,
+html:not(.dark) .border-zinc-800,
+html:not(.dark) .border-zinc-800\/80,
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-zinc-800,
+html.light .border-zinc-800\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .border-slate-700,
+html:not(.dark) .border-zinc-700,
+html:not(.dark) .border-slate-700\/80,
+html.light .border-slate-700,
+html.light .border-zinc-700,
+html.light .border-slate-700\/80 {
+  border-color: #cbd5e1 !important;
+}
+
+/* In light mode, headings and body text that used text-white adapt to dark text, EXCEPT on buttons and colored backgrounds */
+html:not(.dark) :is(h1, h2, h3, h4, h5, h6, p, label):not(button, button *, a, a *, [class*="bg-rose-"] *, [class*="bg-emerald-"] *, [class*="bg-sky-"] *, [class*="bg-indigo-"] *, [class*="bg-blue-"] *).text-white,
+html.light :is(h1, h2, h3, h4, h5, h6, p, label):not(button, button *, a, a *, [class*="bg-rose-"] *, [class*="bg-emerald-"] *, [class*="bg-sky-"] *, [class*="bg-indigo-"] *, [class*="bg-blue-"] *).text-white {
+  color: #0f172a !important;
+}
+
+/* Ensure solid colored buttons, links, and badges maintain crisp white text */
+button.text-white,
+button.text-white *,
+a.text-white,
+a.text-white *,
+.btn-primary,
+.btn-primary *,
+button[class*="bg-rose-6"],
+button[class*="bg-rose-6"] *,
+button[class*="bg-emerald-6"],
+button[class*="bg-emerald-6"] *,
+button[class*="bg-indigo-6"],
+button[class*="bg-indigo-6"] *,
+button[class*="bg-blue-6"],
+button[class*="bg-blue-6"] *,
+button[class*="bg-sky-6"],
+button[class*="bg-sky-6"] * {
+  color: #ffffff !important;
+}
+
+html:not(.dark) .text-slate-200,
+html:not(.dark) .text-zinc-200,
+html.light .text-slate-200,
+html.light .text-zinc-200 {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .text-slate-300,
+html:not(.dark) .text-zinc-300,
+html.light .text-slate-300,
+html.light .text-zinc-300 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-400,
+html:not(.dark) .text-zinc-400,
+html.light .text-slate-400,
+html.light .text-zinc-400 {
+  color: #64748b !important;
+}
+
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-zinc-500,
+html.light .text-slate-500,
+html.light .text-zinc-500 {
+  color: #94a3b8 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea,
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #d4d4d8 !important;
+}
+
+html:not(.dark) input.bg-transparent,
+html.light input.bg-transparent {
+  background-color: transparent !important;
+}
+
+html:not(.dark) input::placeholder,
+html.light input::placeholder {
+  color: #94a3b8 !important;
+}
+
+html:not(.dark) thead,
+html.light thead {
+  background-color: #e6e9ee !important;
+  border-color: #d0d5dd !important;
+  color: #334155 !important;
+}
+
+html:not(.dark) tr:hover,
+html:not(.dark) .hover\:bg-slate-800\/40:hover,
+html:not(.dark) .hover\:bg-slate-900\/40:hover,
+html:not(.dark) .hover\:bg-slate-800:hover,
+html.light tr:hover,
+html.light .hover\:bg-slate-800\/40:hover,
+html.light .hover\:bg-slate-900\/40:hover,
+html.light .hover\:bg-slate-800:hover {
+  background-color: #edf0f4 !important;
+}
+
+html:not(.dark) header,
+html.light header {
+  background-color: #f1f3f6 !important;
+  border-color: #d8dce2 !important;
+}
+
+html:not(.dark) .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]),
+html:not(.dark) .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]),
+html.light .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e6eb !important;
+}
+
+/* ==========================================================================
+   Dark Mode Theme Adapters (VG-ER Charcoal Console Theme)
+   ========================================================================== */
+html.dark .bento-card,
+html.dark .full-page-panel,
+html.dark .bg-slate-900,
+html.dark .bg-slate-900\/60,
+html.dark .bg-slate-900\/80,
+html.dark .bg-zinc-900,
+html.dark .bg-zinc-900\/60,
+html.dark .bg-zinc-900\/80,
+html.dark .bg-zinc-900\/90,
+.dark .bento-card,
+.dark .full-page-panel,
+.dark .bg-slate-900,
+.dark .bg-slate-900\/60,
+.dark .bg-slate-900\/80,
+.dark .bg-zinc-900,
+.dark .bg-zinc-900\/60,
+.dark .bg-zinc-900\/80,
+.dark .bg-zinc-900\/90 {
+  background-color: #18181c !important;
+  border-color: #26262c !important;
+}
+
+html.dark .bg-slate-950,
+html.dark .bg-slate-950\/95,
+html.dark .bg-slate-950\/80,
+html.dark .bg-slate-950\/60,
+html.dark .bg-slate-950\/50,
+html.dark .bg-slate-950\/40,
+html.dark .bg-slate-950\/20,
+html.dark .bg-zinc-950,
+html.dark .bg-zinc-950\/80,
+html.dark .bg-zinc-950\/50,
+html.dark .bg-zinc-950\/60,
+.dark .bg-slate-950,
+.dark .bg-slate-950\/95,
+.dark .bg-slate-950\/80,
+.dark .bg-slate-950\/60,
+.dark .bg-slate-950\/50,
+.dark .bg-slate-950\/40,
+.dark .bg-slate-950\/20,
+.dark .bg-zinc-950,
+.dark .bg-zinc-950\/80,
+.dark .bg-zinc-950\/50,
+.dark .bg-zinc-950\/60 {
+  background-color: #131316 !important;
+  border-color: #26262c !important;
+}
+
+html.dark .border-slate-800,
+html.dark .border-slate-800\/80,
+html.dark .border-slate-800\/60,
+html.dark .border-zinc-800,
+html.dark .border-zinc-800\/80,
+.dark .border-slate-800,
+.dark .border-slate-800\/80,
+.dark .border-slate-800\/60,
+.dark .border-zinc-800,
+.dark .border-zinc-800\/80 {
+  border-color: #26262c !important;
+}
+
+html.dark .border-slate-700,
+html.dark .border-zinc-700,
+.dark .border-slate-700,
+.dark .border-zinc-700 {
+  border-color: #32323a !important;
+}
+
+html.dark thead,
+html.dark thead tr,
+html.dark .bg-slate-900\/90,
+.dark thead,
+.dark thead tr,
+.dark .bg-slate-900\/90 {
+  background-color: #16161a !important;
+  border-color: #26262c !important;
+}
+
+html.dark tbody tr:hover,
+html.dark .hover\:bg-slate-800\/40:hover,
+html.dark .hover\:bg-slate-900\/40:hover,
+.dark tbody tr:hover,
+.dark .hover\:bg-slate-800\/40:hover,
+.dark .hover\:bg-slate-900\/40:hover {
+  background-color: #1e1e24 !important;
+}
+
+html.dark .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-800\/60 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #222228 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea,
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #131316 !important;
+  color: #f1f2f4 !important;
+  border-color: #26262c !important;
+}
+
+html.dark input::placeholder,
+.dark input::placeholder {
+  color: #636773 !important;
+}
+
+html.dark .text-white,
+.dark .text-white {
+  color: #f1f2f4 !important;
+}
+
+html.dark .text-slate-200,
+html.dark .text-zinc-200,
+.dark .text-slate-200,
+.dark .text-zinc-200 {
+  color: #e4e4e7 !important;
+}
+
+html.dark .text-slate-300,
+html.dark .text-zinc-300,
+.dark .text-slate-300,
+.dark .text-zinc-300 {
+  color: #d1d5db !important;
+}
+
+html.dark .text-slate-400,
+html.dark .text-zinc-400,
+.dark .text-slate-400,
+.dark .text-zinc-400 {
+  color: #8e929b !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-zinc-500,
+.dark .text-slate-500,
+.dark .text-zinc-500 {
+  color: #636773 !important;
+}
+
+/* Custom Sleek Scrollbar */
+.custom-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+  background: #131316;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background: #2a2a34;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 63, 94, 0.6);
+}
+
+html:not(.dark) .custom-scrollbar::-webkit-scrollbar-track,
+html:not(.dark) ::-webkit-scrollbar-track,
+html.light .custom-scrollbar::-webkit-scrollbar-track,
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+
+html:not(.dark) .custom-scrollbar::-webkit-scrollbar-thumb,
+html:not(.dark) ::-webkit-scrollbar-thumb,
+html.light .custom-scrollbar::-webkit-scrollbar-thumb,
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+}
+
+/* Print CSS */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+  html,
+  body,
+  #main-content,
+  main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: block !important;
+  }
+  .print-page:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  .page-sheet {
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: block !important;
+  }
+  .page-sheet:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  .print-page:last-child .page-sheet:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+}
+
+/* ==========================================================================
+   PRINT TEMPLATES - STRICT TIMES NEW ROMAN ENFORCEMENT
+   Tất cả các biểu mẫu in A4 (mẫu 1, 2-cn, 2-sf, 3, 4, 5, bqt, hires, resign)
+   bắt buộc phải sử dụng font "Times New Roman" chuẩn quy chuẩn văn bản ISO/Cty.
+   ========================================================================== */
+.template-print-root,
+.template-print-root *,
+.template-hires-root,
+.template-hires-root *,
+.template-bqt-root,
+.template-bqt-root *,
+.template1-root,
+.template1-root *,
+.template2cn-root,
+.template2cn-root *,
+.template2sf-root,
+.template2sf-root *,
+.template3-root,
+.template3-root *,
+.template4-root,
+.template4-root *,
+.template5-root,
+.template5-root *,
+.print-area,
+.print-area * {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+@media print {
+  .template-print-root,
+  .template-print-root *,
+  .template-hires-root,
+  .template-hires-root *,
+  .template-bqt-root,
+  .template-bqt-root *,
+  .template1-root,
+  .template1-root *,
+  .template2cn-root,
+  .template2cn-root *,
+  .template2sf-root,
+  .template2sf-root *,
+  .template3-root,
+  .template3-root *,
+  .template4-root,
+  .template4-root *,
+  .template5-root,
+  .template5-root *,
+  .print-area,
+  .print-area * {
+    font-family: "Times New Roman", Times, serif !important;
+  }
+}
