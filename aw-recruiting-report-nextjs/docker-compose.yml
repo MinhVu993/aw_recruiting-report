@@ -1,0 +1,39 @@
+services:
+  aw-recruiting-app:
+    container_name: aw-recruiting-report-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3002"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+      - HOSTNAME=0.0.0.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./output:/app/output
+    networks:
+      - aw-recruiting-network
+
+  aw-nginx-proxy:
+    image: nginx:alpine
+    container_name: aw-recruiting-report-nginx
+    ports:
+      - "${APP_PORT:-7307}:7307"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - aw-recruiting-app
+    restart: unless-stopped
+    networks:
+      - aw-recruiting-network
+
+networks:
+  aw-recruiting-network:
+    driver: bridge
