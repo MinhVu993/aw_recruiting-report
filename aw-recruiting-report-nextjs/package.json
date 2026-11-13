@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev-random-port.js",
-    "dev:fixed": "next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "tsx --test tests/*.test.js tests/*.test.ts",
