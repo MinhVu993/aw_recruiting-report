@@ -30,8 +30,10 @@ function isValidDateInRange(val: string | null | undefined, from: string, to: st
   if (!val || val === "no" || val === "null") return false;
   const clean = val.slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(clean)) return false;
-  if (from && clean < from) return false;
-  if (to && clean > to) return false;
+  const cleanFrom = from ? from.trim().slice(0, 10) : "";
+  const cleanTo = to ? to.trim().slice(0, 10) : "";
+  if (cleanFrom && clean < cleanFrom) return false;
+  if (cleanTo && clean > cleanTo) return false;
   return true;
 }
 

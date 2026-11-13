@@ -33,12 +33,14 @@ export function buildDemandSyncPayload(params: {
     }
   }
 
-  const demRecruited = params.employees.length;
+  const demRecruited = candidates.length;
   const isFulfilled = demRecruited >= params.demAmount;
+  const stocknumber = Math.max(0, params.demAmount - demRecruited);
 
   return {
     demCandidates: candidates,
     demRecruited,
+    stocknumber,
     demFulfilled: isFulfilled ? "yes" : "no",
     demFullfilldate: isFulfilled ? latestActEnDate : null,
   };
@@ -76,6 +78,7 @@ export async function reconcileAwDemandByDemId(demId: string, prisma: PrismaClie
     data: {
       demCandidates: payload.demCandidates as any,
       demRecruited: payload.demRecruited,
+      stocknumber: payload.stocknumber,
       demFulfilled: payload.demFulfilled,
       demFullfilldate: payload.demFullfilldate,
     },

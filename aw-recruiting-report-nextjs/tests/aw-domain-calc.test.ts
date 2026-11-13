@@ -109,9 +109,24 @@ test("buildDemandSyncPayload merges valid employees into dem_candidates and mark
   });
 
   assert.equal(sync.demRecruited, 2);
+  assert.equal(sync.stocknumber, 0);
   assert.equal(sync.demFulfilled, "yes");
   assert.equal(sync.demFullfilldate, "2025-01-09");
   assert.equal(sync.demCandidates.length, 2);
+
+  // Test case where existingCandidates already has entries not present in current employees
+  const syncWithPreexisting = buildDemandSyncPayload({
+    demAmount: 5,
+    existingCandidates: [{ empno: "000001", date: "2024-12-01", name: "CŨ" }],
+    employees: [
+      { newEmpno: "014537", actEnDate: "2025-01-03", candidateName: "NGUYỄN A" },
+    ],
+  });
+
+  assert.equal(syncWithPreexisting.demCandidates.length, 2);
+  assert.equal(syncWithPreexisting.demRecruited, 2);
+  assert.equal(syncWithPreexisting.stocknumber, 3);
+  assert.equal(syncWithPreexisting.demFulfilled, "no");
 });
 
 test("normalizeCccd, seniority-utils, formatExcelDate, and drillthrough functions behave correctly", () => {
