@@ -858,20 +858,6 @@ function DemandContent() {
                     />
                   </th>
                 )}
-                {visibleColumns.key_in && (
-                  <th className="py-2 px-3 text-center">
-                    <ExcelColumnFilter
-                      title={t("keyInDate", "Ngày Nộp")}
-                      columnKey="key_in"
-                      align="center"
-                      distinctValues={getDistinctValues("key_in")}
-                      selectedValues={excelFilters["key_in"]}
-                      onFilterChange={(v) => setFilter("key_in", v)}
-                      sortDirection={sortConfig?.key === "key_in" ? sortConfig.direction : null}
-                      onSortChange={(dir) => setSort("key_in", dir)}
-                    />
-                  </th>
-                )}
                 {visibleColumns.dem_inputdate && (
                   <th className="py-2 px-3 text-center">
                     <ExcelColumnFilter
@@ -1104,13 +1090,6 @@ function DemandContent() {
                         </td>
                       )}
 
-                      {/* Apply date (key_in) */}
-                      {visibleColumns.key_in && (
-                        <td className="py-2 px-3 text-center tabular-nums text-slate-600 dark:text-slate-400 text-xs">
-                          {item.key_in || "-"}
-                        </td>
-                      )}
-
                       {/* Request date */}
                       {visibleColumns.dem_inputdate && (
                         <td className="py-2 px-3 text-center tabular-nums text-slate-600 dark:text-slate-400 text-xs">
@@ -1237,7 +1216,6 @@ function DemandContent() {
                       {totals.totalAmount}
                     </td>
                   )}
-                  {visibleColumns.key_in && <td></td>}
                   {visibleColumns.dem_inputdate && <td></td>}
                   {visibleColumns.dem_recruited && (
                     <td className="py-2.5 px-3 text-center tabular-nums font-black text-emerald-600 dark:text-emerald-400">
@@ -1711,7 +1689,6 @@ function DemandContent() {
                 { key: "dem_position", label: t("position") },
                 { key: "dem_sub_position", label: t("subPosition") },
                 { key: "dem_amount", label: t("targetAmount") },
-                { key: "key_in", label: t("keyInDate") },
                 { key: "dem_inputdate", label: t("requestDate") },
                 { key: "dem_recruited", label: t("recruited") },
                 { key: "stocknumber", label: t("stillInNeed") },
