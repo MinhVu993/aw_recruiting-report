@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status")?.trim() || "1";
     const fromDate = searchParams.get("fromDate")?.trim() || "";
     const toDate = searchParams.get("toDate")?.trim() || "";
-    const loc = searchParams.get("loc")?.trim() || "aw";
+    // Single factory mode: always 'aw'
+    const loc = "aw";
 
     const where: any = {
       loc,

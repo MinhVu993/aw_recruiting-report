@@ -33,7 +33,7 @@ export const PipelineStreamCard: React.FC = () => {
             candidateName: c.candidateName || c.name || "Chưa đặt tên",
             empno: c.empno || undefined,
             cccd: c.cccd || "",
-            loc: (c.loc === "vg" ? "DMC" : (c.loc || "DMC")).toUpperCase(),
+            loc: (c.loc || "AW").toUpperCase(),
             dept: c.dept || "Chưa phân bộ phận",
             duty: c.duty || "--",
             inDate: c.inDate ? new Date(c.inDate).toISOString().split("T")[0] : "--",

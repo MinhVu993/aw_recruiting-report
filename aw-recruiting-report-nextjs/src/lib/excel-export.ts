@@ -19,7 +19,7 @@ export function exportCandidatesToWorkbook(candidates: any[]) {
     "Ngày Sinh": formatExcelDate(c.dateOfBirth),
     "Giới Tính": c.gender || "Nam",
     "Số Điện Thoại": c.commTel || c.regTel || c.phone || "",
-    "Bp. duyệt": (c.loc === "vg" ? "DMC" : (c.loc || "AW")).toUpperCase(),
+    "Bp. duyệt": (c.loc || "AW").toUpperCase(),
     "Phòng Ban / Bp. duyệt Con": c.tmpDepartid || c.dept || "",
     "Chức Danh": c.position || c.subPosition || c.duty || "",
     "Quê Quán": c.birthProvince || "",

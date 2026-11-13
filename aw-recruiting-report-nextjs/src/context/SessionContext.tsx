@@ -125,46 +125,13 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return "user";
   };
 
-  // Parse factory_code array and fallback to primary factory (aw)
-  const parseAllowedFactories = (factoryCode: any, rawFactory?: string): string[] => {
-    let rawList: any[] = [];
-    if (typeof factoryCode === "string") {
-      const trimmed = factoryCode.trim();
-      if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
-        try {
-          const parsed = JSON.parse(trimmed);
-          if (Array.isArray(parsed)) rawList = parsed;
-          else if (parsed) rawList = [parsed];
-        } catch {
-          rawList = [factoryCode];
-        }
-      } else if (trimmed) {
-        rawList = [trimmed];
-      }
-    } else if (Array.isArray(factoryCode)) {
-      rawList = factoryCode;
-    } else if (factoryCode) {
-      rawList = [factoryCode];
-    }
-
-    if (rawList.length === 0 && rawFactory) {
-      rawList = [rawFactory];
-    }
-
-    const validSet = new Set<string>();
-    rawList.forEach((item) => {
-      if (!item) return;
-      const s = String(item).toLowerCase().trim();
-      validSet.add(s);
-    });
-
-    if (validSet.size === 0) validSet.add("aw");
-    return Array.from(validSet);
+  // Single-factory system: always AW
+  const parseAllowedFactories = (_factoryCode: any, _rawFactory?: string): string[] => {
+    return ["aw"];
   };
 
-  const parseFactory = (factoryCode: any, rawFactory?: string): string => {
-    const allowed = parseAllowedFactories(factoryCode, rawFactory);
-    return allowed[0] || "aw";
+  const parseFactory = (_factoryCode: any, _rawFactory?: string): string => {
+    return "aw";
   };
 
   // Check app permission via global-user API (App ID 38 = recruiting-report)
@@ -229,14 +196,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setCurrentLocale(savedLocale);
     }
 
-    let savedFactory = localStorage.getItem("selected-factory");
-    if (!savedFactory) {
-      savedFactory = "aw";
-      localStorage.setItem("selected-factory", "aw");
-    }
-    if (savedFactory) {
-      setSelectedFactory(savedFactory);
-    }
+    localStorage.setItem("selected-factory", "aw");
+    setSelectedFactory("aw");
 
     // 3. Lấy thông tin phiên làm việc từ session storage của app cũ nếu có (vue-session-key)
     const loadSessionData = async () => {
@@ -285,9 +246,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
             token: localStorage.getItem("session-token") || undefined,
           };
           setUser(sessionUser);
-          if (parsedFact && !savedFactory) {
-            setSelectedFactory(parsedFact);
-          }
+          setSelectedFactory("aw");
 
           if (sessionUser.empno) {
             checkAppAccess(sessionUser.empno);
@@ -340,9 +299,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
               localStorage.setItem("aw-recruiting-report-session", sessionPayload);
               localStorage.setItem("recruiting-report-session", sessionPayload);
 
-              if (parsedFact && !savedFactory) {
-                setSelectedFactory(parsedFact);
-              }
+              setSelectedFactory("aw");
 
               if (activeUser.empno) {
                 const companies = await checkAppAccess(activeUser.empno);
@@ -375,10 +332,10 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadSessionData();
   }, []);
 
-  const handleSetFactory = (factory: string) => {
-    setSelectedFactory(factory);
+  const handleSetFactory = (_factory: string) => {
+    setSelectedFactory("aw");
     if (typeof window !== "undefined") {
-      localStorage.setItem("selected-factory", factory);
+      localStorage.setItem("selected-factory", "aw");
     }
   };
 

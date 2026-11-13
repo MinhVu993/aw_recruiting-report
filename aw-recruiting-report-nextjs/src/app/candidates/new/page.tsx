@@ -52,9 +52,7 @@ import { AppDialog, DialogOptions } from "@/components/ui/AppDialog";
 
 // Master data lists matching legacy create-candidate.vue
 const LOC_OPTIONS = [
-  { value: "dmc", label: "DMC (Đông Mỹ Cự)" },
-  { value: "tb", label: "TB (Trảng Bàng)" },
-  { value: "tc", label: "TC (Tiền Châu)" },
+  { value: "aw", label: "AW" },
 ];
 
 const BUS_OPTIONS = [
@@ -119,12 +117,10 @@ interface HrmOptionsData {
 
 const EPM_BASE_URL = process.env.NEXT_PUBLIC_EPM_API_URL || "http://10.13.34.160:7303";
 
-const resolveEpmPhotoUrl = (empno?: string | null, loc?: string | null): string | null => {
+const resolveEpmPhotoUrl = (empno?: string | null, _loc?: string | null): string | null => {
   const cleanEmpno = (empno || "").trim();
   if (!cleanEmpno || cleanEmpno === "-" || cleanEmpno === "no") return null;
-  const rawLoc = (loc || "dmc").toLowerCase();
-  const normalizedLoc = rawLoc === "tb" ? "tb" : rawLoc === "tc" || rawLoc === "vg3" ? "tc" : "dmc";
-  return `/api/epm-photo/${normalizedLoc}/${encodeURIComponent(cleanEmpno)}`;
+  return `/api/epm-photo/aw/${encodeURIComponent(cleanEmpno)}`;
 };
 
 interface CompactSwitchProps {
@@ -347,7 +343,7 @@ function CandidateFormContent() {
     ex_position: "",
 
     // Card 2: Thông tin nhu cầu tuyển dụng
-    loc: "dmc",
+    loc: "aw",
     dept_apply: "",
     loc_apply: "Worker",
     dm_id: "",
@@ -790,14 +786,14 @@ function CandidateFormContent() {
   }, [candidateId]);
 
 const FALLBACK_DEMANDS = [
-  { id: 1, mprId: 1042, id_code: "HR-MPR00-1042", loc: "dmc", dem_unit: "VVG0PD01", dept: "Xưởng May 1", dem_unit_name: "Xưởng May 1", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 200, dem_amount: 200, recruitedQty: 185, dem_recruited: 185, stocknumber: 15 },
-  { id: 2, mprId: 1043, id_code: "HR-MPR00-1043", loc: "dmc", dem_unit: "VVG0PD02", dept: "Xưởng May 2", dem_unit_name: "Xưởng May 2", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 180, dem_amount: 180, recruitedQty: 140, dem_recruited: 140, stocknumber: 40 },
-  { id: 3, mprId: 1044, id_code: "HR-MPR00-1044", loc: "dmc", dem_unit: "VVG0PD03", dept: "Xưởng Cắt", dem_unit_name: "Xưởng Cắt", duty: "Staff", dem_position: "Staff", dem_sub_position: "-", demandQty: 50, dem_amount: 50, recruitedQty: 45, dem_recruited: 45, stocknumber: 5 },
-  { id: 4, mprId: 1045, id_code: "HR-MPR00-1045", loc: "dmc", dem_unit: "VVG0PD04", dept: "Xưởng Cao Su", dem_unit_name: "Xưởng Cao Su", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 60, dem_amount: 60, recruitedQty: 32, dem_recruited: 32, stocknumber: 28 },
-  { id: 5, mprId: 1046, id_code: "HR-MPR00-1046", loc: "tb", dem_unit: "VVG0TB01", dept: "Xưởng Hoàn Thiện", dem_unit_name: "Xưởng Hoàn Thiện", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 110, dem_amount: 110, recruitedQty: 90, dem_recruited: 90, stocknumber: 20 },
-  { id: 6, mprId: 1047, id_code: "HR-MPR00-1047", loc: "tc", dem_unit: "VVG0PDTC01", dept: "Bộ phận QC", dem_unit_name: "Bộ phận QC", duty: "Leader", dem_position: "Leader", dem_sub_position: "-", demandQty: 40, dem_amount: 40, recruitedQty: 35, dem_recruited: 35, stocknumber: 5 },
-  { id: 7, mprId: 1048, id_code: "HR-MPR00-1048", loc: "dmc", dem_unit: "VVG0PD05", dept: "Phòng Kỹ Thuật", dem_unit_name: "Phòng Kỹ Thuật", duty: "Engineer", dem_position: "Engineer", dem_sub_position: "-", demandQty: 15, dem_amount: 15, recruitedQty: 12, dem_recruited: 12, stocknumber: 3 },
-  { id: 8, mprId: 1049, id_code: "HR-MPR00-1049", loc: "dmc", dem_unit: "VVG0PD06", dept: "Phòng Hành Chính Nhân Sự", dem_unit_name: "Phòng Hành Chính Nhân Sự", duty: "Staff (lang)", dem_position: "Staff (lang)", dem_sub_position: "-", demandQty: 10, dem_amount: 10, recruitedQty: 8, dem_recruited: 8, stocknumber: 2 },
+  { id: 1, mprId: 1042, id_code: "HR-MPR00-1042", loc: "aw", dem_unit: "VAW1PD01", dept: "Xưởng May 1", dem_unit_name: "Xưởng May 1", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 200, dem_amount: 200, recruitedQty: 185, dem_recruited: 185, stocknumber: 15 },
+  { id: 2, mprId: 1043, id_code: "HR-MPR00-1043", loc: "aw", dem_unit: "VAW1PD02", dept: "Xưởng May 2", dem_unit_name: "Xưởng May 2", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 180, dem_amount: 180, recruitedQty: 140, dem_recruited: 140, stocknumber: 40 },
+  { id: 3, mprId: 1044, id_code: "HR-MPR00-1044", loc: "aw", dem_unit: "VAW1PD03", dept: "Xưởng Cắt", dem_unit_name: "Xưởng Cắt", duty: "Staff", dem_position: "Staff", dem_sub_position: "-", demandQty: 50, dem_amount: 50, recruitedQty: 45, dem_recruited: 45, stocknumber: 5 },
+  { id: 4, mprId: 1045, id_code: "HR-MPR00-1045", loc: "aw", dem_unit: "VAW1PD04", dept: "Xưởng Cao Su", dem_unit_name: "Xưởng Cao Su", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 60, dem_amount: 60, recruitedQty: 32, dem_recruited: 32, stocknumber: 28 },
+  { id: 5, mprId: 1046, id_code: "HR-MPR00-1046", loc: "aw", dem_unit: "VAW1PD05", dept: "Xưởng Hoàn Thiện", dem_unit_name: "Xưởng Hoàn Thiện", duty: "Worker", dem_position: "Worker", dem_sub_position: "-", demandQty: 110, dem_amount: 110, recruitedQty: 90, dem_recruited: 90, stocknumber: 20 },
+  { id: 6, mprId: 1047, id_code: "HR-MPR00-1047", loc: "aw", dem_unit: "VAW1QC01", dept: "Bộ phận QC", dem_unit_name: "Bộ phận QC", duty: "Leader", dem_position: "Leader", dem_sub_position: "-", demandQty: 40, dem_amount: 40, recruitedQty: 35, dem_recruited: 35, stocknumber: 5 },
+  { id: 7, mprId: 1048, id_code: "HR-MPR00-1048", loc: "aw", dem_unit: "VAW1EN01", dept: "Phòng Kỹ Thuật", dem_unit_name: "Phòng Kỹ Thuật", duty: "Engineer", dem_position: "Engineer", dem_sub_position: "-", demandQty: 15, dem_amount: 15, recruitedQty: 12, dem_recruited: 12, stocknumber: 3 },
+  { id: 8, mprId: 1049, id_code: "HR-MPR00-1049", loc: "aw", dem_unit: "VAW0AD01", dept: "Phòng Hành Chính Nhân Sự", dem_unit_name: "Phòng Hành Chính Nhân Sự", duty: "Staff (lang)", dem_position: "Staff (lang)", dem_sub_position: "-", demandQty: 10, dem_amount: 10, recruitedQty: 8, dem_recruited: 8, stocknumber: 2 },
 ];
 
   // Load demands for demand picker
@@ -1850,7 +1846,7 @@ const FALLBACK_DEMANDS = [
         work_exp_pt: "",
         ex_company: "",
         ex_position: "",
-        loc: "dmc",
+        loc: "aw",
         dept_apply: "",
         loc_apply: "Worker",
         dm_id: "",
@@ -3682,7 +3678,7 @@ const FALLBACK_DEMANDS = [
                                 }
                                 setForm((prev) => ({
                                   ...prev,
-                                  loc: (d.loc === "vg" ? "dmc" : (d.loc || prev.loc || "dmc")).toLowerCase(),
+                                  loc: "aw",
                                   dept_apply: d.dem_dept || prev.dept_apply,
                                   loc_apply: positionName !== "-" ? positionName : prev.loc_apply,
                                   dm_id: mprCode,

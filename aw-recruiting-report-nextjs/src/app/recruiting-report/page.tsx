@@ -68,13 +68,6 @@ interface HierarchyMeta {
   unitByDept: Record<string, string[]>;
 }
 
-const FACTORY_OPTIONS = [
-  { label: "Tất cả", value: "all" },
-  { label: "DMC", value: "dmc" },
-  { label: "TB", value: "tb" },
-  { label: "TC", value: "tc" },
-];
-
 const POSITION_OPTIONS = [
   { key: "all", labelVi: "Tất cả", labelEn: "All", labelCn: "全部" },
   { key: "Worker", labelVi: "Công nhân", labelEn: "Worker", labelCn: "工人" },
@@ -102,7 +95,7 @@ function formatDateDisplay(d?: string) {
 }
 
 function RecruitingReportContent() {
-  const { selectedFactory, setSelectedFactory } = useSession();
+  const { selectedFactory } = useSession();
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
 
@@ -154,7 +147,7 @@ function RecruitingReportContent() {
       const f = overrideFrom ?? fromDate;
       const to = overrideTo ?? toDate;
       const res = await fetch(
-        `/api/recruiting-report?loc=${encodeURIComponent(selectedFactory)}&fromDate=${encodeURIComponent(f)}&toDate=${encodeURIComponent(to)}`
+        `/api/recruiting-report?loc=aw&fromDate=${encodeURIComponent(f)}&toDate=${encodeURIComponent(to)}`
       );
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
@@ -482,32 +475,6 @@ function RecruitingReportContent() {
                 {formatDateDisplay(fromDate)} — {formatDateDisplay(toDate)}
               </p>
             </div>
-          </div>
-
-          {/* Factory Switcher */}
-          <div
-            className="flex items-center bg-zinc-100 dark:bg-[#131316] p-0.5 rounded-md border border-zinc-200 dark:border-[#26262C]"
-            role="radiogroup"
-            aria-label="Chọn nhà máy"
-          >
-            {FACTORY_OPTIONS.map((opt) => {
-              const active = selectedFactory === opt.value;
-              return (
-                <button
-                  key={opt.value}
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => setSelectedFactory(opt.value)}
-                  className={`h-8 px-3 rounded-md font-semibold text-xs inline-flex items-center justify-center transition-colors duration-150 cursor-pointer ${
-                    active
-                      ? "bg-rose-600 text-white shadow-xs font-bold"
-                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-                  }`}
-                >
-                  {opt.value === "all" ? t("all", "Tất cả") : opt.label}
-                </button>
-              );
-            })}
           </div>
 
           {/* Date Range Picker: fromDate ~ toDate */}

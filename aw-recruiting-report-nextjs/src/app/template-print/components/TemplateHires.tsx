@@ -55,7 +55,7 @@ export default function TemplateHires({ candidates, loc, blank = false }: Templa
       }
 
       try {
-        const factory = loc || "all";
+        const factory = loc || "aw";
         const res = await fetch(`/api/candidates?loc=${factory}&limit=100`);
         const json = await res.json();
         if (json.data && Array.isArray(json.data)) {

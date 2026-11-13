@@ -81,19 +81,8 @@ interface CandidateRecord {
   date_dept_review?: string;
 }
 
-const FACTORY_OPTIONS = [
-  { label: "Tất cả", value: "all" },
-  { label: "DMC", value: "dmc" },
-  { label: "TB", value: "tb" },
-  { label: "TC", value: "tc" },
-];
-
 const FACTORY_CARD_RULES: Record<string, { prefix: string; label: string; example: string; hint: string }> = {
   aw: { prefix: "0", label: "AW", example: "050331", hint: "Quy chuẩn AW: 6 chữ số bắt đầu bằng 0 (0xxxxx)" },
-  tb: { prefix: "1", label: "TB", example: "116681", hint: "Quy chuẩn TB: 6 chữ số bắt đầu bằng 1 (1xxxxx)" },
-  tc: { prefix: "A", label: "TC", example: "A00500", hint: "Quy chuẩn TC: Bắt đầu bằng A + 5 chữ số (Axxxxx)" },
-  dmc: { prefix: "0", label: "DMC", example: "050331", hint: "Quy chuẩn DMC: 6 chữ số bắt đầu bằng 0 (0xxxxx)" },
-  vg: { prefix: "0", label: "VG", example: "050331", hint: "Quy chuẩn VG: 6 chữ số bắt đầu bằng 0 (0xxxxx)" },
 };
 
 
@@ -179,15 +168,13 @@ const getCandidatePhotoUrl = (c: CandidateRecord): string | null => {
     return c.photoUrl;
   }
   if (c.empno && c.empno.trim() !== "" && c.empno !== "-") {
-    const rawLoc = (c.loc || "dmc").toLowerCase();
-    const loc = rawLoc === "tb" ? "tb" : rawLoc === "tc" || rawLoc === "vg3" ? "tc" : "dmc";
-    return `/api/epm-photo/${loc}/${encodeURIComponent(c.empno.trim())}`;
+    return `/api/epm-photo/aw/${encodeURIComponent(c.empno.trim())}`;
   }
   return null;
 };
 
 function CandidatesContent() {
-  const { selectedFactory, setSelectedFactory } = useSession();
+  const { selectedFactory } = useSession();
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -205,7 +192,6 @@ function CandidatesContent() {
   const paramDuty = searchParams.get("duty") || searchParams.get("position");
   const paramGender = searchParams.get("gender");
   const paramApplyDp = searchParams.get("applyDp") || searchParams.get("dept");
-  const paramLoc = searchParams.get("loc");
   const paramSource = searchParams.get("source");
   const paramEdu = searchParams.get("edu");
   const paramAgeGroup = searchParams.get("ageGroup");
@@ -244,11 +230,7 @@ function CandidatesContent() {
       setActiveRecruitedOnly(rec);
       setPage(1);
     }
-    if (paramLoc && paramLoc !== selectedFactory) {
-      setSelectedFactory(paramLoc);
-      setPage(1);
-    }
-  }, [searchParams, paramLoc, selectedFactory, setSelectedFactory]);
+  }, [searchParams]);
 
   // Checkbox multi-select states
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -265,8 +247,8 @@ function CandidatesContent() {
   const [suggestedStartEmpno, setSuggestedStartEmpno] = useState<string>("");
   const [eligibleCandidatesForDate, setEligibleCandidatesForDate] = useState<any[]>([]);
 
-  // Quy chuẩn mã thẻ theo xưởng đang chọn (TB: 1, TC: A, DMC/VG: 0)
-  const factoryCardRule = FACTORY_CARD_RULES[selectedFactory?.toLowerCase()] || FACTORY_CARD_RULES.dmc;
+  // Quy chuẩn mã thẻ nhà máy AW (6 chữ số bắt đầu bằng 0)
+  const factoryCardRule = FACTORY_CARD_RULES.aw;
 
   // Kiểm tra cảnh báo nếu mã thẻ bắt đầu không khớp tiền tố quy chuẩn
   const isPrefixMismatch = useMemo(() => {
@@ -307,10 +289,7 @@ function CandidatesContent() {
         ? `&demand_id=${encodeURIComponent(activeDemandId)}`
         : "";
       const recruitedQuery = activeRecruitedOnly ? "&recruited=true" : "";
-      const effectiveLoc = paramLoc || selectedFactory;
-      const res = await fetch(
-        `/api/candidates?loc=${effectiveLoc}&limit=all${demandQuery}${recruitedQuery}`
-      );
+      const res = await fetch(`/api/candidates?loc=aw&limit=all${demandQuery}${recruitedQuery}`);
       const json = await res.json();
       if (json.data) {
         setCandidates(json.data);
@@ -403,10 +382,10 @@ function CandidatesContent() {
     setEmpnoModalLoading(true);
 
     try {
-      const res = await fetch(`/api/candidates/set-empno?loc=${selectedFactory}&actEnDate=${effectiveDate}`);
+      const res = await fetch(`/api/candidates/set-empno?loc=aw&actEnDate=${effectiveDate}`);
       const data = await res.json();
       if (data.success) {
-        const currentRule = FACTORY_CARD_RULES[selectedFactory?.toLowerCase()] || FACTORY_CARD_RULES.dmc;
+        const currentRule = FACTORY_CARD_RULES.aw;
         const defaultEmpno = currentRule.example;
         setCustomEmpno(data.nextSuggestedEmpno || defaultEmpno);
         setSuggestedStartEmpno(data.nextSuggestedEmpno || defaultEmpno);
@@ -425,10 +404,10 @@ function CandidatesContent() {
     if (!newDate) return;
     try {
       setEmpnoModalLoading(true);
-      const res = await fetch(`/api/candidates/set-empno?loc=${selectedFactory}&actEnDate=${newDate}`);
+      const res = await fetch(`/api/candidates/set-empno?loc=aw&actEnDate=${newDate}`);
       const data = await res.json();
       if (data.success) {
-        const currentRule = FACTORY_CARD_RULES[selectedFactory?.toLowerCase()] || FACTORY_CARD_RULES.dmc;
+        const currentRule = FACTORY_CARD_RULES.aw;
         if (!customEmpno) setCustomEmpno(data.nextSuggestedEmpno || currentRule.example);
         setEligibleCandidatesForDate(data.eligibleCandidates || []);
       }
@@ -449,7 +428,7 @@ function CandidatesContent() {
         body: JSON.stringify({
           candidateIds: idsToUpdate,
           actEnDate: actualWorkDate,
-          loc: selectedFactory,
+          loc: "aw",
           customStartEmpno: customEmpno,
         }),
       });
@@ -694,7 +673,7 @@ function CandidatesContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type,
-          loc: selectedFactory,
+          loc: "aw",
           ids: targetIds,
         }),
       });
@@ -769,8 +748,8 @@ function CandidatesContent() {
   const handlePrintBqt = () => {
     const query =
       selectedIds.length > 0
-        ? `ids=${selectedIds.join(",")}&loc=${selectedFactory}`
-        : `loc=${selectedFactory}`;
+        ? `ids=${selectedIds.join(",")}&loc=aw`
+        : `loc=aw`;
     window.open(`/template-print/bqt?${query}`, "_blank");
   };
 
@@ -778,8 +757,8 @@ function CandidatesContent() {
   const handlePrintHires = () => {
     const query =
       selectedIds.length > 0
-        ? `ids=${selectedIds.join(",")}&loc=${selectedFactory}`
-        : `loc=${selectedFactory}`;
+        ? `ids=${selectedIds.join(",")}&loc=aw`
+        : `loc=aw`;
     window.open(`/template-print/hires?${query}`, "_blank");
   };
 
@@ -1147,14 +1126,8 @@ function CandidatesContent() {
     const nowYear = new Date().getFullYear();
 
     return candidates.filter((c) => {
-      // Factory location filter
-      const effectiveLoc = paramLoc || selectedFactory;
-      if (effectiveLoc !== "all") {
-        const rawLoc = (c.loc || "dmc").toLowerCase();
-        const cLoc = rawLoc === "vg" ? "dmc" : rawLoc;
-        const target = effectiveLoc === "vg" ? "dmc" : effectiveLoc.toLowerCase();
-        if (cLoc !== target) return false;
-      }
+      // Single factory location: AW
+      if (c.loc && c.loc.toLowerCase() !== "aw") return false;
 
       // Filter only recruited candidates (already in company, has employee card)
       if (activeRecruitedOnly) {
@@ -1350,17 +1323,10 @@ function CandidatesContent() {
     defaultSort: { key: "id", direction: "desc" },
   });
 
-  // Sync factory location if provided in drill-through URL
-  useEffect(() => {
-    if (paramLoc && (paramLoc === "all" || paramLoc === "dmc" || paramLoc === "tb" || paramLoc === "tc") && paramLoc !== selectedFactory) {
-      setSelectedFactory(paramLoc);
-    }
-  }, [paramLoc]);
-
-  // Reset page to 1 whenever search, factory or Excel filters change
+  // Reset page to 1 whenever search or Excel filters change
   useEffect(() => {
     setPage(1);
-  }, [search, excelFilters, selectedFactory, activeDemandId]);
+  }, [search, excelFilters, activeDemandId]);
 
   // Sync selectAll state when selectedIds or filteredCandidates change
   useEffect(() => {
@@ -1384,7 +1350,7 @@ function CandidatesContent() {
     <div className="w-full h-full flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 lg:p-3 space-y-2 overflow-hidden bg-[#eaedf0] dark:bg-[#121214] text-zinc-900 dark:text-[#F1F2F4] transition-colors duration-200">
       {/* Top Cockpit Toolbar: App Bar (Fidelity to pages/index.vue v-app-bar) */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 bg-[#f1f3f6] dark:bg-[#18181C] border border-[#d8dce2] dark:border-[#26262C] rounded-lg p-2 sm:px-3 sm:py-2 shadow-xs transition-colors duration-200">
-        {/* Left: Title & Factory Location Radio Selector */}
+        {/* Left: Title */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-md bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
@@ -1395,35 +1361,6 @@ function CandidatesContent() {
                 {t("candidateListing", "Danh Sách Ứng Viên Tuyển Dụng")}
               </h1>
             </div>
-          </div>
-
-          {/* Location Radio Switcher (Direct equivalent to v-radio-group in pages/index.vue) */}
-          <div
-            className="flex items-center bg-zinc-100 dark:bg-[#131316] p-0.5 rounded-md border border-zinc-200 dark:border-[#26262C]"
-            role="radiogroup"
-            aria-label="Chọn Bp. duyệt tuyển dụng"
-          >
-            {FACTORY_OPTIONS.map((opt) => {
-              const active = selectedFactory === opt.value;
-              return (
-                <button
-                  key={opt.value}
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => {
-                    setSelectedFactory(opt.value);
-                    setPage(1);
-                  }}
-                  className={`h-9 px-3.5 rounded-md font-semibold text-xs inline-flex items-center justify-center transition-colors duration-150 active:scale-[0.97] ${
-                    active
-                      ? "bg-rose-600 text-white shadow-xs font-bold"
-                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-                  }`}
-                >
-                  {opt.value === "all" ? t("all", "Tất cả") : opt.label}
-                </button>
-              );
-            })}
           </div>
         </div>
 
@@ -1559,7 +1496,7 @@ function CandidatesContent() {
           </div>
           <button
             onClick={() => {
-              window.location.href = `/candidates?loc=${selectedFactory}`;
+              window.location.href = "/candidates";
             }}
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white dark:bg-zinc-800 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950 transition-colors shadow-2xs cursor-pointer"
           >
@@ -2616,7 +2553,7 @@ function CandidatesContent() {
             {/* Modal Footer */}
             <div className="px-5 py-3 border-t border-zinc-200 dark:border-[#26262C] bg-zinc-50 dark:bg-[#131316] flex items-center justify-between">
               <span className="text-xs text-zinc-500">
-                Nhà máy: <strong className="uppercase font-bold text-zinc-800 dark:text-zinc-200">{selectedFactory}</strong>
+                Nhà máy: <strong className="uppercase font-bold text-zinc-800 dark:text-zinc-200">AW</strong>
               </span>
 
               <div className="flex items-center gap-2">

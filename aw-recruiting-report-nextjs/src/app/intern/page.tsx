@@ -234,7 +234,7 @@ export default function InternPage() {
   const fetchInterns = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/intern?loc=${selectedFactory}`);
+      const res = await fetch("/api/intern?loc=aw");
       const json = await res.json();
       if (json.success && json.data) {
         setInterns(json.data);

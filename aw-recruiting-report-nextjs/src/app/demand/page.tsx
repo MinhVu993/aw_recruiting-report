@@ -81,7 +81,7 @@ const POSITION_FILTERS = [
 ];
 
 function DemandContent() {
-  const { selectedFactory, setSelectedFactory } = useSession();
+  const { selectedFactory } = useSession();
   const { t, locale } = useTranslation();
   const { showError, showSuccess, showConfirm } = useDialog();
   const searchParams = useSearchParams();
@@ -90,7 +90,6 @@ function DemandContent() {
   const paramIdCode = searchParams.get("idCode") || searchParams.get("demand_id");
   const paramPos = searchParams.get("pos") || searchParams.get("position");
   const paramDept = searchParams.get("dept");
-  const paramLoc = searchParams.get("loc");
 
   // Helper to map unit name according to selected header language (VI / EN / CN)
   const getUnitName = (item: DemandItem) => {
@@ -153,7 +152,7 @@ function DemandContent() {
   // Form inputs for Edit
   const [formData, setFormData] = useState({
     id_code: "",
-    loc: "dmc",
+    loc: "aw",
     dept: "",
     dem_unit: "",
     dem_position: "Worker",
@@ -167,7 +166,7 @@ function DemandContent() {
   const fetchDemands = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/demand?loc=${selectedFactory}`);
+      const res = await fetch("/api/demand?loc=aw");
       const json = await res.json();
       if (json.data) {
         const mapped = json.data.map((d: any) => {
@@ -313,11 +312,8 @@ function DemandContent() {
     defaultSort: { key: "key_in", direction: "desc" },
   });
 
-  // Sync drill-through search parameters from Dashboard
+  // Sync drill-through search parameters if passed
   useEffect(() => {
-    if (paramLoc && paramLoc !== selectedFactory && (paramLoc === "all" || paramLoc === "dmc" || paramLoc === "tb" || paramLoc === "tc")) {
-      setSelectedFactory(paramLoc);
-    }
     if (paramIdCode) {
       setSearch(paramIdCode);
     } else if (paramDept) {
@@ -381,8 +377,8 @@ function DemandContent() {
   // Open Create Modal
   const handleOpenCreate = () => {
     setEditingItem(null);
-    const initialLoc = selectedFactory === "all" ? "dmc" : selectedFactory;
-    const initialUnit = initialLoc === "tc" ? "VVG0PDTC" : initialLoc === "tb" ? "VVG0TB01" : "VVG0PD01";
+    const initialLoc = "aw";
+    const initialUnit = "VAW1PD01";
     setFormData({
       id_code: `MPR-${new Date().getFullYear()}-${String(demands.length + 1).padStart(3, "0")}`,
       loc: initialLoc,
@@ -652,31 +648,8 @@ function DemandContent() {
             </div>
           </div>
 
-          {/* Right: Factory pills, Search, Column setting, Refresh, Add */}
+          {/* Right: Search, Column setting, Refresh, Add */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Factory Filter Pills */}
-            <div className="flex items-center bg-white dark:bg-[#131316] p-0.5 rounded-md border border-[#d8dce2] dark:border-[#26262C] text-xs">
-              {["all", "dmc", "tb", "tc"].map((loc) => {
-                const isSelected = selectedFactory === loc;
-                return (
-                  <button
-                    key={loc}
-                    onClick={() => {
-                      setSelectedFactory(loc);
-                      setPage(1);
-                    }}
-                    className={`h-7 px-2.5 rounded text-xs font-semibold uppercase inline-flex items-center justify-center transition-colors duration-150 active:scale-[0.97] ${
-                      isSelected
-                        ? "bg-sky-600 text-white shadow-xs font-bold"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                    }`}
-                  >
-                    {loc === "all" ? t("all", "Tất cả") : loc.toUpperCase()}
-                  </button>
-                );
-              })}
-            </div>
-
             {/* Search Input */}
             <div className="relative">
               <input
@@ -1540,9 +1513,7 @@ function DemandContent() {
                     onChange={(e) => setFormData({ ...formData, loc: e.target.value })}
                     className="w-full h-8 px-2.5 rounded-md bg-white dark:bg-[#131316] border border-[#d8dce2] dark:border-[#26262C] text-xs font-bold focus:outline-none focus:ring-1 focus:ring-sky-500 uppercase"
                   >
-                    <option value="dmc">DMC (Đông Mỹ Cự)</option>
-                    <option value="tb">TB (Trảng Bàng)</option>
-                    <option value="tc">TC (Tiền Châu)</option>
+                    <option value="aw">AW</option>
                   </select>
                 </div>
               </div>
@@ -1561,7 +1532,7 @@ function DemandContent() {
                       const newLoc = getDemandLoc(val);
                       setFormData({ ...formData, dem_unit: val, loc: newLoc });
                     }}
-                    placeholder="VD: VVG0PDTC"
+                    placeholder="VD: VAW1QCQC06"
                     className="w-full h-8 px-2.5 rounded-md bg-white dark:bg-[#131316] border border-[#d8dce2] dark:border-[#26262C] text-xs tabular-nums focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
                 </div>

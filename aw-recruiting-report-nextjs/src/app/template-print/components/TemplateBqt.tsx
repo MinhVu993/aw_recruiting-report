@@ -114,7 +114,7 @@ export default function TemplateBqt({ candidates, loc, blank = false }: Template
     // Otherwise fetch candidates needing BQT
     const fetchBqtCandidates = async () => {
       try {
-        const factory = loc || "dmc";
+        const factory = loc || "aw";
         const res = await fetch(`/api/candidates?bqt=true&loc=${factory}&limit=100`);
         const json = await res.json();
         if (json.data && Array.isArray(json.data)) {

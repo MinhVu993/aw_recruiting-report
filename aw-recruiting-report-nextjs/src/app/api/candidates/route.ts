@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status")?.trim() || "1";
     const fromDate = searchParams.get("fromDate")?.trim() || "";
     const toDate = searchParams.get("toDate")?.trim() || "";
-    const loc = searchParams.get("loc")?.trim() || "aw";
+    // Single factory mode: always 'aw'
+    const loc = "aw";
 
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
     const isAll = searchParams.get("limit") === "all";
@@ -115,9 +116,7 @@ export async function POST(request: NextRequest) {
 
     const data: any = { ...rest };
 
-    if (!data.loc) {
-      data.loc = "aw";
-    }
+    data.loc = "aw";
     if (data.status === undefined || data.status === null) {
       data.status = "1";
     } else {
