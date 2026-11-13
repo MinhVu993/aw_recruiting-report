@@ -202,6 +202,7 @@ function DemandContent() {
             dem_fullfilldate: d.dem_fullfilldate || d.demFullfilldate || "",
             dem_note: d.dem_note || d.demNote || "",
             loc: getDemandLoc(d.dem_unit || d.demUnit),
+            dem_candidates: cList,
             candidates_count: cList.length,
           };
         });
@@ -461,15 +462,16 @@ function DemandContent() {
 
   // Open Candidates Dialog
   const handleShowCandidates = (item: DemandItem) => {
+    const rawCands = item.dem_candidates ?? (item as any).demCandidates;
     let cList: CandidateRecord[] = [];
-    if (typeof item.dem_candidates === "string") {
+    if (typeof rawCands === "string") {
       try {
-        cList = JSON.parse(item.dem_candidates);
+        cList = JSON.parse(rawCands);
       } catch (e) {
         cList = [];
       }
-    } else if (Array.isArray(item.dem_candidates)) {
-      cList = item.dem_candidates;
+    } else if (Array.isArray(rawCands)) {
+      cList = rawCands;
     }
     setActiveCandidatesList(cList);
     setActiveCandTitle(`${item.id_code} - ${getUnitName(item)} (${item.dem_position})`);
