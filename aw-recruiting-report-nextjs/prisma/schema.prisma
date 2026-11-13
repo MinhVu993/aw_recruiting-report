@@ -1,0 +1,245 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EmployeeInfo {
+  id              Int       @id @default(autoincrement())
+  keyInDate       String?   @map("key_in_date") @db.Text
+  candidateName   String?   @map("candidate_name") @db.Text
+  dateOfBirth     String?   @map("dateofbirth") @db.Text
+  gender          String?   @db.Text
+  empId           String?   @map("emp_id") @db.Text
+  email           String?   @db.Text
+  position        String?   @db.Text
+  subPosition     String?   @map("sub_position") @db.Text
+  applyDp         String?   @map("apply_dp") @db.Text
+  hrIvDate        String?   @map("hr_iv_date") @db.Text
+  hrAcDate        String?   @map("hr_ac_date") @db.Text
+  dpIvDate        String?   @map("dp_iv_date") @db.Text
+  dpAcDate        String?   @map("dp_ac_date") @db.Text
+  hrAcQu          String?   @default("no") @map("hr_ac_qu") @db.Text
+  dpAcQu          String?   @default("no") @map("dp_ac_qu") @db.Text
+  reg             String?   @default("no") @db.Text
+  exEnDate        String?   @default("no") @map("ex_en_date") @db.Text
+  actEnDate       String?   @default("no") @map("act_en_date") @db.Text
+  recruSource     String?   @default("no") @map("recru_source") @db.Text
+  jobContent      String?   @default("no") @map("job_content") @db.Text
+  brouComBus      String?   @default("no") @map("brou_com_bus") @db.Text
+  regedForBus     String?   @default("no") @map("regedForBus") @db.Text
+  vgWorkTimes     String?   @default("0") @map("vg_work_times") @db.Text
+  oldEmpno        String?   @map("old_empno") @db.Text
+  reVgFrom        String?   @map("re_vg_from") @db.Text
+  cvReceivedAt    String?   @map("cv_received_at") @db.Text
+  salarySignedAt  String?   @map("salary_signed_at") @db.Text
+  note            String?   @db.Text
+  school          String?   @db.Text
+  empDemandid     String?   @map("emp_demandid") @db.Text
+  userInput       String?   @map("user_input") @db.Text
+  userUpdate      String?   @map("user_update") @db.Text
+  regTel          String?   @map("regTel") @db.Text
+  regAddress      String?   @map("regAddress") @db.Text
+  commTel         String?   @map("commTel") @db.Text
+  commAddress     String?   @map("commAddress") @db.Text
+  national        String?   @db.Text
+  newEmpno        String?   @map("newEmpno") @db.Text
+  tmpIdyclass     String?   @map("tmp_idyclass") @db.Text
+  tmpDepartid     String?   @map("tmp_departid") @db.Text
+  tmpDutyid       String?   @map("tmp_dutyid") @db.Text
+  ethnic          String?   @db.Text
+  tmpCategoryid   String?   @map("tmp_categoryid") @db.Text
+  tmpLevelid      String?   @map("tmp_levelid") @db.Text
+  tmpRankid       String?   @map("tmp_rankid") @db.Text
+  tmpSiteid       String?   @map("tmp_siteid") @db.Text
+  tmpWorkareaid   String?   @map("tmp_workareaid") @db.Text
+  isdirect        String?   @db.Text
+  countryid       String?   @db.Text
+  marrage         String?   @db.Text
+  birthProvince   String?   @map("birth_province") @db.Text
+  province        String?   @db.Text
+  edu             String?   @db.Text
+  probation       String?   @db.Text
+  busInfo         String?   @map("bus_info") @db.Text
+  datecccd        String?   @db.Text
+  reason          String?   @db.Text
+  changeEnDate    String?   @map("change_en_date") @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+  status          String    @default("1") @db.Text
+  loc             String    @default("aw") @db.Text
+
+  @@index([empId], name: "idx_employee_info_emp_id")
+  @@index([newEmpno], name: "idx_employee_info_new_empno")
+  @@index([empDemandid, reg], name: "idx_employee_info_demand_reg")
+  @@index([tmpDepartid], name: "idx_employee_info_tmp_departid")
+  @@index([loc, status, createdAt], name: "idx_employee_info_loc_status_created")
+  @@map("employee_info")
+}
+
+model DemandData {
+  id               Int       @id @default(autoincrement())
+  demId            String?   @unique @map("dem_id") @db.Text
+  demDept          String    @map("dem_dept") @db.Text
+  demSubDepartment String?   @map("dem_sub_department") @db.Text
+  demUnit          String?   @map("dem_unit") @db.Text
+  demPosition      String    @map("dem_position") @db.Text
+  demSubPosition   String?   @map("dem_sub_position") @db.Text
+  demAmount        Int       @default(0) @map("dem_amount")
+  demInputdate     String    @map("dem_inputdate") @db.Text
+  demRecruited     Int?      @default(0) @map("dem_recruited")
+  demFulfilled     String    @default("no") @map("dem_fulfilled") @db.Text
+  demFullfilldate  String?   @map("dem_fullfilldate") @db.Text
+  stocknumber      Int?      @default(0)
+  demNote          String?   @map("dem_note") @db.Text
+  demCandidates    Json?     @default("[]") @map("dem_candidates")
+  demPauseStartAt  String?   @map("dem_pause_start_at") @db.Text
+  demPauseEndAt    String?   @map("dem_pause_end_at") @db.Text
+  demCancelDate    String?   @map("dem_cancel_date") @db.Text
+  userInput        String?   @map("user_input") @db.Text
+  userUpdate       String?   @map("user_update") @db.Text
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([demId], name: "idx_demand_dem_id")
+  @@index([demDept], name: "idx_demand_dept")
+  @@index([demUnit], name: "idx_demand_unit")
+  @@index([demPosition], name: "idx_demand_position")
+  @@map("demand_data")
+}
+
+model AwDept {
+  id            Int       @id @default(autoincrement())
+  department    String    @db.Text
+  mainGroup     String?   @map("main_group") @db.Text
+  subDepartment String    @map("sub_department") @db.Text
+  subDivision   String    @map("sub_division") @db.Text
+  name          Json      @default("{}")
+  startDate     DateTime? @map("start_date") @db.Date
+  endDate       DateTime? @map("end_date") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([subDivision], name: "idx_aw_dept_sub_division")
+  @@index([department], name: "idx_aw_dept_department")
+  @@map("aw_dept")
+}
+
+model AwDeptCode {
+  id        Int       @id @default(autoincrement())
+  deptCode  String    @map("dept_code") @db.Text
+  name      Json      @default("{}")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([deptCode], name: "idx_aw_dept_code_dept_code")
+  @@map("aw_dept_code")
+}
+
+model ResignData {
+  id            Int       @id @default(autoincrement())
+  erEmpid       String    @map("er_empid") @db.Text
+  erIndate      DateTime  @map("er_indate") @db.Date
+  erNumberid    String    @map("er_numberid") @db.Text
+  erName        String    @map("er_name") @db.Text
+  erDeptid      String    @map("er_deptid") @db.Text
+  erDeptname    String    @map("er_deptname") @db.Text
+  erJoblevel    String    @map("er_joblevel") @db.Text
+  erAge         Int       @map("er_age")
+  erSeniority   Int       @map("er_seniority")
+  erBus         String    @map("er_bus") @db.Text
+  erGender      String    @map("er_gender") @db.Text
+  erHometown    String    @map("er_hometown") @db.Text
+  erAddress     String    @map("er_address") @db.Text
+  erReason      String    @map("er_reason") @db.Text
+  erNote        String?   @map("er_note") @db.Text
+  erKeyindate   DateTime  @map("er_keyindate") @db.Date
+  erResigndate  DateTime  @map("er_resigndate") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([erResigndate], name: "idx_resign_resigndate")
+  @@index([erDeptid], name: "idx_resign_deptid")
+  @@index([erNumberid], name: "idx_resign_numberid")
+  @@map("resign_data")
+}
+
+model InternData {
+  id             Int       @id @default(autoincrement())
+  inEmpid        String    @map("in_empid") @db.Text
+  inName         String    @map("in_name") @db.Text
+  inDeptcode     Int       @map("in_deptcode")
+  inSchool       String    @map("in_school") @db.Text
+  inEdulv        String    @map("in_edulv") @db.Text
+  inMajor        String    @map("in_major") @db.Text
+  inStartdate    DateTime? @map("in_startdate") @db.Date
+  inEnddate      DateTime? @map("in_enddate") @db.Date
+  inAllowance    String    @map("in_allowance") @db.Text
+  inBus          String    @map("in_bus") @db.Text
+  inRectype      String    @map("in_rectype") @db.Text
+  inWorkingtime  String    @map("in_workingtime") @db.Text
+  inNote         String?   @map("in_note") @db.Text
+  inPhoto        String?   @map("in_photo") @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("intern_data")
+}
+
+model BirthProvince {
+  id           Int    @id @default(autoincrement())
+  provinceNo   String @map("province_no") @db.Text
+  provinceName String @map("province_name") @db.Text
+
+  @@map("birth_province")
+}
+
+model DutyHrm {
+  id       Int    @id @default(autoincrement())
+  dutyNo   String @map("duty_no") @db.Text
+  dutyName Json?  @map("duty_name")
+
+  @@map("duty_hrm")
+}
+
+model EduHrm {
+  id      Int    @id @default(autoincrement())
+  eduNo   String @map("edu_no") @db.Text
+  eduName String @map("edu_name") @db.Text
+
+  @@map("edu_hrm")
+}
+
+model NationHrm {
+  id         Int     @id @default(autoincrement())
+  nationCode String  @map("nation_code") @db.Text
+  nationName String? @map("nation_name") @db.Text
+
+  @@map("nation_hrm")
+}
+
+model ReasonResign {
+  id     Int  @id @default(autoincrement())
+  reason Json
+
+  @@map("reason_resign")
+}
+
+model SourceRecruit {
+  id        Int       @id @default(autoincrement())
+  source    Json
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("source_recruit")
+}
+
+model JobLevelTbl {
+  id      Int    @id @default(autoincrement())
+  jobCode String @map("job_code") @db.Text
+
+  @@map("job_level_tbl")
+}
