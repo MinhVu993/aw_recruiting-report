@@ -391,8 +391,8 @@ function CandidateFormContent() {
     married: "0",
     nation: "VN",
     nationality: "Việt Nam",
-    birth_province: "T01",
-    province: "T01",
+    birth_province: "H10",
+    province: "H10",
   });
 
   const [saving, setSaving] = useState(false);
@@ -1190,7 +1190,7 @@ const FALLBACK_DEMANDS = [
         const parsed = parseCccdQrData(trimmed);
         if (parsed && parsed.cccd && parsed.fullName) {
           // Tự động nhận diện Tỉnh / TP nơi sinh & cư trú từ địa chỉ quét CCCD
-          let detectedProvinceCode = "T01"; // Mặc định Tây Ninh
+          let detectedProvinceCode = "H10"; // Mặc định TP.Hồ Chí Minh
           const addrLower = (parsed.address || "").toLowerCase();
           if (hrmOptions.provinces && hrmOptions.provinces.length > 0) {
             const foundProv = hrmOptions.provinces.find((p) => {
@@ -1802,8 +1802,8 @@ const FALLBACK_DEMANDS = [
         married: "0",
         nation: "VN",
         nationality: "Việt Nam",
-        birth_province: "T01",
-        province: "T01",
+        birth_province: "H10",
+        province: "H10",
       });
       setHistoryResult(null);
       setShowAllHrmDepts(false);
