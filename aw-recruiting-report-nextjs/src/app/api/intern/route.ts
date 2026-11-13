@@ -65,10 +65,51 @@ export async function GET(request: NextRequest) {
       deptMap.set(d.deptCode, d.name);
     }
 
-    const data = interns.map((item) => ({
-      ...item,
-      deptName: deptMap.get(String(item.inDeptcode)) || null,
-    }));
+    const formatDateOnly = (d: Date | string | null | undefined) => {
+      if (!d) return "";
+      if (d instanceof Date) return d.toISOString().split("T")[0];
+      return String(d).split("T")[0];
+    };
+
+    const isYesFlag = (v: unknown) => {
+      if (v === true || v === 1) return true;
+      const s = String(v ?? "").trim().toLowerCase();
+      return s === "yes" || s === "true" || s === "1";
+    };
+
+    const data = interns.map((item) => {
+      const rawDeptName = deptMap.get(String(item.inDeptcode));
+      const resolvedDeptName =
+        rawDeptName && typeof rawDeptName === "object"
+          ? rawDeptName.vi || rawDeptName.en || rawDeptName.cn || String(item.inDeptcode)
+          : rawDeptName
+          ? String(rawDeptName)
+          : String(item.inDeptcode || "");
+
+      const endDateStr = formatDateOnly(item.inEnddate);
+      const isCompleted = Boolean(item.inEnddate && item.inEnddate < now);
+
+      return {
+        ...item,
+        empId: item.inEmpid || "",
+        studentName: item.inName || "",
+        deptCode: item.inDeptcode ?? null,
+        deptName: resolvedDeptName,
+        school: item.inSchool || "",
+        educationLevel: item.inEdulv || "",
+        major: item.inMajor || "",
+        startDate: formatDateOnly(item.inStartdate),
+        endDate: endDateStr,
+        allowance: isYesFlag(item.inAllowance),
+        bus: isYesFlag(item.inBus),
+        recruitType: item.inRectype || "",
+        workingTime: item.inWorkingtime || "",
+        notes: item.inNote || "",
+        photoUrl: item.inPhoto || null,
+        loc: "aw",
+        status: isCompleted ? "completed" : "active",
+      };
+    });
 
     return NextResponse.json({
       success: true,
