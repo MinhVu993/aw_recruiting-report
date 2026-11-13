@@ -3,12 +3,14 @@ import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-]);
+const MIME_TO_EXT: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+};
+
+const ALLOWED_MIME_TYPES = new Set(Object.keys(MIME_TO_EXT));
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -44,9 +46,8 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Generate safe unique filename
-    const ext = path.extname(file.name) || (file.type === "image/png" ? ".png" : ".jpg");
-    const safeExt = ext.toLowerCase().replace(/[^a-z0-9.]/g, "");
+    // Map validated MIME types directly to an explicit extension dictionary
+    const safeExt = MIME_TO_EXT[file.type] || ".jpg";
     const randomHex = crypto.randomBytes(16).toString("hex");
     const fileName = `${Date.now()}-${randomHex}${safeExt}`;
 

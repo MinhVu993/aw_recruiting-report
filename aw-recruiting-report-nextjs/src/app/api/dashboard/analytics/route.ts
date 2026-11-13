@@ -4,12 +4,19 @@ import { prisma } from "@/lib/prisma";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const fromDate = searchParams.get("fromDate")?.trim() || "";
-    const toDate = searchParams.get("toDate")?.trim() || "";
+    let fromDate = searchParams.get("fromDate")?.trim() || "";
+    let toDate = searchParams.get("toDate")?.trim() || "";
     const factory = searchParams.get("factory")?.trim() || "aw";
     const division = searchParams.get("division")?.trim() || "";
     const department = searchParams.get("department")?.trim() || "";
     const position = searchParams.get("position")?.trim() || "";
+
+    // Default to start and end of current year if omitted to guard heap
+    const currentYear = new Date().getFullYear();
+    if (!fromDate && !toDate) {
+      fromDate = `${currentYear}-01-01`;
+      toDate = `${currentYear}-12-31`;
+    }
 
     // Build conditions for demands
     const demandWhere: any = {};
@@ -53,10 +60,13 @@ export async function GET(request: NextRequest) {
       if (toDate) resignWhere.erResigndate.lte = new Date(toDate);
     }
 
+    const MAX_QUERY_LIMIT = 10000;
+
     // Parallel fetch demands, candidates, resignations, awDepts
     const [demands, candidates, resignations, awDepts, reasonMasters] = await Promise.all([
       prisma.demandData.findMany({
         where: demandWhere,
+        take: MAX_QUERY_LIMIT,
         select: {
           demId: true,
           demDept: true,
@@ -68,6 +78,7 @@ export async function GET(request: NextRequest) {
       }),
       prisma.employeeInfo.findMany({
         where: candWhere,
+        take: MAX_QUERY_LIMIT,
         select: {
           id: true,
           candidateName: true,
@@ -85,6 +96,7 @@ export async function GET(request: NextRequest) {
       }),
       prisma.resignData.findMany({
         where: resignWhere,
+        take: MAX_QUERY_LIMIT,
         select: {
           id: true,
           erDeptid: true,
@@ -225,7 +237,6 @@ export async function GET(request: NextRequest) {
     const departmentFunnel = Array.from(deptFunnelMap.values());
 
     // Age Distribution Series (from candidates dateOfBirth)
-    const currentYear = new Date().getFullYear();
     const ageDistribution = [
       { range: "18-24", count: 0 },
       { range: "25-34", count: 0 },
