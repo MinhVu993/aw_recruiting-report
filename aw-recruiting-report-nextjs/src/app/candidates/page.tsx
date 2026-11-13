@@ -1562,6 +1562,19 @@ function CandidatesContent() {
                   />
                 </th>
 
+                {/* 3.5. Mã đơn (Demand ID) */}
+                <th className="py-2 px-2.5">
+                  <ExcelColumnFilter
+                    title={t("demandCode", "Mã đơn")}
+                    columnKey="empDemandid"
+                    distinctValues={getDistinctValues("empDemandid")}
+                    selectedValues={excelFilters["empDemandid"]}
+                    onFilterChange={(v) => setFilter("empDemandid", v)}
+                    sortDirection={sortConfig?.key === "empDemandid" ? sortConfig.direction : null}
+                    onSortChange={(dir) => setSort("empDemandid", dir)}
+                  />
+                </th>
+
                 {/* 4. Họ và tên (Name) */}
                 <th className="py-2 px-3">
                   <ExcelColumnFilter
@@ -1804,6 +1817,11 @@ function CandidatesContent() {
                       {/* 3. Key In Date (Cố định, không chỉnh sửa) */}
                       <td className="py-1.5 px-2.5 text-zinc-600 dark:text-zinc-400 tabular-nums text-xs">
                         {c.keyInDate ? formatDate(c.keyInDate) : "-"}
+                      </td>
+
+                      {/* 3.5. Mã đơn (Demand ID) */}
+                      <td className="py-1.5 px-2.5 tabular-nums text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                        {c.empDemandid && c.empDemandid !== "no" ? c.empDemandid : "-"}
                       </td>
 
                       {/* 4. Candidate Name (Link to Profile/Edit) */}
