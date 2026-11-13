@@ -3064,7 +3064,7 @@ const FALLBACK_DEMANDS = [
           }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3"
         >
-          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-[92vw] max-w-[1320px] min-h-[340px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl">
+          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-[97vw] max-w-none min-h-[420px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-[#26262C] shrink-0">
               <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-amber-500">
@@ -3340,7 +3340,7 @@ const FALLBACK_DEMANDS = [
                           <td className="py-2.5 px-3">
                             {d.dem_note ? (
                               <span
-                                className="inline-block max-w-[220px] truncate px-2.5 py-0.5 rounded text-[11px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800"
+                                className="inline-block max-w-[420px] truncate px-2.5 py-0.5 rounded text-[11px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800"
                                 title={d.dem_note}
                               >
                                 {d.dem_note}
