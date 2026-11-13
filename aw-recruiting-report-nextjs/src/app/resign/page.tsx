@@ -2448,7 +2448,7 @@ function ResignContent() {
                     >
                       {[
                         { value: "dmc", label: "DMC", title: "DMC (Đông Mỹ Cự)" },
-                        { value: "tb", label: "TB", title: "TB (Thái Bình)" },
+                        { value: "tb", label: "TB", title: "TB (Trảng Bàng)" },
                         { value: "tc", label: "TC", title: "TC (Tiền Châu)" },
                       ].map((item) => {
                         const active = form.loc === item.value;

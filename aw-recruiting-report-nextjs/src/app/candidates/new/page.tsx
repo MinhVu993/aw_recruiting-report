@@ -53,7 +53,7 @@ import { AppDialog, DialogOptions } from "@/components/ui/AppDialog";
 // Master data lists matching legacy create-candidate.vue
 const LOC_OPTIONS = [
   { value: "dmc", label: "DMC (Đông Mỹ Cự)" },
-  { value: "tb", label: "TB (Thái Bình)" },
+  { value: "tb", label: "TB (Trảng Bàng)" },
   { value: "tc", label: "TC (Tiền Châu)" },
 ];
 
@@ -1087,7 +1087,7 @@ const FALLBACK_DEMANDS = [
         })
           .then((r) => r.json())
           .catch(() => null),
-        fetch("/api/vg-recuitingReport/GetDataByCCCDResign", {
+        fetch("/api/aw-recuitingReport/GetDataByCCCDResign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ cccd: normalized, emp_id_old: normalizedOld }),
@@ -1489,7 +1489,7 @@ const FALLBACK_DEMANDS = [
       // 1. Fetch resign_data theo đúng cccd và emp_id_old
       const queryOldCccd = form.emp_id_old?.trim();
       promises.push(
-        fetch("/api/vg-recuitingReport/GetDataByCCCDResign", {
+        fetch("/api/aw-recuitingReport/GetDataByCCCDResign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ cccd: queryCccd, emp_id_old: queryOldCccd, empno: queryEmpno }),

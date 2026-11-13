@@ -45,7 +45,7 @@ export default function Template3({ candidates }: Template3Props) {
 
             let resignInfo: any = null;
             try {
-              const res = await fetch("/api/vg-recuitingReport/GetDataByCCCDResign", {
+              const res = await fetch("/api/aw-recuitingReport/GetDataByCCCDResign", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ emp_id: cccd || oldId }),
@@ -62,7 +62,7 @@ export default function Template3({ candidates }: Template3Props) {
 
             let times = 1;
             try {
-              const resTimes = await fetch(`/api/vg-recuitingReport/checkCccd/${cccd || oldId}`);
+              const resTimes = await fetch(`/api/aw-recuitingReport/checkCccd/${cccd || oldId}`);
               const jsonTimes = await resTimes.json();
               if (jsonTimes.count) times = jsonTimes.count;
             } catch (e) {}

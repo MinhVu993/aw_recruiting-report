@@ -1541,7 +1541,7 @@ function DemandContent() {
                     className="w-full h-8 px-2.5 rounded-md bg-white dark:bg-[#131316] border border-[#d8dce2] dark:border-[#26262C] text-xs font-bold focus:outline-none focus:ring-1 focus:ring-sky-500 uppercase"
                   >
                     <option value="dmc">DMC (Đông Mỹ Cự)</option>
-                    <option value="tb">TB (Thái Bình)</option>
+                    <option value="tb">TB (Trảng Bàng)</option>
                     <option value="tc">TC (Tiền Châu)</option>
                   </select>
                 </div>

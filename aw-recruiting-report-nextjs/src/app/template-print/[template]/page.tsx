@@ -47,7 +47,7 @@ function TemplatePrintContent({ template }: { template: string }) {
       const idList = idsParam.split(",").map((s) => s.trim()).filter(Boolean);
       try {
         // Fast batch fetch
-        const res = await fetch(`/api/vg-recuitingReport/getDataById/${idList.join(",")}`);
+        const res = await fetch(`/api/aw-recuitingReport/getDataById/${idList.join(",")}`);
         if (res.ok) {
           const json = await res.json();
           const list = Array.isArray(json) ? json : json?.id ? [json] : [];
@@ -57,7 +57,7 @@ function TemplatePrintContent({ template }: { template: string }) {
           const responses = await Promise.all(
             idList.map(async (id) => {
               try {
-                const r = await fetch(`/api/vg-recuitingReport/getDataById/${id}`);
+                const r = await fetch(`/api/aw-recuitingReport/getDataById/${id}`);
                 return r.ok ? await r.json() : null;
               } catch {
                 return null;

@@ -32,7 +32,7 @@ function ApplicationContent() {
         const idList = idsParam.split(",").map((s) => s.trim()).filter(Boolean);
         const resList = await Promise.all(
           idList.map(async (id) => {
-            const r = await fetch(`/api/vg-recuitingReport/getDataById/${id}`);
+            const r = await fetch(`/api/aw-recuitingReport/getDataById/${id}`);
             return r.ok ? await r.json() : null;
           })
         );
