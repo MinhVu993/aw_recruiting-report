@@ -3,13 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  FileText,
   Printer,
-  Users,
-  Building2,
-  Calendar,
-  Sparkles,
-  Layers,
   ArrowRight,
   Clock,
   Briefcase,
@@ -22,7 +16,7 @@ interface PrintTemplateItem {
   titleVi: string;
   titleCn: string;
   description: string;
-  category: "candidate" | "hr_list" | "form";
+  category: "hr_list";
   icon: any;
   color: string;
   blankUrl: string;
@@ -40,78 +34,6 @@ const TEMPLATES: PrintTemplateItem[] = [
     icon: Clock,
     color: "from-rose-500 to-red-600",
     blankUrl: "/print/unswiped",
-  },
-  {
-    key: "5",
-    code: "ADHR02-SP001-03",
-    titleVi: "Mẫu Đơn Xin Việc (Cán bộ / Nhân viên / Kỹ sư)",
-    titleCn: "應徵職位申請表 (非工人)",
-    description:
-      "Biểu mẫu ứng tuyển chính thức 2 trang chuẩn A4 dành cho ứng viên khối văn phòng, chuyên viên, kỹ sư và cán bộ quản lý.",
-    category: "form",
-    icon: FileText,
-    color: "from-blue-500 to-indigo-600",
-    blankUrl: "/template-print/5",
-  },
-  {
-    key: "2-cn",
-    code: "ADHR02-SP001-09",
-    titleVi: "Bảng Tuyển Chọn Phỏng Vấn (Công Nhân)",
-    titleCn: "甄選紀錄表 (工人)",
-    description:
-      "Phiếu đánh giá phỏng vấn và phê duyệt tuyển dụng dành cho công nhân xưởng sản xuất.",
-    category: "candidate",
-    icon: Layers,
-    color: "from-teal-500 to-emerald-600",
-    blankUrl: "/template-print/2-cn",
-  },
-  {
-    key: "2-sf",
-    code: "ADHR02-SP001-03",
-    titleVi: "Bảng Tuyển Chọn Phỏng Vấn (Cán Bộ / Nhân Viên)",
-    titleCn: "甄選紀錄表 (幹部 / 職員)",
-    description:
-      "Phiếu đánh giá phỏng vấn chuyên sâu 3 trang gồm kỹ năng, kinh nghiệm và nhận xét từ các cấp quản lý.",
-    category: "candidate",
-    icon: Users,
-    color: "from-sky-500 to-blue-600",
-    blankUrl: "/template-print/2-sf",
-  },
-  {
-    key: "1",
-    code: "ADHR02-SP001-13",
-    titleVi: "Giấy Hẹn Phỏng Vấn",
-    titleCn: "面試通知單",
-    description:
-      "Thư mời hẹn phỏng vấn hoặc bổ sung hồ sơ gửi đến ứng viên kèm địa chỉ và thông tin liên hệ.",
-    category: "candidate",
-    icon: Calendar,
-    color: "from-amber-500 to-orange-600",
-    blankUrl: "/template-print/1",
-  },
-  {
-    key: "4",
-    code: "ADHR02-SP001-05",
-    titleVi: "Thư Mời Tuyển Dụng (Job Offer Letter)",
-    titleCn: "錄用通知書",
-    description:
-      "Thông báo kết quả trúng tuyển chính thức, ngày tiếp nhận công việc và thời gian thử việc.",
-    category: "candidate",
-    icon: Sparkles,
-    color: "from-emerald-500 to-teal-600",
-    blankUrl: "/template-print/4",
-  },
-  {
-    key: "3",
-    code: "ADHR02-SP001-FORM",
-    titleVi: "Bảng Ghi Nhận Trở Lại Công Ty & Cam Kết",
-    titleCn: "員工離職回廠紀錄與工作承諾書",
-    description:
-      "Bảng tổng hợp tiền sử làm việc, thâm niên và lý do thôi việc của công nhân viên xin vào làm lại.",
-    category: "candidate",
-    icon: Building2,
-    color: "from-rose-500 to-pink-600",
-    blankUrl: "/template-print/3",
   },
   {
     key: "bqt",
@@ -141,7 +63,7 @@ const TEMPLATES: PrintTemplateItem[] = [
 
 export default function PrintCenterHubPage() {
   const { t, locale } = useTranslation();
-  const [filter, setFilter] = useState<"all" | "form" | "candidate" | "hr_list">("all");
+  const [filter, setFilter] = useState<"all" | "hr_list">("all");
 
   const filteredTemplates = TEMPLATES.filter((tpl) => {
     if (filter === "all") return true;
@@ -190,26 +112,6 @@ export default function PrintCenterHubPage() {
           }`}
         >
           {t("allTemplates")} ({TEMPLATES.length})
-        </button>
-        <button
-          onClick={() => setFilter("candidate")}
-          className={`h-8 px-3.5 rounded-lg text-xs font-semibold transition-colors duration-150 active:scale-95 ${
-            filter === "candidate"
-              ? "bg-rose-600 text-white shadow-xs font-bold"
-              : "bg-white dark:bg-[#18181C] text-slate-700 dark:text-[#8E929B] hover:text-slate-900 hover:bg-slate-50 dark:hover:text-white border border-slate-200 dark:border-[#26262C]"
-          }`}
-        >
-          {t("candidateTemplates")} ({TEMPLATES.filter((t) => t.category === "candidate").length})
-        </button>
-        <button
-          onClick={() => setFilter("form")}
-          className={`h-8 px-3.5 rounded-lg text-xs font-semibold transition-colors duration-150 active:scale-95 ${
-            filter === "form"
-              ? "bg-rose-600 text-white shadow-xs font-bold"
-              : "bg-white dark:bg-[#18181C] text-slate-700 dark:text-[#8E929B] hover:text-slate-900 hover:bg-slate-50 dark:hover:text-white border border-slate-200 dark:border-[#26262C]"
-          }`}
-        >
-          {t("formTemplates")} ({TEMPLATES.filter((t) => t.category === "form").length})
         </button>
         <button
           onClick={() => setFilter("hr_list")}
