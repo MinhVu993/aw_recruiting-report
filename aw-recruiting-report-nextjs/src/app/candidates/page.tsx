@@ -1360,7 +1360,7 @@ function CandidatesContent() {
   }, [filteredCandidates, currentPage, pageSize]);
 
   return (
-    <div className="w-full h-full flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 lg:p-3 space-y-2 overflow-hidden bg-[#eaedf0] dark:bg-[#121214] text-zinc-900 dark:text-[#F1F2F4] transition-colors duration-200">
+    <div className="w-full h-full flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 lg:p-3 gap-2 overflow-hidden bg-[#eaedf0] dark:bg-[#121214] text-zinc-900 dark:text-[#F1F2F4] transition-colors duration-200">
       {/* Top Cockpit Toolbar: App Bar (Fidelity to pages/index.vue v-app-bar) */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 bg-[#f1f3f6] dark:bg-[#18181C] border border-[#d8dce2] dark:border-[#26262C] rounded-lg p-2 sm:px-3 sm:py-2 shadow-xs transition-colors duration-200">
         {/* Left: Title */}
@@ -2262,7 +2262,7 @@ function CandidatesContent() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-empno-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-xs p-4 transition-opacity duration-150"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-xs p-4 transition-opacity duration-150"
         >
           <div className="w-full max-w-4xl max-h-[92vh] flex flex-col rounded-xl bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] shadow-2xl overflow-hidden animate-modal-enter text-zinc-900 dark:text-[#F1F2F4]">
             {/* Modal Header */}
@@ -2498,7 +2498,7 @@ function CandidatesContent() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/60 backdrop-blur-xs p-4 transition-opacity duration-150"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 dark:bg-black/60 backdrop-blur-xs p-4 transition-opacity duration-150"
         >
           <div className="w-full max-w-sm rounded-lg bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] p-4 shadow-2xl space-y-3 animate-modal-enter text-zinc-900 dark:text-[#F1F2F4]">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-[#26262C]">
@@ -2553,7 +2553,7 @@ function CandidatesContent() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-xs p-4 animate-modal-enter"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-xs p-4 animate-modal-enter"
         >
           <div className="relative max-w-xs w-full bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-lg p-3 text-center space-y-2.5 shadow-2xl">
             <button
@@ -2597,7 +2597,7 @@ function CandidatesContent() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="confirm-reg-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 dark:bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200"
         >
           <div className="w-full max-w-md rounded-2xl bg-white dark:bg-[#18181c] border border-zinc-200/90 dark:border-zinc-800 shadow-2xl shadow-zinc-950/20 dark:shadow-black/60 overflow-hidden animate-modal-enter text-zinc-900 dark:text-zinc-100">
             {/* Top decorative gradient bar */}

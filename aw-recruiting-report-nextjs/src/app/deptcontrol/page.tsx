@@ -340,7 +340,7 @@ export default function DeptControlPage() {
 
   return (
     <div className="flex-1 w-full bg-[#eaedf0] dark:bg-[#121214] min-h-[calc(100vh-4rem)] p-4 md:p-6 transition-colors">
-      <div className="w-full space-y-4">
+      <div className="w-full flex flex-col gap-4">
         {/* Header bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#1e1e20] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-3">
@@ -761,7 +761,7 @@ export default function DeptControlPage() {
 
       {/* Add / Edit Department Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-[#1e1e20] w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/40">

@@ -463,7 +463,7 @@ function RecruitingReportContent() {
   };
 
   return (
-    <div className="w-full h-full flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 lg:p-3 space-y-2 overflow-hidden bg-[#eaedf0] dark:bg-[#121214] text-zinc-900 dark:text-[#F1F2F4] transition-colors duration-200">
+    <div className="w-full h-full flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 lg:p-3 gap-2 overflow-hidden bg-[#eaedf0] dark:bg-[#121214] text-zinc-900 dark:text-[#F1F2F4] transition-colors duration-200">
       {/* Row 1: Top Cockpit Toolbar */}
       <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-2 bg-[#f1f3f6] dark:bg-[#18181C] border border-[#d8dce2] dark:border-[#26262C] rounded-lg p-2 sm:px-3 sm:py-2 shadow-xs transition-colors duration-200">
         {/* Left: Title & Factory Selector + Date Range */}
@@ -1365,7 +1365,7 @@ function RecruitingReportContent() {
       {/* Note Details Modal */}
       {noteModalRow && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
           onClick={() => setNoteModalRow(null)}
         >
           <div
