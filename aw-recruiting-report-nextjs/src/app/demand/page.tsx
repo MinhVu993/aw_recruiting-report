@@ -77,7 +77,7 @@ const POSITION_FILTERS = [
   { vi: "Nhân viên (ngôn ngữ)", en: "Staff (lang)" },
   { vi: "Cán bộ", en: "Leader" },
   { vi: "Phiên dịch", en: "Translator" },
-  { vi: "Kỹ sư", en: "Engineer" },
+  { vi: "Thực tập sinh", en: "Intern" },
 ];
 
 function DemandContent() {
@@ -627,8 +627,8 @@ function DemandContent() {
                     ? t("leader", "Cán bộ")
                     : pos.en === "Translator"
                     ? t("translator", "Phiên dịch")
-                    : pos.en === "Engineer"
-                    ? t("engineer", "Kỹ sư")
+                    : pos.en === "Intern"
+                    ? t("intern", "Thực tập sinh")
                     : pos.vi;
 
                 return (
@@ -1073,6 +1073,7 @@ function DemandContent() {
                             if (p === "Cán bộ" || p === "Cán bộ / Tổ trưởng" || p.toLowerCase() === "leader") return t("leader");
                             if (p === "Phiên dịch" || p.toLowerCase() === "translator") return t("translator");
                             if (p === "Kỹ sư" || p.toLowerCase() === "engineer") return t("engineer");
+                            if (p === "Thực tập sinh" || p.toLowerCase() === "intern") return t("intern", "Thực tập sinh");
                             return p;
                           })()}
                         </td>
@@ -1548,7 +1549,7 @@ function DemandContent() {
                     <option value="Staff (lang)">{t("staffLang")}</option>
                     <option value="Leader">{t("leader")}</option>
                     <option value="Translator">{t("translator")}</option>
-                    <option value="Engineer">{t("engineer")}</option>
+                    <option value="Intern">{t("intern", "Thực tập sinh")}</option>
                   </select>
                 </div>
 
