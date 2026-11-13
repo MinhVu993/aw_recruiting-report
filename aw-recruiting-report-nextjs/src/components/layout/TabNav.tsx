@@ -16,11 +16,9 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { id: "dashboard", key: "dashboard", fallback: "Dashboard", href: "/" },
   { id: "candidates", key: "candidates", fallback: "Ứng Viên", href: "/candidates" },
   { id: "demand", key: "demand", fallback: "Nhu Cầu", href: "/demand" },
   { id: "recruiting-report", key: "recruitingReport", fallback: "Báo Cáo Tuyển Dụng", href: "/recruiting-report" },
-  { id: "resign", key: "resign", fallback: "Thôi Việc", href: "/resign" },
   { id: "intern", key: "intern", fallback: "Thực Tập Sinh", href: "/intern" },
   { id: "deptcontrol", key: "deptcontrol", fallback: "Bộ Phận", href: "/deptcontrol" },
   { id: "print", key: "printTemplates", fallback: "Mẫu In", href: "/print" },
@@ -29,27 +27,21 @@ const tabs: TabItem[] = [
 export const TabNav: React.FC = () => {
   const pathname = usePathname();
   const { t } = useTranslation();
-  const { isAdmin, isUserOnly } = useSession();
+  const { isAdmin } = useSession();
 
   // Role-based visible tabs:
-  // - 'user': Chỉ thấy Thôi Việc (Resign)
   // - 'admin': Thấy toàn bộ kể cả Thực Tập Sinh (Intern) và Quản Lý Bộ Phận (Dept Control)
-  // - 'review': Thấy Dashboard, Ứng Viên, Nhu Cầu, Thôi Việc, Mẫu In (Ẩn Intern và Dept Control)
+  // - Other roles: Thấy Ứng Viên, Nhu Cầu, Báo Cáo Tuyển Dụng, Mẫu In (Ẩn Intern và Dept Control)
   const visibleTabs = tabs.filter((tab) => {
-    if (isUserOnly) {
-      return tab.id === "resign";
-    }
     if (isAdmin) {
       return true;
     }
-    // Review role
+    // Non-admin roles
     return tab.id !== "intern" && tab.id !== "deptcontrol";
   });
 
   const isActive = (href: string) => {
-    if (href === "/" && pathname === "/") return true;
-    if (href !== "/" && pathname.startsWith(href)) return true;
-    return false;
+    return pathname.startsWith(href);
   };
 
   return (

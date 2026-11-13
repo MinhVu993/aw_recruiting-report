@@ -5,7 +5,6 @@ import { buildDemandSyncPayload } from "../src/lib/aw-demand-utils";
 import { normalizeCccd, isValidCccd } from "../src/lib/cccd-normalizer";
 import { parseSeniorityYears, matchesSeniorityRange } from "../src/lib/seniority-utils";
 import { formatExcelDate } from "../src/lib/excel-export";
-import { buildDrillThroughTarget } from "../src/lib/drillthrough";
 
 test("calculateAwRecruitReportRow matches legacy api.php::recruitReport formulas", () => {
   const result = calculateAwRecruitReportRow({
@@ -129,7 +128,7 @@ test("buildDemandSyncPayload merges valid employees into dem_candidates and mark
   assert.equal(syncWithPreexisting.demFulfilled, "no");
 });
 
-test("normalizeCccd, seniority-utils, formatExcelDate, and drillthrough functions behave correctly", () => {
+test("normalizeCccd, seniority-utils, and formatExcelDate behave correctly", () => {
   assert.equal(normalizeCccd("079201004523"), "79201004523");
   assert.equal(isValidCccd("079201004523"), true);
   assert.equal(isValidCccd("123"), false);
@@ -139,12 +138,4 @@ test("normalizeCccd, seniority-utils, formatExcelDate, and drillthrough function
   assert.equal(matchesSeniorityRange(2, "1 - 3 năm"), true);
 
   assert.equal(formatExcelDate("2025-01-15"), new Date("2025-01-15").toLocaleDateString("vi-VN"));
-
-  const drillResign = buildDrillThroughTarget({
-    perspective: "turnover",
-    filters: { resignReason: "1", div: "VAW1QC" },
-    globalSlicers: { loc: "aw" },
-  });
-  assert.equal(drillResign?.pageName, "resign");
-  assert.equal(drillResign?.url.includes("reason=1"), true);
 });

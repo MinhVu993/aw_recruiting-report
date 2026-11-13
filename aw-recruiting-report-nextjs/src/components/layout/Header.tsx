@@ -18,7 +18,7 @@ export const Header: React.FC = () => {
         {/* Left: Brand Logo */}
         <div className="flex items-center space-x-3.5" id="tour-brand-logo">
           <Link
-            href={user.role === "user" ? "/resign" : "/"}
+            href="/candidates"
             className="flex items-center space-x-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50 rounded-lg"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

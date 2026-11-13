@@ -21,42 +21,14 @@ import { useSession } from "@/context/SessionContext";
 export const MobileBottomNav: React.FC = () => {
   const pathname = usePathname();
   const { t } = useTranslation();
-  const { user, isAdmin, isUserOnly, currentLocale, setLocale } = useSession();
+  const { user, isAdmin, currentLocale, setLocale } = useSession();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === "/" && pathname === "/") return true;
-    if (href !== "/" && pathname.startsWith(href)) return true;
-    return false;
+    return pathname.startsWith(href);
   };
 
-  // If user only has role "user", they only access Resign
-  if (isUserOnly) {
-    return (
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#121214]/95 backdrop-blur-xl border-t border-[#d8dce2] dark:border-[#26262C] px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] print:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.06)]"
-        aria-label="Điều hướng di động"
-      >
-        <div className="flex items-center justify-center">
-          <Link
-            href="/resign"
-            className="flex flex-col items-center justify-center py-1 px-6 rounded-xl bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-bold active:scale-95 transition-transform"
-          >
-            <UserMinus className="w-5 h-5 mb-0.5" />
-            <span className="text-[11px] leading-tight">{t("resign", "Thôi Việc")}</span>
-          </Link>
-        </div>
-      </nav>
-    );
-  }
-
   const primaryNavItems = [
-    {
-      id: "dashboard",
-      href: "/",
-      label: t("dashboard", "Dashboard"),
-      icon: LayoutDashboard,
-    },
     {
       id: "candidates",
       href: "/candidates",
@@ -70,20 +42,20 @@ export const MobileBottomNav: React.FC = () => {
       icon: Briefcase,
     },
     {
-      id: "resign",
-      href: "/resign",
-      label: t("resign", "Thôi Việc"),
-      icon: UserMinus,
-    },
-  ];
-
-  const secondaryNavItems = [
-    {
       id: "recruiting-report",
       href: "/recruiting-report",
       label: t("recruitingReport", "Báo Cáo Tuyển Dụng"),
       icon: FileBarChart2,
     },
+    {
+      id: "print",
+      href: "/print",
+      label: t("printTemplates", "Mẫu In"),
+      icon: Printer,
+    },
+  ];
+
+  const secondaryNavItems = [
     ...(isAdmin
       ? [
           {
@@ -100,12 +72,6 @@ export const MobileBottomNav: React.FC = () => {
           },
         ]
       : []),
-    {
-      id: "print",
-      href: "/print",
-      label: t("printTemplates", "Mẫu In"),
-      icon: Printer,
-    },
   ];
 
   const isMoreActive = secondaryNavItems.some((item) => isActive(item.href));

@@ -35,9 +35,9 @@ export const APP_TOUR_STEPS: TourStepDefinition[] = [
       cn: "主导航栏",
     },
     content: {
-      vi: "Dễ dàng chuyển đổi giữa các phân hệ: Dashboard Phân Tích, Ứng Viên, Nhu Cầu Định Biên, Báo Cáo Tuyển Dụng, Thôi Việc, Thực Tập Sinh và Mẫu In.",
-      en: "Quickly switch between modules: Analytics Dashboard, Candidates, Manpower Demand, Recruitment Reports, Resignations, Interns, and Print Templates.",
-      cn: "快速在各模块间切换：分析看板、应聘人员、定编需求、招聘报表、离职人员、实习生及打印模板。",
+      vi: "Dễ dàng chuyển đổi giữa các phân hệ: Ứng Viên, Nhu Cầu Định Biên, Báo Cáo Tuyển Dụng, Thực Tập Sinh, Quản Lý Bộ Phận và Mẫu In.",
+      en: "Quickly switch between modules: Candidates, Manpower Demand, Recruitment Reports, Interns, Department Management, and Print Templates.",
+      cn: "快速在各模块间切换：应聘人员、定编需求、招聘报表、实习生、部门管理及打印模板。",
     },
     selector: "#tour-main-nav",
     side: "bottom",
@@ -73,55 +73,7 @@ export const APP_TOUR_STEPS: TourStepDefinition[] = [
     side: "bottom-right",
   },
 
-  // 2. Dashboard Perspective & Slicers
-  {
-    icon: "🎛️",
-    title: {
-      vi: "Bộ Lọc Tương Tác Slicers",
-      en: "Interactive Slicers Bar",
-      cn: "交互式切片筛选器",
-    },
-    content: {
-      vi: "Lọc linh hoạt theo Xưởng (DMC, TB, TC), mốc thời gian (Hôm nay, Tuần, Tháng, Năm, Khoảng ngày tùy chọn) với dữ liệu thời gian thực.",
-      en: "Filter dynamically by Factory (DMC, TB, TC) and Time Ranges (Today, Week, Month, Custom Range) with live real-time sync.",
-      cn: "可按工厂（DMC、TB、TC）以及时间跨度（今天、本周、本月、自定义）实时过滤报表。",
-    },
-    selector: "#tour-slicers-bar",
-    side: "bottom",
-  },
-  {
-    icon: "📊",
-    title: {
-      vi: "Thẻ Điểm KPI & Scorecards",
-      en: "KPI Executive Scorecards",
-      cn: "KPI核心指标计分卡",
-    },
-    content: {
-      vi: "Theo dõi tức thời 4 chỉ số sinh mệnh: Nhu Cầu Định Biên, Đã Tuyển, Thiếu Hụt, và Tỷ Lệ Đáp Ứng Kế Hoạch.",
-      en: "Track four vital pillars in real-time: Total Demand, Recruited Count, Shortage, and Fulfillment Rate.",
-      cn: "即时追踪四项核心指标：定编需求、已录用、缺口数以及目标达成率。",
-    },
-    selector: "#tour-kpi-scorecards",
-    side: "bottom",
-  },
-  {
-    icon: "📑",
-    title: {
-      vi: "Góc Nhìn Báo Cáo Chuyên Sâu",
-      en: "In-Depth Analytical Perspectives",
-      cn: "深度多维分析视角",
-    },
-    content: {
-      vi: "Chuyển đổi góc nhìn giữa: Tiến Độ Tuyển Dụng (Phễu & Thời gian bù đắp), Hồ Sơ Ứng Viên (Tháp tuổi, Giới tính, Học vấn, Nguồn tuyển), và Phân Tích Thôi Việc.",
-      en: "Switch perspectives between: Recruitment Performance (Funnel & Time-to-Fill), Demographics (Age Pyramid, Gender, Source), and Resignation Deep Dive.",
-      cn: "在不同视角间自由切换：招聘效能（漏斗模型与交付周期）、应聘画像（年龄金字塔、性别、渠道）及离职全景分析。",
-    },
-    selector: "#tour-perspective-nav",
-    side: "top",
-    nextRoute: "/candidates",
-  },
-
-  // 3. Candidates Module
+  // 2. Candidates Module
   {
     icon: "👥",
     title: {
@@ -136,11 +88,10 @@ export const APP_TOUR_STEPS: TourStepDefinition[] = [
     },
     selector: "#tour-candidate-controls",
     side: "bottom",
-    prevRoute: "/",
     nextRoute: "/demand",
   },
 
-  // 4. Demand Module
+  // 3. Demand Module
   {
     icon: "🎯",
     title: {
@@ -156,28 +107,9 @@ export const APP_TOUR_STEPS: TourStepDefinition[] = [
     selector: "#tour-demand-header",
     side: "bottom",
     prevRoute: "/candidates",
-    nextRoute: "/resign",
   },
 
-  // 5. Resign Module
-  {
-    icon: "📉",
-    title: {
-      vi: "Phân Tích & Biến Động Thôi Việc",
-      en: "Resignation & Turnover Analytics",
-      cn: "离职数据与流动性分析",
-    },
-    content: {
-      vi: "Hệ thống tự động đồng bộ lý do thôi việc, thâm niên, tuổi tác và ghi chú vắng mặt từ HRM; hỗ trợ ma trận lý do và xuất dữ liệu báo cáo ban giám đốc.",
-      en: "Auto-synced with HRM separation data including reasons, seniority, age, and notes; offers turnover matrices and executive reporting.",
-      cn: "自动同步HRM系统离职原因、工龄、年龄及考勤备注；提供离职多维分析矩阵及高管汇报报表。",
-    },
-    selector: "#tour-resign-controls",
-    side: "bottom",
-    prevRoute: "/demand",
-  },
-
-  // 6. Finish Tour
+  // 4. Finish Tour
   {
     icon: "🎉",
     title: {
@@ -192,7 +124,7 @@ export const APP_TOUR_STEPS: TourStepDefinition[] = [
     },
     selector: "#tour-help-button",
     side: "bottom-right",
-    prevRoute: "/resign",
+    prevRoute: "/demand",
   },
 ];
 
