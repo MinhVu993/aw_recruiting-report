@@ -8,8 +8,11 @@ export async function GET(request: NextRequest) {
     const deptCode = searchParams.get("deptCode")?.trim() || "";
     const status = searchParams.get("status")?.trim() || "all";
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
-    const limit = Math.max(1, Math.min(1000, parseInt(searchParams.get("limit") || "50", 10) || 50));
-    const skip = (page - 1) * limit;
+    const isAll = searchParams.get("limit") === "all";
+    const limit = isAll
+      ? undefined
+      : Math.max(1, Math.min(1000, parseInt(searchParams.get("limit") || "50", 10) || 50));
+    const skip = isAll ? undefined : (page - 1) * (limit || 50);
 
     const where: any = {};
 
@@ -116,9 +119,9 @@ export async function GET(request: NextRequest) {
       data,
       pagination: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: isAll ? 1 : page,
+        limit: isAll ? total : limit,
+        totalPages: isAll ? 1 : Math.ceil(total / (limit || 50)),
       },
     });
   } catch (error: any) {

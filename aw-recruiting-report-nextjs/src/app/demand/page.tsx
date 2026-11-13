@@ -167,7 +167,7 @@ function DemandContent() {
   const fetchDemands = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/demand?loc=aw");
+      const res = await fetch("/api/demand?loc=aw&limit=all");
       const json = await res.json();
       if (json.data) {
         const mapped = json.data.map((d: any) => {
@@ -349,6 +349,11 @@ function DemandContent() {
       { totalAmount: 0, totalRecruited: 0, totalStillInNeed: 0, totalCandidates: 0 }
     );
   }, [filteredDemands]);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, selectedPos, excelFilters]);
 
   // Pagination slice
   const paginatedDemands = useMemo(() => {

@@ -298,6 +298,11 @@ export default function DeptControlPage() {
     },
   });
 
+  // Reset page when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedDivFilter, statusFilter, excelFilters]);
+
   // Pagination calculation
   const totalItems = filteredData.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));

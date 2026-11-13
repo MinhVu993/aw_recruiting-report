@@ -807,7 +807,7 @@ const FALLBACK_DEMANDS = [
 
   // Load demands for demand picker
   useEffect(() => {
-    fetch("/api/demand?limit=1000")
+    fetch("/api/demand?limit=all")
       .then((r) => r.json())
       .then((res) => {
         if (res.data && res.data.length > 0) {

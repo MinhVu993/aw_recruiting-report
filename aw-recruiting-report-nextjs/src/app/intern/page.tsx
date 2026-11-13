@@ -234,7 +234,7 @@ export default function InternPage() {
   const fetchInterns = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/intern?loc=aw");
+      const res = await fetch("/api/intern?loc=aw&limit=all");
       const json = await res.json();
       if (json.success && json.data) {
         setInterns(json.data);
@@ -298,6 +298,11 @@ export default function InternPage() {
     },
     defaultSort: { key: "id", direction: "desc" },
   });
+
+  // Reset page to 1 when filters or search change
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, excelFilters]);
 
   // Calculate pagination
   const totalPages = useMemo(() => {
