@@ -3064,7 +3064,7 @@ const FALLBACK_DEMANDS = [
           }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3"
         >
-          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-[96vw] max-w-[1550px] h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-[90vw] max-w-[1100px] min-h-[340px] max-h-[75vh] flex flex-col overflow-hidden shadow-2xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-[#26262C] shrink-0">
               <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-amber-500">
