@@ -2108,11 +2108,16 @@ const FALLBACK_DEMANDS = [
                       type="button"
                       onClick={() => {
                         resetAllExcelFilters();
+                        setDemandSearch("");
                         if (form.dept_apply) {
-                          setExcelFilter("dem_dept", new Set([form.dept_apply]));
+                          const hasExactDept = demandList.some((d) => d.dem_dept === form.dept_apply);
+                          if (hasExactDept) {
+                            setExcelFilter("dem_dept", new Set([form.dept_apply]));
+                          } else {
+                            setDemandSearch(form.dept_apply);
+                          }
                         }
                         setOnlyRemainingDemand(true);
-                        setDemandSearch("");
                         setDemandModalOpen(true);
                       }}
                       className="h-[38px] px-3.5 rounded-md bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer animate-in fade-in zoom-in-95 duration-150"
