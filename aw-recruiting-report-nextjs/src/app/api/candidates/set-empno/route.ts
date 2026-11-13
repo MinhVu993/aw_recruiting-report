@@ -5,27 +5,13 @@ import { formatNextEmpno } from "./empno-utils";
 
 export async function GET() {
   try {
-    // 1. Find max newEmpno matching 6 digits ^0[0-9]{5}$
-    const allAssigned = await prisma.employeeInfo.findMany({
-      where: {
-        newEmpno: { not: null },
-      },
-      select: { newEmpno: true },
-    });
-
-    let maxNum = 0;
-    let maxEmpnoStr: string | null = null;
-
-    for (const item of allAssigned) {
-      if (item.newEmpno && /^0\d{5}$/.test(item.newEmpno.trim())) {
-        const val = parseInt(item.newEmpno.trim(), 10);
-        if (val > maxNum) {
-          maxNum = val;
-          maxEmpnoStr = item.newEmpno.trim();
-        }
-      }
-    }
-
+    // 1. Find max newEmpno matching 6 digits ^0[0-9]{5}$ using raw SQL regex query
+    const result = await prisma.$queryRaw<[{ max_empno: string | null }]>`
+      SELECT MAX("newEmpno") as max_empno
+      FROM employee_info
+      WHERE "newEmpno" ~ '^0[0-9]{5}$'
+    `;
+    const maxEmpnoStr = result[0]?.max_empno || null;
     const nextEmpno = formatNextEmpno(maxEmpnoStr);
 
     // 2. Find eligible candidates: status = '1', reg = 'yes', actEnDate != null && actEnDate != 'no', newEmpno == null || newEmpno == ''
@@ -116,19 +102,18 @@ export async function POST(request: NextRequest) {
       const parsed = parseInt(String(startEmpnoInput).trim(), 10);
       currentNumber = isNaN(parsed) ? 1 : parsed + 1;
     } else {
-      // Find highest existing
-      const allAssigned = await prisma.employeeInfo.findMany({
-        where: { newEmpno: { not: null } },
-        select: { newEmpno: true },
-      });
-      let maxNum = 0;
-      for (const item of allAssigned) {
-        if (item.newEmpno && /^0\d{5}$/.test(item.newEmpno.trim())) {
-          const val = parseInt(item.newEmpno.trim(), 10);
-          if (val > maxNum) maxNum = val;
-        }
+      // Find highest existing in database
+      const result = await prisma.$queryRaw<[{ max_empno: string | null }]>`
+        SELECT MAX("newEmpno") as max_empno
+        FROM employee_info
+        WHERE "newEmpno" ~ '^0[0-9]{5}$'
+      `;
+      const maxEmpnoStr = result[0]?.max_empno || null;
+      if (maxEmpnoStr && /^\d+$/.test(maxEmpnoStr.trim())) {
+        currentNumber = parseInt(maxEmpnoStr.trim(), 10) + 1;
+      } else {
+        currentNumber = 1;
       }
-      currentNumber = maxNum + 1;
     }
 
     const assigned: { id: number; newEmpno: string }[] = [];
@@ -137,20 +122,24 @@ export async function POST(request: NextRequest) {
     for (const cand of targetCandidates) {
       const formatted = String(currentNumber).padStart(6, "0");
       currentNumber++;
-
-      await prisma.employeeInfo.update({
-        where: { id: cand.id },
-        data: {
-          newEmpno: formatted,
-          reg: "yes",
-        },
-      });
-
       assigned.push({ id: cand.id, newEmpno: formatted });
       if (cand.empDemandid) {
         affectedDemandIds.add(cand.empDemandid);
       }
     }
+
+    // Wrap candidate updates in a transaction to prevent race conditions and ensure atomicity
+    await prisma.$transaction(
+      assigned.map((item) =>
+        prisma.employeeInfo.update({
+          where: { id: item.id },
+          data: {
+            newEmpno: item.newEmpno,
+            reg: "yes",
+          },
+        })
+      )
+    );
 
     // Reconcile affected demands
     for (const demId of affectedDemandIds) {

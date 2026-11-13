@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
     const candidates = await prisma.employeeInfo.findMany({
       where,
       orderBy: { id: "desc" },
+      take: 10000,
     });
 
     const buffer = exportCandidatesToBuffer(candidates);
