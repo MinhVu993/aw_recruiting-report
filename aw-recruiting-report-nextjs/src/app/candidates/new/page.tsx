@@ -807,13 +807,13 @@ const FALLBACK_DEMANDS = [
 
   // Load demands for demand picker
   useEffect(() => {
-    fetch("/api/demand")
+    fetch("/api/demand?limit=1000")
       .then((r) => r.json())
       .then((res) => {
         if (res.data && res.data.length > 0) {
           const normalized = res.data.map((d: any) => ({
             ...d,
-            id_code: d.id_code || d.idCode || "",
+            id_code: d.demId || d.dem_id || d.id_code || d.idCode || "",
             dem_dept: d.dem_dept || d.demDept || "",
             dem_sub_department: d.dem_sub_department || d.demSubDepartment || "",
             dem_unit: d.dem_unit || d.demUnit || "",
