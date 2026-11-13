@@ -132,8 +132,9 @@ function DemandContent() {
   const [showColumnDialog, setShowColumnDialog] = useState<boolean>(false);
   const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
     id_code: true,
+    dem_dept: true,
+    dem_sub_department: true,
     dem_unit: true,
-    dem_unit_name: true,
     dem_position: true,
     dem_sub_position: true,
     dem_amount: true,
@@ -794,29 +795,42 @@ function DemandContent() {
                     />
                   </th>
                 )}
-                {visibleColumns.dem_unit && (
+                {visibleColumns.dem_dept && (
                   <th className="py-2 px-3">
                     <ExcelColumnFilter
-                      title={t("unitCode", "Mã Đơn Vị")}
+                      title="Cấp sở"
+                      columnKey="dem_dept"
+                      distinctValues={getDistinctValues("dem_dept")}
+                      selectedValues={excelFilters["dem_dept"]}
+                      onFilterChange={(v) => setFilter("dem_dept", v)}
+                      sortDirection={sortConfig?.key === "dem_dept" ? sortConfig.direction : null}
+                      onSortChange={(dir) => setSort("dem_dept", dir)}
+                    />
+                  </th>
+                )}
+                {visibleColumns.dem_sub_department && (
+                  <th className="py-2 px-3">
+                    <ExcelColumnFilter
+                      title="Bộ phận"
+                      columnKey="dem_sub_department"
+                      distinctValues={getDistinctValues("dem_sub_department")}
+                      selectedValues={excelFilters["dem_sub_department"]}
+                      onFilterChange={(v) => setFilter("dem_sub_department", v)}
+                      sortDirection={sortConfig?.key === "dem_sub_department" ? sortConfig.direction : null}
+                      onSortChange={(dir) => setSort("dem_sub_department", dir)}
+                    />
+                  </th>
+                )}
+                {visibleColumns.dem_unit && (
+                  <th className="py-2 px-3.5">
+                    <ExcelColumnFilter
+                      title="Đơn vị / Xưởng"
                       columnKey="dem_unit"
                       distinctValues={getDistinctValues("dem_unit")}
                       selectedValues={excelFilters["dem_unit"]}
                       onFilterChange={(v) => setFilter("dem_unit", v)}
                       sortDirection={sortConfig?.key === "dem_unit" ? sortConfig.direction : null}
                       onSortChange={(dir) => setSort("dem_unit", dir)}
-                    />
-                  </th>
-                )}
-                {visibleColumns.dem_unit_name && (
-                  <th className="py-2 px-3.5">
-                    <ExcelColumnFilter
-                      title={t("unitName", "Tên Đơn Vị")}
-                      columnKey="dem_unit_name"
-                      distinctValues={getDistinctValues("dem_unit_name")}
-                      selectedValues={excelFilters["dem_unit_name"]}
-                      onFilterChange={(v) => setFilter("dem_unit_name", v)}
-                      sortDirection={sortConfig?.key === "dem_unit_name" ? sortConfig.direction : null}
-                      onSortChange={(dir) => setSort("dem_unit_name", dir)}
                     />
                   </th>
                 )}
@@ -1048,17 +1062,24 @@ function DemandContent() {
                         </td>
                       )}
 
-                      {/* Unit code */}
-                      {visibleColumns.dem_unit && (
+                      {/* Dept (Cấp sở) */}
+                      {visibleColumns.dem_dept && (
                         <td className="py-2 px-3 font-semibold text-slate-700 dark:text-slate-300 text-xs">
-                          {item.dem_unit}
+                          {item.dem_dept || "-"}
                         </td>
                       )}
 
-                      {/* Unit name */}
-                      {visibleColumns.dem_unit_name && (
-                        <td className="py-2 px-3.5 font-bold text-slate-900 dark:text-white">
-                          {getUnitName(item)}
+                      {/* Sub-department (Bộ phận) */}
+                      {visibleColumns.dem_sub_department && (
+                        <td className="py-2 px-3 font-semibold text-slate-700 dark:text-slate-300 text-xs">
+                          {item.dem_sub_department || "-"}
+                        </td>
+                      )}
+
+                      {/* Unit (Đơn vị / Xưởng) */}
+                      {visibleColumns.dem_unit && (
+                        <td className="py-2 px-3.5 font-bold text-slate-900 dark:text-white text-xs">
+                          {item.dem_unit || "-"}
                         </td>
                       )}
 
@@ -1209,7 +1230,7 @@ function DemandContent() {
             {filteredDemands.length > 0 && (
               <tfoot className="sticky bottom-0 z-10 bg-[#f1f3f6] dark:bg-[#131316] border-t-2 border-[#d0d5dd] dark:border-[#26262C] font-bold text-xs select-none">
                 <tr>
-                  <td colSpan={4} className="py-2.5 px-3 text-center uppercase tracking-wide text-slate-700 dark:text-slate-300">
+                  <td colSpan={5} className="py-2.5 px-3 text-center uppercase tracking-wide text-slate-700 dark:text-slate-300">
                     {t("total", "TỔNG CỘNG")}
                   </td>
                   {visibleColumns.dem_position && <td></td>}
@@ -1687,8 +1708,9 @@ function DemandContent() {
             <div className="p-4 space-y-2 max-h-80 overflow-y-auto custom-scrollbar text-xs">
               {[
                 { key: "id_code", label: t("demandId") },
-                { key: "dem_unit", label: t("unitCode") },
-                { key: "dem_unit_name", label: t("unitName") },
+                { key: "dem_dept", label: "Cấp sở" },
+                { key: "dem_sub_department", label: "Bộ phận" },
+                { key: "dem_unit", label: "Đơn vị / Xưởng" },
                 { key: "dem_position", label: t("position") },
                 { key: "dem_sub_position", label: t("subPosition") },
                 { key: "dem_amount", label: t("targetAmount") },
