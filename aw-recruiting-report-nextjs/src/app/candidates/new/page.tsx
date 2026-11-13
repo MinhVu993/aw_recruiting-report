@@ -987,7 +987,7 @@ const FALLBACK_DEMANDS = [
           ? String(d.mprId).startsWith("HR-") || String(d.mprId).startsWith("MPR-")
             ? String(d.mprId)
             : `MPR-${d.mprId}`
-          : `DM-${d.id}`),
+          : "-"),
       dem_dept: (d: any) => d.dem_dept || "-",
       dem_unit: (d: any) => d.dem_unit || d.dem_sub_department || "-",
       dem_position: (d: any) => d.dem_position || d.duty || "-",
@@ -3277,7 +3277,7 @@ const FALLBACK_DEMANDS = [
                           ? String(d.mprId).startsWith("HR-") || String(d.mprId).startsWith("MPR-")
                             ? String(d.mprId)
                             : `MPR-${d.mprId}`
-                          : `DM-${d.id}`);
+                          : "-");
                       const deptCode = d.dem_dept || "-";
                       const unitName = d.dem_unit || d.dem_sub_department || "-";
                       const positionName = d.dem_position || d.duty || "-";
