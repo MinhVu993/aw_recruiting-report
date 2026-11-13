@@ -37,8 +37,10 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       nextEmpno,
+      nextSuggestedEmpno: nextEmpno,
       eligibleCount: candidates.length,
       candidates,
+      eligibleCandidates: candidates,
     });
   } catch (error: any) {
     return NextResponse.json(
