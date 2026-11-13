@@ -3064,10 +3064,10 @@ const FALLBACK_DEMANDS = [
           }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3"
         >
-          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-[97vw] max-w-none min-h-[420px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl w-fit min-w-[min(92vw,960px)] max-w-[96vw] min-h-[380px] max-h-[86vh] flex flex-col overflow-hidden shadow-2xl">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-[#26262C] shrink-0">
-              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-amber-500">
+              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500">
                 <Briefcase className="w-4 h-4" />
                 <span>{t("openDemandsList")} ({finalDemandList.length} {t("demandsCountUnit")})</span>
               </div>
@@ -3082,12 +3082,13 @@ const FALLBACK_DEMANDS = [
 
             {/* Quick Search & Global Toolbar */}
             <div className="px-4 py-2.5 bg-zinc-50 dark:bg-[#131316] border-b border-zinc-200 dark:border-[#26262C] flex flex-wrap items-center justify-between gap-3 shrink-0">
-              <div className="flex-1 max-w-md flex items-center gap-2 bg-white dark:bg-[#18181C] border border-zinc-300 dark:border-[#383842] rounded-lg px-2.5 py-1.5 shadow-2xs">
+              <div className="flex-1 min-w-[240px] max-w-sm flex items-center gap-2 bg-white dark:bg-[#18181C] border border-zinc-300 dark:border-[#383842] rounded-lg px-2.5 py-1.5 shadow-2xs focus-within:border-amber-500 transition-colors">
                 <Search className="w-4 h-4 text-zinc-400 shrink-0" />
                 <input
                   type="text"
                   value={demandSearch}
                   onChange={(e) => setDemandSearch(e.target.value)}
+                  placeholder={t("searchDemandPlaceholder", "Tìm mã MPR, bộ phận, đơn vị, vị trí, ghi chú...")}
                   className="w-full bg-transparent text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
                   autoFocus
                 />
@@ -3134,11 +3135,11 @@ const FALLBACK_DEMANDS = [
             </div>
 
             <div className="flex-1 min-h-0 overflow-auto custom-scrollbar relative border-t border-zinc-200 dark:border-[#26262C]">
-              <table className="w-full text-left text-xs border-collapse min-w-[1300px]">
+              <table className="w-full text-left text-xs border-collapse">
                 <thead className="sticky top-0 z-20 shadow-xs">
                   {/* Single Row: Column Titles with Excel Filter Trigger Popovers */}
-                  <tr className="bg-zinc-100 dark:bg-[#1a1a20] border-b border-zinc-300 dark:border-[#383842] text-[11px] font-bold text-zinc-700 dark:text-zinc-200">
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                  <tr className="bg-slate-100/95 dark:bg-[#1a1a20] border-b border-zinc-300 dark:border-[#383842] text-[11px] font-bold text-zinc-700 dark:text-zinc-200">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("mprCode")}
                         columnKey="mprCode"
@@ -3149,7 +3150,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("mprCode", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("department")}
                         columnKey="dem_dept"
@@ -3160,7 +3161,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_dept", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("unit")}
                         columnKey="dem_unit"
@@ -3171,7 +3172,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_unit", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("position")}
                         columnKey="dem_position"
@@ -3182,7 +3183,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_position", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("subPositionCol")}
                         columnKey="dem_sub_position"
@@ -3193,7 +3194,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_sub_position", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 text-center whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2 text-center whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("amount")}
                         columnKey="dem_amount"
@@ -3206,7 +3207,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_amount", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 text-center whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2 text-center whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("recruited")}
                         columnKey="dem_recruited"
@@ -3219,7 +3220,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_recruited", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 text-center whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2 text-center whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("remainingNeeded")}
                         columnKey="stocknumber"
@@ -3232,7 +3233,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("stocknumber", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("inputDateCol")}
                         columnKey="inputDate"
@@ -3244,7 +3245,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("inputDate", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="min-w-[180px] max-w-[340px] py-2 px-2.5 whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       <ExcelColumnFilter
                         title={t("note")}
                         columnKey="dem_note"
@@ -3255,7 +3256,7 @@ const FALLBACK_DEMANDS = [
                         onSortChange={(dir) => setExcelSort("dem_note", dir)}
                       />
                     </th>
-                    <th className="py-2.5 px-3 text-center whitespace-nowrap bg-zinc-100 dark:bg-[#1a1a20]">
+                    <th className="w-px py-2 px-2.5 text-center whitespace-nowrap bg-slate-100/95 dark:bg-[#1a1a20]">
                       {t("actionCol")}
                     </th>
                   </tr>
@@ -3298,49 +3299,57 @@ const FALLBACK_DEMANDS = [
                       return (
                         <tr
                           key={`demand-row-${d.id ?? mprCode}-${idx}`}
-                          className="hover:bg-zinc-50 dark:hover:bg-[#202025] transition-colors"
+                          className="hover:bg-amber-50/45 dark:hover:bg-[#202025] transition-colors"
                         >
                           {/* 1. MPR ID */}
-                          <td className="py-2.5 px-3 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 font-mono text-[11.5px] font-semibold tracking-tight text-slate-800 dark:text-zinc-200 whitespace-nowrap">
                             {mprCode}
                           </td>
                           {/* 2. Bộ phận */}
-                          <td className="py-2.5 px-3 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 font-medium text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                             {deptCode}
                           </td>
                           {/* 3. Đơn vị */}
-                          <td className="py-2.5 px-3 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
                             {unitName}
                           </td>
                           {/* 4. Vị trí */}
-                          <td className="py-2.5 px-3 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 font-medium text-zinc-800 dark:text-zinc-200 whitespace-nowrap">
                             {positionName}
                           </td>
                           {/* 5. Vị trí phụ */}
-                          <td className="py-2.5 px-3 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
-                            {subPosName || ""}
+                          <td className="w-px py-2 px-2.5 text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                            {subPosName || "-"}
                           </td>
                           {/* 6. Số lượng */}
-                          <td className="py-2.5 px-3 text-center tabular-nums text-zinc-800 dark:text-zinc-200">
+                          <td className="w-px py-2 px-2 text-center tabular-nums text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                             {demandQty}
                           </td>
                           {/* 7. Đã tuyển */}
-                          <td className="py-2.5 px-3 text-center tabular-nums text-zinc-800 dark:text-zinc-200">
+                          <td className="w-px py-2 px-2 text-center tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
                             {recruitedQty}
                           </td>
                           {/* 8. Số lượng còn thiếu */}
-                          <td className="py-2.5 px-3 text-center font-bold tabular-nums text-zinc-900 dark:text-zinc-100">
-                            {needed}
+                          <td className="w-px py-2 px-2 text-center tabular-nums whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center justify-center min-w-[26px] px-1.5 py-0.5 rounded font-bold ${
+                                Number(needed) > 0
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800"
+                                  : "text-zinc-400"
+                              }`}
+                            >
+                              {needed}
+                            </span>
                           </td>
                           {/* 9. Ngày nhập */}
-                          <td className="py-2.5 px-3 tabular-nums text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 tabular-nums text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
                             {inputDateDisplay}
                           </td>
                           {/* 10. Ghi chú */}
-                          <td className="py-2.5 px-3">
+                          <td className="min-w-[180px] max-w-[340px] py-2 px-2.5">
                             {d.dem_note ? (
                               <span
-                                className="inline-block max-w-[420px] truncate px-2.5 py-0.5 rounded text-[11px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800"
+                                className="inline-block max-w-full whitespace-normal break-words leading-snug px-2 py-0.5 rounded text-[11px] font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-800"
                                 title={d.dem_note}
                               >
                                 {d.dem_note}
@@ -3348,7 +3357,7 @@ const FALLBACK_DEMANDS = [
                             ) : null}
                           </td>
                           {/* 11. Hành động */}
-                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <td className="w-px py-2 px-2.5 text-center whitespace-nowrap">
                             <button
                               type="button"
                               onClick={() => {
