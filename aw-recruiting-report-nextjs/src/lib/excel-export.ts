@@ -10,25 +10,22 @@ export function formatExcelDate(date: Date | string | null | undefined): string 
   return d.toLocaleDateString("vi-VN");
 }
 
-/**
- * Xuat mang du lieu ra file Excel (.xlsx) chuan
- */
-export function exportCandidatesToExcel(candidates: any[], fileName: string = "Danh_Sach_Ung_Vien") {
+export function exportCandidatesToWorkbook(candidates: any[]) {
   const formattedData = candidates.map((c, idx) => ({
     "STT": idx + 1,
-    "Họ và Tên": c.candidateName,
-    "Mã Thẻ (EMPNO)": c.empno || "",
-    "Số CCCD": c.cccd,
+    "Họ và Tên": c.candidateName || "",
+    "Mã Thẻ (EMPNO)": c.newEmpno || c.empno || "",
+    "Số CCCD": c.empId || c.cccd || "",
     "Ngày Sinh": formatExcelDate(c.dateOfBirth),
     "Giới Tính": c.gender || "Nam",
-    "Số Điện Thoại": c.phone || "",
-    "Bp. duyệt": (c.loc === "vg" ? "DMC" : (c.loc || "DMC")).toUpperCase(),
-    "Phòng Ban / Bp. duyệt Con": c.dept || "",
-    "Chức Danh": c.duty || "",
+    "Số Điện Thoại": c.commTel || c.regTel || c.phone || "",
+    "Bp. duyệt": (c.loc === "vg" ? "DMC" : (c.loc || "AW")).toUpperCase(),
+    "Phòng Ban / Bp. duyệt Con": c.tmpDepartid || c.dept || "",
+    "Chức Danh": c.position || c.subPosition || c.duty || "",
     "Quê Quán": c.birthProvince || "",
-    "Địa Chỉ Thường Trú": c.addressPermanent || "",
-    "Ngày vào làm": formatExcelDate(c.inDate),
-    "Trạng Thái": c.isHires ? "Đã Tuyển dụng" : c.isBqt ? "Chưa quẹt thẻ" : "Tiếp nhận",
+    "Địa Chỉ Thường Trú": c.regAddress || c.addressPermanent || "",
+    "Ngày vào làm": formatExcelDate(c.actEnDate || c.inDate),
+    "Trạng Thái": c.reg === "yes" ? "Đã xác nhận" : "Tiếp nhận",
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
@@ -53,6 +50,18 @@ export function exportCandidatesToExcel(candidates: any[], fileName: string = "D
 
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Candidates");
+  return workbook;
+}
 
+export function exportCandidatesToBuffer(candidates: any[]): Buffer {
+  const workbook = exportCandidatesToWorkbook(candidates);
+  return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" }) as Buffer;
+}
+
+/**
+ * Xuat mang du lieu ra file Excel (.xlsx) chuan
+ */
+export function exportCandidatesToExcel(candidates: any[], fileName: string = "Danh_Sach_Ung_Vien") {
+  const workbook = exportCandidatesToWorkbook(candidates);
   XLSX.writeFile(workbook, `${fileName}_${new Date().toISOString().split("T")[0]}.xlsx`);
 }
