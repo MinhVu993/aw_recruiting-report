@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Attach dept details from AwDept if available
+    // Attach dept, source, edu details in parallel
     const deptCodes = Array.from(
       new Set(
         candidates
@@ -86,24 +86,78 @@ export async function GET(request: NextRequest) {
       )
     );
 
-    let deptMap = new Map<string, any>();
-    if (deptCodes.length > 0) {
-      const depts = await prisma.awDept.findMany({
-        where: {
-          subDivision: { in: deptCodes },
-        },
-      });
-      for (const d of depts) {
-        deptMap.set(d.subDivision, d);
-      }
+    const [depts, sources, edus] = await Promise.all([
+      deptCodes.length > 0
+        ? prisma.awDept.findMany({ where: { subDivision: { in: deptCodes } } })
+        : Promise.resolve([]),
+      prisma.sourceRecruit.findMany(),
+      prisma.eduHrm.findMany(),
+    ]);
+
+    const deptMap = new Map<string, any>();
+    for (const d of depts) {
+      deptMap.set(d.subDivision, d);
     }
 
+    const sourceMap = new Map<string, string>();
+    for (const s of sources) {
+      const obj = (s.source && typeof s.source === "object" ? s.source : {}) as Record<string, string>;
+      const label = obj.vi || obj.en || obj.cn || String(s.id);
+      sourceMap.set(String(s.id), label);
+      if (obj.vi) sourceMap.set(obj.vi.toLowerCase(), label);
+      if (obj.en) sourceMap.set(obj.en.toLowerCase(), label);
+      if (obj.cn) sourceMap.set(obj.cn.toLowerCase(), label);
+    }
+
+    const eduMap = new Map<string, string>();
+    for (const e of edus) {
+      eduMap.set(e.eduNo, e.eduName);
+    }
+
+    const isYesFlag = (v: unknown) => {
+      if (v === true || v === 1) return true;
+      const s = String(v ?? "").trim().toLowerCase();
+      return s === "yes" || s === "true" || s === "1";
+    };
+
     const data = candidates.map((c) => {
-      const deptCode = c.tmpDepartid || c.applyDp || "";
-      const dept = deptMap.get(deptCode) || null;
+      const deptKey = c.tmpDepartid || c.applyDp || "";
+      const dept = deptMap.get(deptKey) || null;
+      const deptNameObj = (dept?.name && typeof dept.name === "object" ? dept.name : {}) as Record<string, string>;
+      const resolvedDeptName = deptNameObj.vi || deptNameObj.en || deptNameObj.cn || deptKey;
+
+      const hrApproved = isYesFlag(c.hrAcQu);
+      const dpApproved = isYesFlag(c.dpAcQu);
+      const isReg = isYesFlag(c.reg);
+      const cleanEmpno = c.newEmpno && c.newEmpno !== "no" ? c.newEmpno.trim() : "";
+      const cleanNote = c.note && c.note !== "no" ? c.note : "";
+      const rawSrc = c.recruSource && c.recruSource !== "no" ? c.recruSource.trim() : "";
+      const resolvedSourceName = rawSrc
+        ? sourceMap.get(rawSrc) || sourceMap.get(rawSrc.toLowerCase()) || rawSrc
+        : "";
+      const resolvedEduName = c.edu ? eduMap.get(c.edu) || c.edu : "";
+
       return {
         ...c,
         awDept: dept,
+        cccd: c.empId || "",
+        duty: c.position || "",
+        deptCode: c.applyDp || "",
+        dept: c.tmpDepartid || c.applyDp || "",
+        deptName: resolvedDeptName,
+        empno: cleanEmpno,
+        notes: cleanNote,
+        hrAcQu: hrApproved,
+        dpAcQu: dpApproved,
+        reg: isReg,
+        isHires: isReg || Boolean(c.actEnDate && c.actEnDate !== "no"),
+        recru_source: rawSrc,
+        source_recruit: rawSrc,
+        source_name: resolvedSourceName,
+        edu_name: resolvedEduName,
+        date_hr_inter: c.hrIvDate || "",
+        date_hr_review: c.hrAcDate || "",
+        date_dept_review: c.dpAcDate || "",
       };
     });
 
@@ -273,38 +327,59 @@ export async function PUT(request: NextRequest) {
   return saveCandidate(request);
 }
 
-export async function DELETE(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    let idParam = searchParams.get("id");
+    const body = await request.json();
+    const targetIds: number[] = Array.isArray(body.ids)
+      ? body.ids.map((v: unknown) => parseInt(String(v), 10)).filter((n: number) => !isNaN(n))
+      : body.id
+      ? [parseInt(String(body.id), 10)].filter((n: number) => !isNaN(n))
+      : [];
 
-    if (!idParam) {
-      try {
-        const body = await request.json();
-        if (body && body.id) {
-          idParam = String(body.id);
-        }
-      } catch {
-        // Body optional
-      }
-    }
-
-    if (!idParam) {
+    if (targetIds.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Candidate ID is required" },
+        { success: false, error: "Candidate ID or IDs are required" },
         { status: 400 }
       );
     }
 
-    const numId = parseInt(idParam, 10);
-    const updated = await prisma.employeeInfo.update({
-      where: { id: numId },
-      data: { status: "0" },
+    const boolToYesNo = (v: unknown) => {
+      if (v === true || v === 1 || String(v).toLowerCase() === "yes" || String(v).toLowerCase() === "true") {
+        return "yes";
+      }
+      return "no";
+    };
+
+    const updateData: Record<string, any> = {};
+    if (body.hrAcQu !== undefined) updateData.hrAcQu = boolToYesNo(body.hrAcQu);
+    if (body.dpAcQu !== undefined) updateData.dpAcQu = boolToYesNo(body.dpAcQu);
+    if (body.reg !== undefined) updateData.reg = boolToYesNo(body.reg);
+    if (body.exEnDate !== undefined) updateData.exEnDate = body.exEnDate ? String(body.exEnDate) : "no";
+    if (body.actEnDate !== undefined) updateData.actEnDate = body.actEnDate ? String(body.actEnDate) : "no";
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { success: false, error: "No valid fields to update" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.employeeInfo.updateMany({
+      where: { id: { in: targetIds } },
+      data: updateData,
     });
 
-    if (updated.empDemandid) {
+    const updatedRows = await prisma.employeeInfo.findMany({
+      where: { id: { in: targetIds } },
+      select: { empDemandid: true },
+    });
+
+    const demandIds = Array.from(
+      new Set(updatedRows.map((r) => r.empDemandid).filter((d): d is string => Boolean(d && d.trim())))
+    );
+    for (const dId of demandIds) {
       try {
-        await reconcileAwDemandByDemId(updated.empDemandid, prisma);
+        await reconcileAwDemandByDemId(dId, prisma);
       } catch (e) {
         console.error("Demand reconciliation error:", e);
       }
@@ -312,8 +387,80 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Candidate soft deleted successfully",
-      data: updated,
+      count: targetIds.length,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to update candidate" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const idParam = searchParams.get("id");
+    const idsParam = searchParams.get("ids");
+
+    let targetIds: number[] = [];
+    if (idsParam) {
+      targetIds = idsParam
+        .split(",")
+        .map((v) => parseInt(v.trim(), 10))
+        .filter((n) => !isNaN(n));
+    } else if (idParam) {
+      const parsed = parseInt(idParam.trim(), 10);
+      if (!isNaN(parsed)) targetIds = [parsed];
+    } else {
+      try {
+        const body = await request.json();
+        if (Array.isArray(body?.ids)) {
+          targetIds = body.ids.map((v: unknown) => parseInt(String(v), 10)).filter((n: number) => !isNaN(n));
+        } else if (body?.id) {
+          const parsed = parseInt(String(body.id), 10);
+          if (!isNaN(parsed)) targetIds = [parsed];
+        }
+      } catch {
+        // Body optional
+      }
+    }
+
+    if (targetIds.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Candidate ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const rowsToUpdate = await prisma.employeeInfo.findMany({
+      where: { id: { in: targetIds } },
+      select: { empDemandid: true },
+    });
+
+    await prisma.employeeInfo.updateMany({
+      where: { id: { in: targetIds } },
+      data: { status: "0" },
+    });
+
+    const demandIds = Array.from(
+      new Set(rowsToUpdate.map((r) => r.empDemandid).filter((d): d is string => Boolean(d && d.trim())))
+    );
+    for (const dId of demandIds) {
+      try {
+        await reconcileAwDemandByDemId(dId, prisma);
+      } catch (e) {
+        console.error("Demand reconciliation error:", e);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message:
+        targetIds.length > 1
+          ? `Đã xóa ${targetIds.length} hồ sơ ứng viên thành công`
+          : "Candidate soft deleted successfully",
+      count: targetIds.length,
     });
   } catch (error: any) {
     return NextResponse.json(
