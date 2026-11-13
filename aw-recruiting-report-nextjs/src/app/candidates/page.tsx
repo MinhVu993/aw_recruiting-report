@@ -1736,9 +1736,6 @@ function CandidatesContent() {
                   />
                 </th>
 
-                {/* 18. Ảnh (Image) */}
-                <th className="py-2 px-2 text-center">{t("photo", "Ảnh")}</th>
-
                 {/* 19. Ghi chú (Note) */}
                 <th className="py-2 px-2 text-center">
                   <ExcelColumnFilter
@@ -2060,48 +2057,6 @@ function CandidatesContent() {
                         ) : (
                           <span className="text-zinc-400 dark:text-zinc-600 text-xs">-</span>
                         )}
-                      </td>
-
-                      {/* 18. Image Preview Thumbnail */}
-                      <td className="py-1.5 px-2 text-center">
-                        {(() => {
-                          const resolvedPhoto = getCandidatePhotoUrl(c);
-                          if (resolvedPhoto) {
-                            return (
-                              <div className="flex items-center justify-center">
-                                <button
-                                  type="button"
-                                  onClick={() => setPreviewPhotoCandidate(c)}
-                                  title="Bấm để phóng to ảnh đại diện"
-                                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded cursor-pointer"
-                                >
-                                  <img
-                                    src={resolvedPhoto}
-                                    alt={c.candidateName}
-                                    className="w-6 h-6 rounded object-cover mx-auto border border-zinc-200 dark:border-zinc-700 hover:border-rose-500 transition-colors"
-                                    onError={(e) => {
-                                      // Fallback sang icon rỗng nếu ảnh lỗi tải hoặc trả về 404
-                                      const target = e.currentTarget as HTMLElement;
-                                      target.style.display = "none";
-                                      const btn = target.closest("button");
-                                      if (btn) btn.style.display = "none";
-                                      const fallback = btn?.nextElementSibling as HTMLElement;
-                                      if (fallback) fallback.classList.remove("hidden");
-                                    }}
-                                  />
-                                </button>
-                                <div className="hidden w-6 h-6 rounded bg-zinc-100 dark:bg-[#222228] border border-zinc-200 dark:border-[#26262C] flex items-center justify-center mx-auto text-zinc-400 text-[10px]">
-                                  <ImageIcon className="w-3 h-3" />
-                                </div>
-                              </div>
-                            );
-                          }
-                          return (
-                            <div className="w-6 h-6 rounded bg-zinc-100 dark:bg-[#222228] border border-zinc-200 dark:border-[#26262C] flex items-center justify-center mx-auto text-zinc-400 text-[10px]">
-                              <ImageIcon className="w-3 h-3" />
-                            </div>
-                          );
-                        })()}
                       </td>
 
                       {/* 19. Note Details Button */}
