@@ -67,18 +67,23 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [theme, setThemeState] = useState<"dark" | "light">("light");
 
   const applyTheme = (t: "dark" | "light" = "light") => {
-    setThemeState("light");
+    setThemeState(t);
     if (typeof window !== "undefined") {
-      localStorage.setItem("theme", "light");
+      localStorage.setItem("theme", t);
       const root = document.documentElement;
-      root.style.colorScheme = "light";
-      root.classList.remove("dark");
-      root.classList.add("light");
+      root.style.colorScheme = t;
+      if (t === "dark") {
+        root.classList.remove("light");
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+        root.classList.add("light");
+      }
     }
   };
 
   const toggleTheme = () => {
-    applyTheme("light");
+    applyTheme(theme === "dark" ? "light" : "dark");
   };
 
   // Parse role strictly according to GMO SSO app rules: admin, review (or reviewer), user
@@ -215,8 +220,9 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       window.history.replaceState({}, "", newUrl);
     }
 
-    // 2. Tải ngôn ngữ và cố định giao diện sáng (Light mode)
-    applyTheme("light");
+    // 2. Tải ngôn ngữ và giao diện (Theme)
+    const savedTheme = localStorage.getItem("theme");
+    applyTheme(savedTheme === "dark" ? "dark" : "light");
 
     const savedLocale = localStorage.getItem("app-locale");
     if (savedLocale === "vi" || savedLocale === "en" || savedLocale === "cn") {

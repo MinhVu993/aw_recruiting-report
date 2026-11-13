@@ -3,22 +3,33 @@
 import React, { useState } from "react";
 import { Cpu, RefreshCw, Unplug, CheckCircle2 } from "lucide-react";
 import { useScanner } from "@/context/ScannerContext";
+import { useDialog } from "@/context/DialogContext";
 
 export const ScannerStatusBadge: React.FC = () => {
   const { isSupported, isConnected, portInfo, connect, disconnect, errorMessage } = useScanner();
+  const { showWarning, showConfirm } = useDialog();
   const [connecting, setConnecting] = useState(false);
 
   const handleClick = async () => {
     if (!isSupported) {
-      alert("Trình duyệt hiện tại không hỗ trợ Web Serial/USB API. Vui lòng truy cập qua HTTPS bằng Google Chrome hoặc Microsoft Edge.");
+      showWarning(
+        "Trình duyệt không hỗ trợ",
+        "Trình duyệt hiện tại không hỗ trợ Web Serial/USB API. Vui lòng truy cập qua HTTPS bằng Google Chrome hoặc Microsoft Edge."
+      );
       return;
     }
 
     if (isConnected) {
-      const confirmDisconnect = window.confirm(`Thiết bị ${portInfo || "Máy quét CCCD"} đang kết nối.\nBạn có muốn ngắt kết nối không?`);
-      if (confirmDisconnect) {
-        await disconnect();
-      }
+      showConfirm({
+        title: "Ngắt kết nối thiết bị",
+        message: `Thiết bị ${portInfo || "Máy quét CCCD"} đang kết nối. Bạn có muốn ngắt kết nối không?`,
+        confirmText: "Ngắt kết nối",
+        cancelText: "Hủy",
+        type: "warning",
+        onConfirm: async () => {
+          await disconnect();
+        },
+      });
       return;
     }
 
