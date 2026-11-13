@@ -501,7 +501,7 @@ function CandidateFormContent() {
               dept: d.dept,
             }));
           }
-          setHrmOptions(loadedData);
+          setHrmOptions((prev) => ({ ...prev, ...loadedData }));
           if (loadedData.sources && Array.isArray(loadedData.sources) && loadedData.sources.length > 0) {
             setSourcesList(loadedData.sources);
           } else if (loadedData.sourceRecruits && Array.isArray(loadedData.sourceRecruits) && loadedData.sourceRecruits.length > 0) {
@@ -818,7 +818,18 @@ const FALLBACK_DEMANDS = [
       .then((r) => r.json())
       .then((res) => {
         if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          setDepartmentDivs(res.data);
+          const normalizedDivs = res.data
+            .map((d: any) => {
+              const divCode = String(d?.div || d?.code || d?.name || "").trim();
+              if (!divCode) return null;
+              return {
+                div: divCode,
+                name: String(d?.name || divCode),
+                label: String(d?.label || divCode),
+              };
+            })
+            .filter(Boolean) as Array<{ div: string; name: string; label: string }>;
+          setDepartmentDivs(normalizedDivs);
         }
       })
       .catch(console.error);
@@ -2235,8 +2246,8 @@ const FALLBACK_DEMANDS = [
                             { code: "009", name: "Thạc Sĩ" },
                             { code: "010", name: "Tiến Sĩ" },
                           ]
-                      ).map((e) => (
-                        <option key={e.code} value={e.code}>
+                      ).map((e, idx) => (
+                        <option key={`edu-${e.code || idx}-${idx}`} value={e.code}>
                           {e.name}
                         </option>
                       ))}
@@ -2380,14 +2391,20 @@ const FALLBACK_DEMANDS = [
                       className="font-semibold"
                     >
                       <option value=""> {t("selectDeptApply", "Chọn bộ phận ứng tuyển")} </option>
-                      {departmentDivs.map((d) => (
-                        <option key={d.div} value={d.div}>
-                          {d.div}{d.name && d.name !== d.div ? ` - ${d.name}` : ""}
-                        </option>
-                      ))}
-                      {form.dept_apply && !departmentDivs.some((d) => d.div === form.dept_apply) && (
-                        <option value={form.dept_apply}>{form.dept_apply}</option>
-                      )}
+                      {departmentDivs.map((d, idx) => {
+                        const divVal = d.div || (d as any).code || d.name || String(idx);
+                        return (
+                          <option key={`dept-div-${divVal}-${idx}`} value={divVal}>
+                            {divVal}{d.name && d.name !== divVal ? ` - ${d.name}` : ""}
+                          </option>
+                        );
+                      })}
+                      {form.dept_apply &&
+                        !departmentDivs.some((d) => (d.div || (d as any).code) === form.dept_apply) && (
+                          <option key={`dept-div-custom-${form.dept_apply}`} value={form.dept_apply}>
+                            {form.dept_apply}
+                          </option>
+                        )}
                     </OutlinedSelect>
                   </div>
                   {form.dept_apply && (
@@ -2428,8 +2445,8 @@ const FALLBACK_DEMANDS = [
                   value={form.loc_apply}
                   onChange={(e) => setForm({ ...form, loc_apply: e.target.value })}
                 >
-                  {locApplyOptions.map((la) => (
-                    <option key={la.code} value={la.code}>
+                  {locApplyOptions.map((la, idx) => (
+                    <option key={`loc-apply-${la.code || idx}-${idx}`} value={la.code}>
                       {getLocApplyDisplayName(la)}
                     </option>
                   ))}
@@ -2853,8 +2870,8 @@ const FALLBACK_DEMANDS = [
                           {hrmOptions.positions.find((p) => p.name.toLowerCase() === form.position.toLowerCase())?.name || form.position}
                         </option>
                       )}
-                    {hrmOptions.positions.map((hp) => (
-                      <option key={hp.code} value={hp.code}>
+                    {(hrmOptions.positions || []).map((hp, idx) => (
+                      <option key={`pos-${hp.code || idx}-${idx}`} value={hp.code}>
                         {hp.name}
                       </option>
                     ))}
@@ -2871,8 +2888,8 @@ const FALLBACK_DEMANDS = [
                     {form.deputy && !hrmOptions.ranks.includes(form.deputy) && (
                       <option value={form.deputy}>{form.deputy}</option>
                     )}
-                    {hrmOptions.ranks.map((d) => (
-                      <option key={d} value={d}>
+                    {(hrmOptions.ranks || []).map((d, idx) => (
+                      <option key={`rank-${d}-${idx}`} value={d}>
                         {d}
                       </option>
                     ))}
@@ -2886,11 +2903,11 @@ const FALLBACK_DEMANDS = [
                     onChange={(e) => setForm({ ...form, level: e.target.value })}
                   >
                     <option value=""> {t("selectLevel", "Chọn cấp độ")} </option>
-                    {form.level && !hrmOptions.levels.includes(form.level) && (
+                    {form.level && !(hrmOptions.levels || []).includes(form.level) && (
                       <option value={form.level}>{form.level}</option>
                     )}
-                    {hrmOptions.levels.map((l) => (
-                      <option key={l} value={l}>
+                    {(hrmOptions.levels || []).map((l, idx) => (
+                      <option key={`level-${l}-${idx}`} value={l}>
                         {l}
                       </option>
                     ))}
@@ -2904,11 +2921,11 @@ const FALLBACK_DEMANDS = [
                     onChange={(e) => setForm({ ...form, parameters: e.target.value })}
                   >
                     <option value=""> {t("selectParameters", "Chọn tham số")} </option>
-                    {form.parameters && !hrmOptions.parameters.includes(form.parameters) && (
+                    {form.parameters && !(hrmOptions.parameters || []).includes(form.parameters) && (
                       <option value={form.parameters}>{form.parameters}</option>
                     )}
-                    {hrmOptions.parameters.map((p) => (
-                      <option key={p} value={p}>
+                    {(hrmOptions.parameters || []).map((p, idx) => (
+                      <option key={`param-${p}-${idx}`} value={p}>
                         {p}
                       </option>
                     ))}
@@ -2927,11 +2944,11 @@ const FALLBACK_DEMANDS = [
                     }
                   >
                     <option value=""> {t("selectTrial", "Chọn ngày")} </option>
-                    {form.time_trial && !hrmOptions.trials.includes(Number(form.time_trial)) && (
+                    {form.time_trial && !(hrmOptions.trials || []).includes(Number(form.time_trial)) && (
                       <option value={form.time_trial}>{form.time_trial} {t("daysCount", "ngày")}</option>
                     )}
-                    {hrmOptions.trials.map((trialDays) => (
-                      <option key={trialDays} value={trialDays}>
+                    {(hrmOptions.trials || []).map((trialDays, idx) => (
+                      <option key={`trial-${trialDays}-${idx}`} value={trialDays}>
                         {trialDays} {t("daysCount", "ngày")}
                       </option>
                     ))}
@@ -2949,13 +2966,13 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectEthnicity", "Chọn dân tộc")} </option>
                     {form.dantoc &&
-                      !hrmOptions.dantocs.some((dt) => dt.code === form.dantoc) && (
+                      !(hrmOptions.dantocs || []).some((dt) => dt.code === form.dantoc) && (
                         <option value={form.dantoc}>
-                          {hrmOptions.dantocs.find((dt) => dt.name.toLowerCase() === form.dantoc.toLowerCase())?.name || form.dantoc}
+                          {(hrmOptions.dantocs || []).find((dt) => dt.name.toLowerCase() === form.dantoc.toLowerCase())?.name || form.dantoc}
                         </option>
                       )}
-                    {hrmOptions.dantocs.map((dt) => (
-                      <option key={dt.code} value={dt.code}>
+                    {(hrmOptions.dantocs || []).map((dt, idx) => (
+                      <option key={`dt-${dt.code || idx}-${idx}`} value={dt.code}>
                         {dt.name}
                       </option>
                     ))}
@@ -2970,10 +2987,10 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectReligion", "Chọn tôn giáo")} </option>
                     {form.religious &&
-                      !hrmOptions.religious.some((r) => r.code === form.religious) && (
+                      !(hrmOptions.religious || []).some((r) => r.code === form.religious) && (
                         <option value={form.religious}>
                           {(() => {
-                            const matched = hrmOptions.religious.find(
+                            const matched = (hrmOptions.religious || []).find(
                               (r) =>
                                 r.code === form.religious ||
                                 r.name.toLowerCase() === form.religious.toLowerCase() ||
@@ -2985,8 +3002,8 @@ const FALLBACK_DEMANDS = [
                           })()}
                         </option>
                       )}
-                    {hrmOptions.religious.map((r) => (
-                      <option key={r.code} value={r.code}>
+                    {(hrmOptions.religious || []).map((r, idx) => (
+                      <option key={`rel-${r.code || idx}-${idx}`} value={r.code}>
                         {getReligiousDisplayName(r)}
                       </option>
                     ))}
@@ -3001,13 +3018,13 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectMarital", "Chọn hôn nhân")} </option>
                     {form.married &&
-                      !hrmOptions.married.some((m) => m.code === form.married) && (
+                      !(hrmOptions.married || []).some((m) => m.code === form.married) && (
                         <option value={form.married}>
-                          {hrmOptions.married.find((m) => m.name.toLowerCase() === form.married.toLowerCase())?.name || form.married}
+                          {(hrmOptions.married || []).find((m) => m.name.toLowerCase() === form.married.toLowerCase())?.name || form.married}
                         </option>
                       )}
-                    {hrmOptions.married.map((m) => (
-                      <option key={m.code} value={m.code}>
+                    {(hrmOptions.married || []).map((m, idx) => (
+                      <option key={`married-${m.code || idx}-${idx}`} value={m.code}>
                         {m.name}
                       </option>
                     ))}
@@ -3029,11 +3046,11 @@ const FALLBACK_DEMANDS = [
                     }}
                   >
                     <option value=""> {t("selectCountry", "Chọn mã QG")} </option>
-                    {form.nation && !hrmOptions.nations.includes(form.nation) && (
+                    {form.nation && !(hrmOptions.nations || []).includes(form.nation) && (
                       <option value={form.nation}>{form.nation}</option>
                     )}
-                    {hrmOptions.nations.map((n) => (
-                      <option key={n} value={n}>
+                    {(hrmOptions.nations || []).map((n, idx) => (
+                      <option key={`nation-${n}-${idx}`} value={n}>
                         {n}
                       </option>
                     ))}
@@ -3056,11 +3073,11 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectNationality", "Chọn quốc tịch")} </option>
                     {form.nationality &&
-                      !hrmOptions.nationalities.some((nt) => nt.toLowerCase() === form.nationality.toLowerCase()) && (
+                      !(hrmOptions.nationalities || []).some((nt) => nt.toLowerCase() === form.nationality.toLowerCase()) && (
                         <option value={form.nationality}>{form.nationality}</option>
                       )}
-                    {hrmOptions.nationalities.map((nt) => (
-                      <option key={nt} value={nt}>
+                    {(hrmOptions.nationalities || []).map((nt, idx) => (
+                      <option key={`nat-${nt}-${idx}`} value={nt}>
                         {nt}
                       </option>
                     ))}
@@ -3075,13 +3092,13 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectBirthProvince", "Chọn nơi sinh")} </option>
                     {form.birth_province &&
-                      !hrmOptions.provinces.some((p) => p.code === form.birth_province) && (
+                      !(hrmOptions.provinces || []).some((p) => p.code === form.birth_province) && (
                         <option value={form.birth_province}>
-                          {hrmOptions.provinces.find((p) => p.name.toLowerCase() === form.birth_province.toLowerCase())?.name || form.birth_province}
+                          {(hrmOptions.provinces || []).find((p) => p.name.toLowerCase() === form.birth_province.toLowerCase())?.name || form.birth_province}
                         </option>
                       )}
-                    {hrmOptions.provinces.map((p) => (
-                      <option key={`bp-${p.code}`} value={p.code}>
+                    {(hrmOptions.provinces || []).map((p, idx) => (
+                      <option key={`bp-${p.code || idx}-${idx}`} value={p.code}>
                         {p.name}
                       </option>
                     ))}
@@ -3096,13 +3113,13 @@ const FALLBACK_DEMANDS = [
                   >
                     <option value=""> {t("selectResideProvince", "Chọn nơi cư trú")} </option>
                     {form.province &&
-                      !hrmOptions.provinces.some((p) => p.code === form.province) && (
+                      !(hrmOptions.provinces || []).some((p) => p.code === form.province) && (
                         <option value={form.province}>
-                          {hrmOptions.provinces.find((p) => p.name.toLowerCase() === form.province.toLowerCase())?.name || form.province}
+                          {(hrmOptions.provinces || []).find((p) => p.name.toLowerCase() === form.province.toLowerCase())?.name || form.province}
                         </option>
                       )}
-                    {hrmOptions.provinces.map((p) => (
-                      <option key={`p-${p.code}`} value={p.code}>
+                    {(hrmOptions.provinces || []).map((p, idx) => (
+                      <option key={`p-${p.code || idx}-${idx}`} value={p.code}>
                         {p.name}
                       </option>
                     ))}
@@ -3580,7 +3597,7 @@ const FALLBACK_DEMANDS = [
                       </td>
                     </tr>
                   ) : (
-                    finalDemandList.map((d) => {
+                    finalDemandList.map((d, idx) => {
                       const mprCode =
                         d.id_code ||
                         (d.mprId
@@ -3607,7 +3624,7 @@ const FALLBACK_DEMANDS = [
 
                       return (
                         <tr
-                          key={d.id}
+                          key={`demand-row-${d.id ?? mprCode}-${idx}`}
                           className="hover:bg-zinc-50 dark:hover:bg-[#202025] transition-colors"
                         >
                           {/* 1. MPR ID */}

@@ -65,13 +65,15 @@ export async function GET(req: NextRequest) {
     const filtered = all ? mapped : mapped.filter((d) => d.active);
 
     if (type === "divs") {
-      const divMap = new Map<string, { id: number; code: string; name: string }>();
+      const divMap = new Map<string, { id: number; div: string; code: string; name: string; label: string }>();
       for (const item of filtered) {
         if (item.div && !divMap.has(item.div)) {
           divMap.set(item.div, {
             id: item.id,
+            div: item.div,
             code: item.div,
             name: item.div,
+            label: item.div,
           });
         }
       }
