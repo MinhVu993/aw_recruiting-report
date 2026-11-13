@@ -335,7 +335,7 @@ export default function DeptControlPage() {
 
   return (
     <div className="flex-1 w-full bg-[#eaedf0] dark:bg-[#121214] min-h-[calc(100vh-4rem)] p-4 md:p-6 transition-colors">
-      <div className="max-w-[1600px] mx-auto space-y-4">
+      <div className="w-full space-y-4">
         {/* Header bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#1e1e20] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center gap-3">
