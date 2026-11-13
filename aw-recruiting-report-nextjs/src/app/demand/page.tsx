@@ -91,6 +91,34 @@ function DemandContent() {
   const paramPos = searchParams.get("pos") || searchParams.get("position");
   const paramDept = searchParams.get("dept");
 
+  // Helper to compute display status matching table cell rendering
+  const getDemandStatusLabel = (item: DemandItem) => {
+    const pct =
+      item.dem_amount > 0
+        ? Math.round((item.dem_recruited / item.dem_amount) * 100)
+        : 0;
+    if (item.status === "closed" || pct >= 100) {
+      return t("demandClosed", "Đã kết thúc");
+    }
+    if (item.status === "on_hold" || Boolean(item.dem_pause_start_at)) {
+      return t("demandOnHold", "Tạm dừng");
+    }
+    return t("demandRecruiting", "Đang tuyển");
+  };
+
+  // Helper to translate position code matching table cell rendering
+  const getDemandPositionLabel = (pos?: string) => {
+    if (!pos) return "-";
+    const p = pos.trim();
+    if (p === "Công nhân" || p.toLowerCase() === "worker") return t("worker");
+    if (p === "Nhân viên" || p.toLowerCase() === "staff") return t("staff");
+    if (p === "Cán bộ" || p === "Cán bộ / Tổ trưởng" || p.toLowerCase() === "leader") return t("leader");
+    if (p === "Phiên dịch" || p.toLowerCase() === "translator") return t("translator");
+    if (p === "Kỹ sư" || p.toLowerCase() === "engineer") return t("engineer");
+    if (p === "Thực tập sinh" || p.toLowerCase() === "intern") return t("intern", "Thực tập sinh");
+    return p;
+  };
+
   // Helper to map unit name according to selected header language (VI / EN / CN)
   const getUnitName = (item: DemandItem) => {
     if (item.dem_unit_multilang) {
@@ -291,12 +319,8 @@ function DemandContent() {
   } = useTableExcelFilter(baseDemands, {
     customExtractors: {
       dem_unit_name: (item) => getUnitName(item),
-      status: (item) =>
-        item.status === "closed"
-          ? "Đã kết thúc"
-          : item.status === "on_hold"
-          ? "Tạm dừng"
-          : "Đang tuyển",
+      dem_position: (item) => getDemandPositionLabel(item.dem_position),
+      status: (item) => getDemandStatusLabel(item),
       dem_note: (item) => {
         if (!item.dem_note) return "";
         if (typeof item.dem_note === "string") {
@@ -1091,17 +1115,7 @@ function DemandContent() {
                       {/* Position */}
                       {visibleColumns.dem_position && (
                         <td className="py-2 px-3 font-semibold text-slate-800 dark:text-slate-200">
-                          {(() => {
-                            if (!item.dem_position) return "-";
-                            const p = item.dem_position.trim();
-                            if (p === "Công nhân" || p.toLowerCase() === "worker") return t("worker");
-                            if (p === "Nhân viên" || p.toLowerCase() === "staff") return t("staff");
-                            if (p === "Cán bộ" || p === "Cán bộ / Tổ trưởng" || p.toLowerCase() === "leader") return t("leader");
-                            if (p === "Phiên dịch" || p.toLowerCase() === "translator") return t("translator");
-                            if (p === "Kỹ sư" || p.toLowerCase() === "engineer") return t("engineer");
-                            if (p === "Thực tập sinh" || p.toLowerCase() === "intern") return t("intern", "Thực tập sinh");
-                            return p;
-                          })()}
+                          {getDemandPositionLabel(item.dem_position)}
                         </td>
                       )}
 
@@ -1155,19 +1169,17 @@ function DemandContent() {
                       {/* Status */}
                       {visibleColumns.dem_status && (
                         <td className="py-2 px-3 text-center text-xs font-semibold">
-                          {item.status === "closed" || pct >= 100 ? (
-                            <span className="text-emerald-600 dark:text-emerald-400">
-                              {t("demandClosed")}
-                            </span>
-                          ) : item.status === "on_hold" || item.dem_pause_start_at ? (
-                            <span className="text-amber-600 dark:text-amber-400">
-                              {t("demandOnHold")}
-                            </span>
-                          ) : (
-                            <span className="text-sky-600 dark:text-sky-400">
-                              {t("demandRecruiting")}
-                            </span>
-                          )}
+                          <span
+                            className={
+                              item.status === "closed" || pct >= 100
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : item.status === "on_hold" || item.dem_pause_start_at
+                                ? "text-amber-600 dark:text-amber-400"
+                                : "text-sky-600 dark:text-sky-400"
+                            }
+                          >
+                            {getDemandStatusLabel(item)}
+                          </span>
                         </td>
                       )}
 

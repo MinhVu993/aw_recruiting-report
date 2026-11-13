@@ -1293,6 +1293,18 @@ function CandidatesContent() {
     paramReportSource,
   ]);
 
+  const getDutyLabel = (duty?: string) => {
+    if (!duty) return "-";
+    const d = duty.trim();
+    if (d === "Công nhân" || d.toLowerCase() === "worker") return t("worker");
+    if (d === "Nhân viên" || d.toLowerCase() === "staff") return t("staff");
+    if (d === "Cán bộ" || d === "Cán bộ / Tổ trưởng" || d.toLowerCase() === "leader") return t("leader");
+    if (d === "Phiên dịch" || d.toLowerCase() === "translator") return t("translator");
+    if (d === "Kỹ sư" || d.toLowerCase() === "engineer") return t("engineer");
+    if (d === "Thực tập sinh" || d.toLowerCase() === "intern") return t("intern", "Thực tập sinh");
+    return d;
+  };
+
   // Excel multi-column filtering and sorting
   const {
     filteredData: filteredCandidates,
@@ -1306,15 +1318,16 @@ function CandidatesContent() {
     activeFilterCount,
   } = useTableExcelFilter(baseCandidates, {
     customExtractors: {
-      gender: (c) =>
-        c.gender === "0" || c.gender === "M" || c.gender === "Nam"
-          ? "Nam"
-          : c.gender === "1" || c.gender === "F" || c.gender === "Nữ"
-          ? "Nữ"
-          : c.gender || "",
+      gender: (c) => {
+        const g = (c.gender || "").trim().toLowerCase();
+        if (g === "1" || g === "f" || g === "nữ" || g === "female") return t("female");
+        if (g === "0" || g === "m" || g === "nam" || g === "male") return t("male");
+        return c.gender || t("male");
+      },
       hrAcQu: (c) => (c.hrAcQu ? "Đạt" : "Chưa"),
       dpAcQu: (c) => (c.dpAcQu ? "Đạt" : "Chưa"),
       reg: (c) => (c.reg ? "Đã tuyển" : "Chưa"),
+      duty: (c) => getDutyLabel(c.duty),
       tmpDepartid: (c) => c.tmpDepartid || c.dept || "",
       applyDp: (c) => c.applyDp || c.deptCode || "",
       note: (c) => c.notes || "",
@@ -1854,16 +1867,7 @@ function CandidatesContent() {
 
                       {/* 8. Position (Duty) */}
                       <td className="py-1.5 px-3 text-zinc-800 dark:text-zinc-300 truncate max-w-[140px]">
-                        {(() => {
-                          if (!c.duty) return "-";
-                          const d = c.duty.trim();
-                          if (d === "Công nhân" || d.toLowerCase() === "worker") return t("worker");
-                          if (d === "Nhân viên" || d.toLowerCase() === "staff") return t("staff");
-                          if (d === "Cán bộ" || d === "Cán bộ / Tổ trưởng" || d.toLowerCase() === "leader") return t("leader");
-                          if (d === "Phiên dịch" || d.toLowerCase() === "translator") return t("translator");
-                          if (d === "Kỹ sư" || d.toLowerCase() === "engineer") return t("engineer");
-                          return d;
-                        })()}
+                        {getDutyLabel(c.duty)}
                       </td>
 
                       {/* 9. Dept Applied Code (apply_dp) */}

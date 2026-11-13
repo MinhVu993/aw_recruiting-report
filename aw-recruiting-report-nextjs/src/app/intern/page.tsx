@@ -289,8 +289,8 @@ export default function InternPage() {
       period: (i) => {
         const s = i.startDate || "";
         const e = i.endDate || "";
-        if (!s && !e) return "";
-        return `${s} ~ ${e}`;
+        if (s && e) return `${s} ~ ${e}`;
+        return s || e || "";
       },
       allowance: (i) => (i.allowance ? "Có phụ cấp" : "Không"),
       bus: (i) => (i.bus ? "Có xe đưa rước" : "Không"),
