@@ -151,7 +151,12 @@ function RecruitingReportContent() {
       );
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
-        setRows(json.data);
+        setRows(
+          json.data.map((r: any) => ({
+            ...r,
+            id_code: r.id_code || r.dem_id || "",
+          }))
+        );
         if (json.hierarchy) {
           setHierarchy(json.hierarchy);
         }

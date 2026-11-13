@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateAwRecruitReportRow } from "@/lib/aw-report-calc";
+import { parseMultilangName } from "@/app/api/depts/dept-mapper";
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,23 +77,30 @@ export async function GET(request: NextRequest) {
     const demands = await prisma.demandData.findMany({
       where: demandWhere,
       select: {
+        id: true,
         demId: true,
         demDept: true,
         demUnit: true,
         demSubDepartment: true,
         demPosition: true,
+        demSubPosition: true,
+        demInputdate: true,
         demNote: true,
         demAmount: true,
       },
+      orderBy: { id: "desc" },
     });
 
     // Group and deduplicate combination key: demId-demDept_demUnit_demPosition
     type UniqueDemand = {
+      id: number;
       demId: string;
       demDept: string;
       demUnit: string | null;
       demSubDepartment: string | null;
       demPosition: string;
+      demSubPosition: string | null;
+      demInputdate: string;
       demNote: string | null;
       demandAmount: number;
     };
@@ -107,11 +115,14 @@ export async function GET(request: NextRequest) {
         existing.demandAmount += d.demAmount;
       } else {
         demandMap.set(key, {
+          id: d.id,
           demId: d.demId,
           demDept: d.demDept,
           demUnit: d.demUnit,
           demSubDepartment: d.demSubDepartment,
           demPosition: d.demPosition,
+          demSubPosition: d.demSubPosition,
+          demInputdate: d.demInputdate,
           demNote: d.demNote,
           demandAmount: d.demAmount,
         });
@@ -182,6 +193,12 @@ export async function GET(request: NextRequest) {
     let totalInterview = 0;
     let totalBus = 0;
 
+    const divisionSet = new Set<string>();
+    const departmentSet = new Set<string>();
+    const unitSet = new Set<string>();
+    const deptByDivMap = new Map<string, Set<string>>();
+    const unitByDeptMap = new Map<string, Set<string>>();
+
     for (const d of uniqueDemands) {
       const candidatesForDem = (candidatesByDemand.get(d.demId) || []).filter(
         (c) => !c.applyDp || c.applyDp === d.demDept
@@ -206,9 +223,42 @@ export async function GET(request: NextRequest) {
         const deptMeta = deptMetaMap.get(d.demDept) || null;
         const subDeptMeta = d.demSubDepartment ? deptMetaMap.get(d.demSubDepartment) || null : null;
         const unitMeta = d.demUnit ? deptMetaMap.get(d.demUnit) || null : null;
+        const unitFallback = d.demUnit || d.demSubDepartment || d.demDept;
+        const demUnitName = parseMultilangName(unitMeta?.name ?? subDeptMeta?.name ?? deptMeta?.name, unitFallback);
+        const deptAccRateNum =
+          calculated.accByHR > 0 ? Math.round((calculated.accByDept / calculated.accByHR) * 100) : 0;
+        const employmentRateNum =
+          calculated.accByDept > 0
+            ? Math.round((calculated.actualEnrollDate / calculated.accByDept) * 100)
+            : 0;
+
+        if (d.demDept) {
+          divisionSet.add(d.demDept);
+          if (!deptByDivMap.has(d.demDept)) deptByDivMap.set(d.demDept, new Set());
+        }
+        if (d.demSubDepartment) {
+          departmentSet.add(d.demSubDepartment);
+          if (d.demDept) deptByDivMap.get(d.demDept)?.add(d.demSubDepartment);
+          if (!unitByDeptMap.has(d.demSubDepartment)) unitByDeptMap.set(d.demSubDepartment, new Set());
+        }
+        if (d.demUnit) {
+          unitSet.add(d.demUnit);
+          if (d.demSubDepartment) unitByDeptMap.get(d.demSubDepartment)?.add(d.demUnit);
+        }
 
         const row = {
+          id: d.id,
+          id_code: d.demId,
           ...calculated,
+          sub_position: d.demSubPosition || "",
+          dem_inputdate: d.demInputdate || "",
+          dem_unit_name: demUnitName,
+          deptAccRate: `${deptAccRateNum}%`,
+          deptAccRateNum,
+          employmentRate: `${employmentRateNum}%`,
+          employmentRateNum,
+          offerCycleTimeAvg: 0,
+          enrolledCycleTimeAvg: 0,
           deptName: deptMeta?.name || null,
           subDeptName: subDeptMeta?.name || null,
           unitName: unitMeta?.name || null,
@@ -223,9 +273,25 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const deptByDiv: Record<string, string[]> = {};
+    deptByDivMap.forEach((set, key) => {
+      deptByDiv[key] = Array.from(set).sort();
+    });
+    const unitByDept: Record<string, string[]> = {};
+    unitByDeptMap.forEach((set, key) => {
+      unitByDept[key] = Array.from(set).sort();
+    });
+
     return NextResponse.json({
       success: true,
       data: reportRows,
+      hierarchy: {
+        divisions: Array.from(divisionSet).sort(),
+        departments: Array.from(departmentSet).sort(),
+        units: Array.from(unitSet).sort(),
+        deptByDiv,
+        unitByDept,
+      },
       summary: {
         totalDemand,
         totalRecruited,
