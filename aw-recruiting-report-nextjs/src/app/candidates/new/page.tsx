@@ -811,7 +811,20 @@ const FALLBACK_DEMANDS = [
       .then((r) => r.json())
       .then((res) => {
         if (res.data && res.data.length > 0) {
-          setDemandList(res.data);
+          const normalized = res.data.map((d: any) => ({
+            ...d,
+            id_code: d.id_code || d.idCode || "",
+            dem_dept: d.dem_dept || d.demDept || "",
+            dem_sub_department: d.dem_sub_department || d.demSubDepartment || "",
+            dem_unit: d.dem_unit || d.demUnit || "",
+            dem_position: d.dem_position || d.demPosition || "",
+            dem_sub_position: d.dem_sub_position || d.demSubPosition || "",
+            dem_amount: d.dem_amount ?? d.demAmount ?? 0,
+            dem_recruited: d.dem_recruited ?? d.demRecruited ?? 0,
+            dem_inputdate: d.dem_inputdate || d.demInputdate || "",
+            dem_note: d.dem_note || d.demNote || "",
+          }));
+          setDemandList(normalized);
         } else {
           setDemandList(FALLBACK_DEMANDS);
         }
