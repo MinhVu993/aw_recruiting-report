@@ -5,6 +5,22 @@ import { reconcileAwDemandByDemId } from "@/lib/aw-demand-utils";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const idParam = searchParams.get("id")?.trim();
+    if (idParam) {
+      const numId = parseInt(idParam, 10);
+      if (isNaN(numId)) {
+        return NextResponse.json({ success: false, error: "Invalid candidate ID" }, { status: 400 });
+      }
+      const candidate = await prisma.employeeInfo.findUnique({
+        where: { id: numId },
+      });
+      return NextResponse.json({
+        success: true,
+        candidate,
+        data: candidate ? [candidate] : [],
+      });
+    }
+
     const search = searchParams.get("search")?.trim() || "";
     const demandId = searchParams.get("demand_id")?.trim() || "";
     const status = searchParams.get("status")?.trim() || "1";
@@ -109,24 +125,113 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+function mapCandidateBodyToPrisma(body: Record<string, any>) {
+  const strOrNull = (val: unknown) => {
+    if (val === undefined || val === null) return undefined;
+    const s = String(val).trim();
+    return s === "" ? null : s;
+  };
+  const dateOrNo = (val: unknown) => {
+    if (val === undefined) return undefined;
+    if (val === null) return "no";
+    const s = String(val).trim();
+    return s === "" ? "no" : s;
+  };
+
+  const data: Record<string, any> = {
+    loc: "aw",
+    status: body.status !== undefined && body.status !== null ? String(body.status) : "1",
+  };
+
+  const candidateName = strOrNull(body.candidateName ?? body.name);
+  if (candidateName !== undefined) data.candidateName = candidateName ? candidateName.toUpperCase() : null;
+  if (body.dateOfBirth !== undefined || body.dateBirth !== undefined) {
+    data.dateOfBirth = strOrNull(body.dateOfBirth ?? body.dateBirth) ?? null;
+  }
+  if (body.gender !== undefined) {
+    const g = String(body.gender).trim();
+    data.gender = g === "Nữ" || g === "1" ? "1" : "0";
+  }
+  if (body.empId !== undefined || body.cccd !== undefined) {
+    data.empId = strOrNull(body.empId ?? body.cccd) ?? null;
+  }
+  if (body.datecccd !== undefined || body.selectedDatecccd !== undefined) {
+    data.datecccd = strOrNull(body.datecccd ?? body.selectedDatecccd) ?? null;
+  }
+  if (body.email !== undefined) data.email = strOrNull(body.email) ?? null;
+  if (body.regTel !== undefined || body.tel !== undefined) data.regTel = strOrNull(body.regTel ?? body.tel) ?? null;
+  if (body.commTel !== undefined || body.sub_tel !== undefined) data.commTel = strOrNull(body.commTel ?? body.sub_tel) ?? null;
+  if (body.regAddress !== undefined || body.address !== undefined) data.regAddress = strOrNull(body.regAddress ?? body.address) ?? null;
+  if (body.commAddress !== undefined || body.sub_address !== undefined) data.commAddress = strOrNull(body.commAddress ?? body.sub_address) ?? null;
+
+  if (body.empDemandid !== undefined || body.dm_id !== undefined) data.empDemandid = strOrNull(body.empDemandid ?? body.dm_id) ?? null;
+  if (body.subPosition !== undefined || body.dm_Subpos !== undefined) data.subPosition = strOrNull(body.subPosition ?? body.dm_Subpos) ?? null;
+  if (body.position !== undefined || body.loc_apply !== undefined) {
+    data.position = strOrNull(body.loc_apply ?? body.position) ?? null;
+  }
+  if (body.applyDp !== undefined || body.dept_apply !== undefined) data.applyDp = strOrNull(body.applyDp ?? body.dept_apply) ?? null;
+
+  if (body.recruSource !== undefined || body.source_recruit !== undefined) {
+    data.recruSource = strOrNull(body.recruSource ?? body.source_recruit) ?? "no";
+  }
+  if (body.cvReceivedAt !== undefined || body.date_cv !== undefined) data.cvReceivedAt = strOrNull(body.cvReceivedAt ?? body.date_cv) ?? null;
+  if (body.salarySignedAt !== undefined || body.date_salary !== undefined) data.salarySignedAt = strOrNull(body.salarySignedAt ?? body.date_salary) ?? null;
+  if (body.vgWorkTimes !== undefined || body.inVG !== undefined) data.vgWorkTimes = strOrNull(body.vgWorkTimes ?? body.inVG) ?? "0";
+  if (body.oldEmpno !== undefined || body.empno_old !== undefined) data.oldEmpno = strOrNull(body.oldEmpno ?? body.empno_old) ?? null;
+  if (body.reVgFrom !== undefined || body.comp_return !== undefined) data.reVgFrom = strOrNull(body.reVgFrom ?? body.comp_return) ?? null;
+  if (body.note !== undefined || body.remark !== undefined) data.note = strOrNull(body.note ?? body.remark) ?? null;
+
+  if (body.hrIvDate !== undefined || body.date_hr_inter !== undefined) data.hrIvDate = strOrNull(body.hrIvDate ?? body.date_hr_inter) ?? null;
+  if (body.hrAcDate !== undefined || body.date_hr_review !== undefined) data.hrAcDate = strOrNull(body.hrAcDate ?? body.date_hr_review) ?? null;
+  if (body.dpIvDate !== undefined || body.date_dept_inter !== undefined) data.dpIvDate = strOrNull(body.dpIvDate ?? body.date_dept_inter) ?? null;
+  if (body.dpAcDate !== undefined || body.date_dept_review !== undefined) data.dpAcDate = strOrNull(body.dpAcDate ?? body.date_dept_review) ?? null;
+  if (body.hrAcQu !== undefined || body.hrAcc !== undefined) data.hrAcQu = (body.hrAcQu ?? body.hrAcc) === "yes" ? "yes" : "no";
+  if (body.dpAcQu !== undefined || body.deptACC !== undefined) data.dpAcQu = (body.dpAcQu ?? body.deptACC) === "yes" ? "yes" : "no";
+  if (body.reg !== undefined || body.inWorker !== undefined) data.reg = (body.reg ?? body.inWorker) === "yes" ? "yes" : "no";
+  if (body.exEnDate !== undefined || body.inDateWork !== undefined) data.exEnDate = dateOrNo(body.exEnDate ?? body.inDateWork);
+  if (body.actEnDate !== undefined || body.inDateAccWork !== undefined) data.actEnDate = dateOrNo(body.actEnDate ?? body.inDateAccWork);
+  if (body.changeEnDate !== undefined || body.change_date !== undefined) data.changeEnDate = strOrNull(body.changeEnDate ?? body.change_date) ?? null;
+
+  if (body.national !== undefined || body.nation !== undefined) data.national = strOrNull(body.national ?? body.nation) ?? null;
+  if (body.countryid !== undefined || body.nationality !== undefined) data.countryid = strOrNull(body.countryid ?? body.nationality) ?? null;
+  if (body.newEmpno !== undefined || body.empno_hrm !== undefined) data.newEmpno = strOrNull(body.newEmpno ?? body.empno_hrm) ?? null;
+  if (body.tmpDepartid !== undefined || body.newDept !== undefined) data.tmpDepartid = strOrNull(body.tmpDepartid ?? body.newDept) ?? null;
+  if (body.tmpDutyid !== undefined || body.position_hrm !== undefined) {
+    data.tmpDutyid = strOrNull(body.tmpDutyid ?? body.position_hrm) ?? null;
+  }
+  if (body.probation !== undefined || body.time_trial !== undefined) data.probation = strOrNull(body.probation ?? body.time_trial) ?? null;
+  if (body.tmpIdyclass !== undefined || body.parameters !== undefined) data.tmpIdyclass = strOrNull(body.tmpIdyclass ?? body.parameters) ?? null;
+  if (body.ethnic !== undefined || body.dantoc !== undefined) data.ethnic = strOrNull(body.ethnic ?? body.dantoc) ?? null;
+  if (body.tmpRankid !== undefined || body.deputy !== undefined) data.tmpRankid = strOrNull(body.tmpRankid ?? body.deputy) ?? null;
+  if (body.tmpLevelid !== undefined || body.level !== undefined) data.tmpLevelid = strOrNull(body.tmpLevelid ?? body.level) ?? null;
+  if (body.tmpSiteid !== undefined || body.code_mc !== undefined) data.tmpSiteid = strOrNull(body.tmpSiteid ?? body.code_mc) ?? null;
+  if (body.tmpWorkareaid !== undefined || body.loc_work !== undefined) data.tmpWorkareaid = strOrNull(body.tmpWorkareaid ?? body.loc_work) ?? null;
+  if (body.isdirect !== undefined || body.direct !== undefined) data.isdirect = strOrNull(body.isdirect ?? body.direct) ?? null;
+  if (body.marrage !== undefined || body.married !== undefined) data.marrage = strOrNull(body.marrage ?? body.married) ?? null;
+  if (body.edu !== undefined) data.edu = strOrNull(body.edu) ?? null;
+  if (body.birthProvince !== undefined || body.birth_province !== undefined) data.birthProvince = strOrNull(body.birthProvince ?? body.birth_province) ?? null;
+  if (body.province !== undefined) data.province = strOrNull(body.province) ?? null;
+  if (body.tmpCategoryid !== undefined || body.tmp_categoryid !== undefined) data.tmpCategoryid = strOrNull(body.tmpCategoryid ?? body.tmp_categoryid) ?? null;
+  if (body.school !== undefined || body.school_gra !== undefined) data.school = strOrNull(body.school ?? body.school_gra) ?? null;
+
+  if (body.userInput !== undefined) data.userInput = strOrNull(body.userInput) ?? null;
+  if (body.userUpdate !== undefined) data.userUpdate = strOrNull(body.userUpdate) ?? null;
+  if (body.keyInDate !== undefined) data.keyInDate = strOrNull(body.keyInDate) ?? null;
+
+  return data;
+}
+
+async function saveCandidate(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, ...rest } = body;
-
-    const data: any = { ...rest };
-
-    data.loc = "aw";
-    if (data.status === undefined || data.status === null) {
-      data.status = "1";
-    } else {
-      data.status = String(data.status);
-    }
+    const { id } = body;
+    const data = mapCandidateBodyToPrisma(body);
 
     let savedCandidate;
 
     if (id) {
       const numId = parseInt(String(id), 10);
+      delete data.keyInDate;
       savedCandidate = await prisma.employeeInfo.update({
         where: { id: numId },
         data,
@@ -158,6 +263,14 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+  return saveCandidate(request);
+}
+
+export async function PUT(request: NextRequest) {
+  return saveCandidate(request);
 }
 
 export async function DELETE(request: NextRequest) {

@@ -16,7 +16,6 @@ import {
   Calendar,
   CreditCard,
   CheckCircle,
-  Camera,
   Trash2,
   Briefcase,
   Layers,
@@ -26,7 +25,6 @@ import {
   Search,
   Check,
   AlertTriangle,
-  Upload,
   RefreshCw,
   Clock,
   Car,
@@ -50,26 +48,56 @@ import { useSession } from "@/context/SessionContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AppDialog, DialogOptions } from "@/components/ui/AppDialog";
 
-// Master data lists matching legacy create-candidate.vue
-const LOC_OPTIONS = [
-  { value: "aw", label: "AW" },
-];
-
-const BUS_OPTIONS = [
-  "Ben Cau Tri",
-  "Tan Chau Tri",
-  "Chau Thanh Vui",
-  "Tan Bien Cuong",
-];
-
+// Master data lists matching legacy create-candidate.vue + companies.json
 const COMP_RETURN_OPTIONS = [
-  "LuThai",
-  "Brotex",
-  "Sailun",
-  "Gain Lucky",
-  "HAVina",
-  "Pouhung",
-  "Khác",
+  "CTY ETOP",
+  "CTY TWINKLE",
+  "CTY SUPERRIOR",
+  "CTY DỆT TATONG",
+  "CTY TONG HONG",
+  "CTY MAY THẠNH MỸ",
+  "CTY MAY VIỆT AN",
+  "CTY MAY THÁI BÌNH DƯƠNG",
+  "CTY MAY BẢO ĐÔ",
+  "CTY BẠCH KIM",
+  "CTY DỆT STAR FLEX",
+  "CTY CLOCK & CLOCK",
+  "CTY GIẤY SÀI GÒN",
+  "CTY BAO BÌ ĐẠM PHÚ MỸ",
+  "CTY BAO BÌ CHÂU THÀNH",
+  "CTY NITORI",
+  "CTY GIÀY CHANG CHUN",
+  "CTY GIÀY CHUN IL",
+  "CTY ĐIỆN TỬ CORETRONIC",
+  "CTY ĐIỆN TỬ PAVONINE",
+  "CTY DỆT MEISHENG",
+  "CTY DỆT MAY MERRY",
+  "CTY DỆT AJ SLUTION",
+  "CTY DỆT MAY DAISAN",
+  "CTY GIÀY UY VIỆT",
+  "CTY GIÀY FULLXIN",
+  "CTY NGÀNH GIÀY APEX",
+  "CTY NÓN GREENTECH",
+  "CTY ĐÔNG PHƯƠNG",
+  "CTY VHG",
+  "CTY NƯỚC GIẢI KHÁT WANNA",
+  "CTY TNHH AIR KING",
+  "CTY DỆT MAY DAEYOUN VINA",
+  "CTY DỆT AOJIA VN",
+  "CTY DỆT XINGCHEN",
+  "CTY HONG IN VINA",
+  "CTY TNHH NHÀ BẾP AMON VIỆT NAM",
+  "CTY DỆT MAY SUH LIM VINA",
+  "CTY TNHH COV VINA",
+  "CTY TNHH WORLD TOP",
+  "CTY DỆT MAY DONG IN",
+  "CTY THIẾT BỊ Y TẾ A&T",
+  "CTY GĂNG TAY NAM VIỆT",
+  "CTY SANG FANG",
+  "CTY THÉP VIỆT NHẬT",
+  "CTY ỐNG THÉP SÀI GÒN",
+  "CTY HÒA PHÁT",
+  "CTY ỐNG NHỰA HOA SEN",
 ];
 
 const DEFAULT_SOURCE_RECRUIT: HrmOptionItem[] = [
@@ -102,26 +130,19 @@ interface HrmOptionsData {
   parameters: string[];
   trials: number[];
   dantocs: HrmOptionItem[];
-  religious: HrmOptionItem[];
   married: HrmOptionItem[];
+  directs?: HrmOptionItem[];
   provinces: HrmOptionItem[];
   nations: string[];
   nationalities: string[];
   countries?: Array<{ code: string; name: string }>;
   locApplies?: HrmOptionItem[];
   compReturns?: string[];
-  busRoutes?: string[];
+  codeMcs?: string[];
+  locWorks?: string[];
   edus?: HrmOptionItem[];
   sources?: HrmOptionItem[];
 }
-
-const EPM_BASE_URL = process.env.NEXT_PUBLIC_EPM_API_URL || "http://10.13.34.160:7303";
-
-const resolveEpmPhotoUrl = (empno?: string | null, _loc?: string | null): string | null => {
-  const cleanEmpno = (empno || "").trim();
-  if (!cleanEmpno || cleanEmpno === "-" || cleanEmpno === "no") return null;
-  return `/api/epm-photo/aw/${encodeURIComponent(cleanEmpno)}`;
-};
 
 interface CompactSwitchProps {
   label: string;
@@ -269,13 +290,6 @@ function CandidateFormContent() {
   const initialCccd = searchParams.get("cccd") || "";
   const isEditing = Boolean(candidateId);
 
-  // Helper hiển thị tên tôn giáo theo ngôn ngữ giao diện (vi, en, cn)
-  const getReligiousDisplayName = (r: HrmOptionItem) => {
-    if (currentLocale === "en" && r.name_en) return r.name_en;
-    if (currentLocale === "cn" && r.name_cn) return r.name_cn;
-    return r.name_vi || r.name;
-  };
-
   // Helper hiển thị tên vị trí ứng tuyển theo ngôn ngữ giao diện (vi, en, cn)
   const getLocApplyDisplayName = (la: HrmOptionItem | string) => {
     if (typeof la === "string") {
@@ -319,40 +333,31 @@ function CandidateFormContent() {
     return s.name_vi || s.name || s.code || "";
   };
 
-  // Complete Form State with all ~50 fields from create-candidate.vue
+  // Form State matching legacy pages/create-candidate.vue fields 1-to-1
   const [form, setForm] = useState({
-    // Card 1: Thông tin cá nhân
-    keyInDate: new Date().toISOString().split("T")[0],
-    candidate_picture: "" as string | null,
+    // Section 1: Thông tin cá nhân
     cccd: initialCccd,
-    emp_id_old: "",
     selectedDatecccd: "",
     name: "",
     dateBirth: "",
-    gender: "Nam",
+    gender: "0",
     address: "",
     sub_address: "",
     tel: "",
     sub_tel: "",
     email: "",
-    edu: "",
-    school_gra: "",
-    work_exp: "",
-    work_exp_pt: "",
-    ex_company: "",
-    ex_position: "",
 
-    // Card 2: Thông tin nhu cầu tuyển dụng
+    // Section 2: Thông tin nhu cầu tuyển dụng
     loc: "aw",
     dept_apply: "",
     loc_apply: "Worker",
     dm_id: "",
     dm_Subpos: "",
 
-    // Card 3: Thông tin tuyển dụng & Đánh giá phỏng vấn
-    source_recruit: "17",
-    bus_info: "",
+    // Section 3: Thông tin tuyển dụng & Đánh giá phỏng vấn
+    source_recruit: "",
     date_cv: "",
+    date_salary: "",
     inVG: "",
     empno_old: "",
     comp_return: "",
@@ -360,21 +365,17 @@ function CandidateFormContent() {
     date_hr_inter: new Date().toISOString().split("T")[0],
     date_hr_review: new Date().toISOString().split("T")[0],
     hrAcc: "no",
-    reason: "",
     date_dept_inter: "",
     date_dept_review: "",
     deptACC: "no",
-    dept_reason: "",
-    date_salary: "",
-    reply_date: "",
-    reply_check: "no",
-    candidate_reason: "",
     inDateWork: "",
     inDateAccWork: "",
     inWorker: "no",
-    reg_bus: false,
+    change_date: "",
 
-    // Card 4: Thông tin nhân sự HRM & Tham số (mặc định rỗng, nạp từ DB)
+    // Section 4: Thông tin nhân sự HRM
+    edu: "",
+    school_gra: "",
     empno_hrm: "",
     newDept: "",
     position: "",
@@ -382,11 +383,14 @@ function CandidateFormContent() {
     level: "",
     parameters: "",
     time_trial: "" as unknown as number,
-    dantoc: "A", // Mặc định dân tộc Kinh
-    religious: "000", // Mặc định Không tôn giáo
-    married: "0", // Mặc định Độc thân
+    code_mc: "SCS006",
+    loc_work: "AW",
+    direct: "",
+    tmp_categoryid: "00001",
+    dantoc: "A",
+    married: "0",
     nation: "VN",
-    nationality: "VietNam",
+    nationality: "Việt Nam",
     birth_province: "T01",
     province: "T01",
   });
@@ -414,27 +418,51 @@ function CandidateFormContent() {
   const [hrmOptions, setHrmOptions] = useState<HrmOptionsData>({
     depts: [],
     positions: [],
-    ranks: [],
+    ranks: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"],
     levels: [],
-    parameters: [],
-    trials: [],
+    parameters: ["A01", "A02", "CN01", "CN02", "CN03", "TW-VN"],
+    trials: [6, 30, 60],
     dantocs: [],
-    religious: [],
-    married: [],
+    married: [
+      { code: "0", name: "Độc thân", name_vi: "Độc thân", name_en: "Single", name_cn: "未婚" },
+      { code: "1", name: "Đã kết hôn", name_vi: "Đã kết hôn", name_en: "Married", name_cn: "已婚" },
+    ],
+    directs: [
+      { code: "0", name: "Trực tiếp", name_vi: "Trực tiếp", name_en: "Direct", name_cn: "直接" },
+      { code: "1", name: "Gián tiếp", name_vi: "Gián tiếp", name_en: "Indirect", name_cn: "間接" },
+      { code: "3", name: "Bán trực tiếp", name_vi: "Bán trực tiếp", name_en: "Semi-direct", name_cn: "半直接" },
+    ],
     provinces: [],
-    nations: [],
-    nationalities: [],
+    nations: ["CA", "CN", "DE", "ES", "FR", "IN", "JP", "KH", "MA", "MM", "PH", "SG", "TW", "US", "VN"],
+    nationalities: [
+      "Việt Nam",
+      "Canada",
+      "China",
+      "Germany",
+      "Spain",
+      "France",
+      "India",
+      "Japan",
+      "Cambodia",
+      "Morocco",
+      "Myanmar",
+      "Philippines",
+      "Singapore",
+      "Taiwan",
+      "United States",
+      "Vietnam",
+    ],
     countries: [],
     locApplies: [],
-    compReturns: [],
-    busRoutes: [],
+    compReturns: COMP_RETURN_OPTIONS,
+    codeMcs: ["SCS006"],
+    locWorks: ["AW"],
     edus: [],
     sources: [],
   });
   const [loadingHrmOptions, setLoadingHrmOptions] = useState(true);
 
   // Dialog states
-  const [cameraModalOpen, setCameraModalOpen] = useState(false);
   const [demandModalOpen, setDemandModalOpen] = useState(false);
   const [resignModalOpen, setResignModalOpen] = useState(false);
   const [newSourceModalOpen, setNewSourceModalOpen] = useState(false);
@@ -458,11 +486,6 @@ function CandidateFormContent() {
     title: "",
     message: "",
   });
-
-  // Camera video ref
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-  const [cameraError, setCameraError] = useState<string | null>(null);
 
   // Ref chuyển tiếp hàm xử lý quét QR CCCD
   const handleApplyScannedCccdRef = useRef<(raw: string) => boolean>(() => false);
@@ -569,23 +592,6 @@ function CandidateFormContent() {
       }
     }
   }, [hrmOptions.dantocs, form.dantoc]);
-
-  // Tự động chuẩn hóa form.religious sang mã religious_no nếu nhận giá trị là tên
-  useEffect(() => {
-    if (form.religious && hrmOptions.religious.length > 0) {
-      const match = hrmOptions.religious.find(
-        (r) =>
-          r.code.toLowerCase() === form.religious.toLowerCase() ||
-          r.name.toLowerCase() === form.religious.toLowerCase() ||
-          r.name_vi?.toLowerCase() === form.religious.toLowerCase() ||
-          r.name_en?.toLowerCase() === form.religious.toLowerCase() ||
-          r.name_cn?.toLowerCase() === form.religious.toLowerCase()
-      );
-      if (match && form.religious !== match.code) {
-        setForm((prev) => ({ ...prev, religious: match.code }));
-      }
-    }
-  }, [hrmOptions.religious, form.religious]);
 
   // Tự động chuẩn hóa form.married sang mã code nếu nhận giá trị là tên tiếng Việt
   useEffect(() => {
@@ -699,85 +705,88 @@ function CandidateFormContent() {
               }
             }
 
+            const cleanFlagDate = (val?: string | null) =>
+              val && val !== "no" && val !== "null" ? String(val).split("T")[0] : "";
+
             setForm((prev) => ({
               ...prev,
               ...parsedNotes,
-              keyInDate: item.keyInDate || (item.createdAt ? String(item.createdAt).split("T")[0] : prev.keyInDate),
               name: item.candidateName || parsedNotes.name || prev.name,
-              cccd: item.cccd || parsedNotes.cccd || prev.cccd,
-              emp_id_old: item.emp_id_old || item.empIdOld || parsedNotes.emp_id_old || prev.emp_id_old,
-              selectedDatecccd: item.selectedDatecccd || item.datecccd || parsedNotes.selectedDatecccd || prev.selectedDatecccd,
-              dateBirth: item.dateOfBirth
-                ? item.dateOfBirth.split("T")[0]
-                : parsedNotes.dateBirth || prev.dateBirth,
+              cccd: item.empId || item.cccd || parsedNotes.cccd || prev.cccd,
+              selectedDatecccd: cleanFlagDate(item.selectedDatecccd || item.datecccd) || parsedNotes.selectedDatecccd || prev.selectedDatecccd,
+              dateBirth: cleanFlagDate(item.dateOfBirth) || parsedNotes.dateBirth || prev.dateBirth,
               gender:
                 item.gender === "1" || item.gender === "Nữ"
-                  ? "Nữ"
-                  : parsedNotes.gender || "Nam",
-              tel: item.phone || parsedNotes.tel || prev.tel,
-              sub_tel: item.sub_tel || item.commTel || parsedNotes.sub_tel || prev.sub_tel,
-              address: item.addressPermanent || parsedNotes.address || prev.address,
-              sub_address:
-                item.addressTemporary || parsedNotes.sub_address || prev.sub_address,
-              dept_apply: item.deptCode || item.applyDp || item.dept || parsedNotes.dept_apply || prev.dept_apply,
-              loc_apply: item.duty || parsedNotes.loc_apply || prev.loc_apply,
-              loc: item.loc?.toLowerCase() || parsedNotes.loc || prev.loc,
-              dm_id: item.dm_id || item.empDemandid || parsedNotes.dm_id || prev.dm_id,
-              dm_Subpos: item.dm_Subpos || item.subPosition || parsedNotes.dm_Subpos || prev.dm_Subpos,
-              candidate_picture:
-                item.photoUrl ||
-                parsedNotes.candidate_picture ||
-                resolveEpmPhotoUrl(item.empno_hrm || item.empno || item.empno_old || item.oldEmpno || parsedNotes.empno_hrm, item.loc || prev.loc) ||
-                prev.candidate_picture,
+                  ? "1"
+                  : item.gender === "0" || item.gender === "Nam"
+                  ? "0"
+                  : parsedNotes.gender === "Nữ" || parsedNotes.gender === "1"
+                  ? "1"
+                  : "0",
+              tel: item.regTel || item.phone || parsedNotes.tel || prev.tel,
+              sub_tel: item.commTel || item.sub_tel || parsedNotes.sub_tel || prev.sub_tel,
+              address: item.regAddress || item.addressPermanent || parsedNotes.address || prev.address,
+              sub_address: item.commAddress || item.addressTemporary || parsedNotes.sub_address || prev.sub_address,
+              email: item.email || parsedNotes.email || prev.email,
+              dept_apply: item.applyDp || item.deptCode || item.dept || parsedNotes.dept_apply || prev.dept_apply,
+              loc_apply: item.position || item.duty || parsedNotes.loc_apply || prev.loc_apply,
+              loc: "aw",
+              dm_id: item.empDemandid || item.dm_id || parsedNotes.dm_id || prev.dm_id,
+              dm_Subpos: item.subPosition || item.dm_Subpos || parsedNotes.dm_Subpos || prev.dm_Subpos,
               edu: item.edu || parsedNotes.edu || prev.edu,
-              school_gra: item.school_gra || item.school || parsedNotes.school_gra || prev.school_gra,
-              bus_info: item.bus_info || item.busInfo || parsedNotes.bus_info || prev.bus_info,
-              source_recruit: item.source_recruit || item.recru_source || parsedNotes.source_recruit || prev.source_recruit,
-              comp_return: item.comp_return || item.reVgFrom || parsedNotes.comp_return || prev.comp_return,
-              empno_old: item.empno_old || item.oldEmpno || parsedNotes.empno_old || prev.empno_old,
-              inVG: item.inVG || item.vgWorkTimes || parsedNotes.inVG || prev.inVG,
-              remark: item.remark || (typeof rawNote === "string" && !rawNote.trim().startsWith("{") ? rawNote : parsedNotes.remark || prev.remark),
-              date_cv: item.date_cv || parsedNotes.date_cv || prev.date_cv,
-              date_hr_inter: item.date_hr_inter || parsedNotes.date_hr_inter || prev.date_hr_inter,
-              date_hr_review: item.date_hr_review || parsedNotes.date_hr_review || prev.date_hr_review,
-              hrAcc: item.hrAcQu !== undefined ? (item.hrAcQu ? "yes" : "no") : (parsedNotes.hrAcc || "no"),
-              reason: item.reason || parsedNotes.reason || prev.reason,
-              date_dept_inter: item.date_dept_inter || parsedNotes.date_dept_inter || prev.date_dept_inter,
-              date_dept_review: item.date_dept_review || parsedNotes.date_dept_review || prev.date_dept_review,
-              deptACC: item.dpAcQu !== undefined ? (item.dpAcQu ? "yes" : "no") : (parsedNotes.deptACC || "no"),
-              dept_reason: item.dept_reason || parsedNotes.dept_reason || prev.dept_reason,
-              date_salary: item.date_salary || parsedNotes.date_salary || prev.date_salary,
-              reply_date: item.reply_date || parsedNotes.reply_date || prev.reply_date,
-              reply_check: parsedNotes.reply_check || (item.replyCheck ? "yes" : "no"),
-              candidate_reason: item.candidate_reason || parsedNotes.candidate_reason || prev.candidate_reason,
-              inDateWork: item.inDateWork || parsedNotes.inDateWork || prev.inDateWork,
-              inDateAccWork: item.inDateAccWork || parsedNotes.inDateAccWork || prev.inDateAccWork,
-              inWorker: item.reg !== undefined ? (item.reg ? "yes" : "no") : (parsedNotes.inWorker || "no"),
-              reg_bus: item.reg_bus !== undefined ? item.reg_bus : (parsedNotes.reg_bus ?? prev.reg_bus),
-              empno_hrm: item.empno_hrm || item.empno || parsedNotes.empno_hrm || prev.empno_hrm,
-              newDept: item.newDept || item.tmpDepartid || parsedNotes.newDept || prev.newDept,
-              position: item.position_hrm || item.position || parsedNotes.position || prev.position,
-              deputy: item.deputy || item.tmpRankid || parsedNotes.deputy || prev.deputy,
-              level: item.level || item.tmpLevelid || parsedNotes.level || prev.level,
-              parameters: item.parameters || item.tmpIdyclass || parsedNotes.parameters || prev.parameters,
+              school_gra: item.school || item.school_gra || parsedNotes.school_gra || prev.school_gra,
+              source_recruit:
+                item.recruSource && item.recruSource !== "no"
+                  ? item.recruSource
+                  : item.source_recruit || parsedNotes.source_recruit || prev.source_recruit,
+              comp_return: item.reVgFrom || item.comp_return || parsedNotes.comp_return || prev.comp_return,
+              empno_old: item.oldEmpno || item.empno_old || parsedNotes.empno_old || prev.empno_old,
+              inVG: item.vgWorkTimes || item.inVG || parsedNotes.inVG || prev.inVG,
+              remark:
+                item.note && !String(item.note).trim().startsWith("{")
+                  ? item.note
+                  : item.remark || parsedNotes.remark || prev.remark,
+              date_cv: cleanFlagDate(item.cvReceivedAt || item.date_cv) || parsedNotes.date_cv || prev.date_cv,
+              date_salary: cleanFlagDate(item.salarySignedAt || item.date_salary) || parsedNotes.date_salary || prev.date_salary,
+              date_hr_inter: cleanFlagDate(item.hrIvDate || item.date_hr_inter) || parsedNotes.date_hr_inter || prev.date_hr_inter,
+              date_hr_review: cleanFlagDate(item.hrAcDate || item.date_hr_review) || parsedNotes.date_hr_review || prev.date_hr_review,
+              hrAcc: item.hrAcQu === "yes" || item.hrAcQu === true ? "yes" : (parsedNotes.hrAcc || "no"),
+              date_dept_inter: cleanFlagDate(item.dpIvDate || item.date_dept_inter) || parsedNotes.date_dept_inter || prev.date_dept_inter,
+              date_dept_review: cleanFlagDate(item.dpAcDate || item.date_dept_review) || parsedNotes.date_dept_review || prev.date_dept_review,
+              deptACC: item.dpAcQu === "yes" || item.dpAcQu === true ? "yes" : (parsedNotes.deptACC || "no"),
+              inDateWork: cleanFlagDate(item.exEnDate || item.inDateWork) || parsedNotes.inDateWork || prev.inDateWork,
+              inDateAccWork: cleanFlagDate(item.actEnDate || item.inDateAccWork) || parsedNotes.inDateAccWork || prev.inDateAccWork,
+              inWorker: item.reg === "yes" || item.reg === true ? "yes" : (parsedNotes.inWorker || "no"),
+              change_date: cleanFlagDate(item.changeEnDate || item.change_date) || parsedNotes.change_date || prev.change_date,
+              empno_hrm: item.newEmpno || item.empno_hrm || item.empno || parsedNotes.empno_hrm || prev.empno_hrm,
+              newDept: item.tmpDepartid || item.newDept || parsedNotes.newDept || prev.newDept,
+              position: item.tmpDutyid || item.position_hrm || parsedNotes.position || prev.position,
+              deputy: item.tmpRankid || item.deputy || parsedNotes.deputy || prev.deputy,
+              level: item.tmpLevelid || item.level || parsedNotes.level || prev.level,
+              parameters: item.tmpIdyclass || item.parameters || parsedNotes.parameters || prev.parameters,
               time_trial:
-                item.time_trial !== undefined
+                item.probation !== undefined && item.probation !== null && item.probation !== ""
+                  ? item.probation
+                  : item.time_trial !== undefined
                   ? item.time_trial
                   : parsedNotes.time_trial !== undefined
                   ? parsedNotes.time_trial
                   : prev.time_trial,
-              dantoc: item.dantoc || item.ethnic || parsedNotes.dantoc || prev.dantoc,
-              religious: item.religious || parsedNotes.religious || prev.religious,
-              married: item.married || item.marrage || parsedNotes.married || prev.married,
-              nation: item.nation || item.countryid || parsedNotes.nation || prev.nation,
-              nationality: item.nationality || item.national || parsedNotes.nationality || prev.nationality,
-              birth_province:
-                item.birth_province || item.birthProvince || parsedNotes.birth_province || prev.birth_province,
+              code_mc: item.tmpSiteid || item.code_mc || parsedNotes.code_mc || prev.code_mc,
+              loc_work: item.tmpWorkareaid || item.loc_work || parsedNotes.loc_work || prev.loc_work,
+              direct: item.isdirect ?? item.direct ?? parsedNotes.direct ?? prev.direct,
+              tmp_categoryid: item.tmpCategoryid || item.tmp_categoryid || parsedNotes.tmp_categoryid || prev.tmp_categoryid,
+              dantoc: item.ethnic || item.dantoc || parsedNotes.dantoc || prev.dantoc,
+              married: item.marrage ?? item.married ?? parsedNotes.married ?? prev.married,
+              nation: item.national || item.nation || parsedNotes.nation || prev.nation,
+              nationality: item.countryid || item.nationality || parsedNotes.nationality || prev.nationality,
+              birth_province: item.birthProvince || item.birth_province || parsedNotes.birth_province || prev.birth_province,
               province: item.province || parsedNotes.province || prev.province,
             }));
 
-            if (item.cccd) {
-              handleCheckHistory(item.cccd);
+            const cccdForHistory = item.empId || item.cccd;
+            if (cccdForHistory) {
+              handleCheckHistory(cccdForHistory);
             }
           }
         })
@@ -1048,7 +1057,6 @@ const FALLBACK_DEMANDS = [
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setDemandModalOpen(false);
-        handleClosePhotoModal();
         setResignModalOpen(false);
         setNewSourceModalOpen(false);
         setQrModalOpen(false);
@@ -1080,24 +1088,23 @@ const FALLBACK_DEMANDS = [
     }
   }, [initialCccd]);
 
-  const handleCheckHistory = async (cccdVal: string, oldCccdVal?: string) => {
-    if (!cccdVal && !oldCccdVal) return;
+  const handleCheckHistory = async (cccdVal: string) => {
+    if (!cccdVal) return;
     setCheckingHistory(true);
     try {
       const normalized = normalizeCccd(cccdVal);
-      const normalizedOld = normalizeCccd(oldCccdVal);
       const [resCccd, resResign] = await Promise.all([
         fetch("/api/candidates/check-cccd", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cccd: normalized, emp_id_old: normalizedOld }),
+          body: JSON.stringify({ cccd: normalized }),
         })
           .then((r) => r.json())
           .catch(() => null),
         fetch("/api/aw-recuitingReport/GetDataByCCCDResign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cccd: normalized, emp_id_old: normalizedOld }),
+          body: JSON.stringify({ cccd: normalized }),
         })
           .then((r) => r.json())
           .catch(() => []),
@@ -1158,17 +1165,11 @@ const FALLBACK_DEMANDS = [
         }
       }
 
-      const autoOldCccd =
-        resCccd?.empIdOld ||
-        (combinedResign.length > 0 && combinedResign[0]?.er_numberid && combinedResign[0]?.er_numberid !== cccdVal
-          ? combinedResign[0]?.er_numberid
-          : "");
       const autoOldEmpno = resCccd?.oldEmpno || resCccd?.empno || foundEmpno;
 
       setForm((prev) => ({
         ...prev,
-        emp_id_old: prev.emp_id_old || autoOldCccd || "",
-        inVG: totalTimes > 0 ? `Có (${totalTimes} lần)` : "",
+        inVG: totalTimes > 0 ? String(totalTimes) : "0",
         empno_old: autoOldEmpno || prev.empno_old || "",
       }));
     } catch (e) {
@@ -1206,19 +1207,16 @@ const FALLBACK_DEMANDS = [
             cccd: parsed.cccd,
             name: parsed.fullName || prev.name,
             dateBirth: parsed.dateOfBirth || prev.dateBirth,
-            gender: parsed.gender ? (/nam/i.test(parsed.gender) ? "Nam" : "Nữ") : prev.gender,
+            gender: parsed.gender ? (/nam/i.test(parsed.gender) ? "0" : "1") : prev.gender,
             selectedDatecccd: parsed.issueDate || prev.selectedDatecccd,
             address: parsed.address || prev.address,
             sub_address: parsed.address || prev.sub_address,
-            // Số thứ 2 trong QR CCCD là Số CMND 9 số cũ (emp_id_old), nếu rỗng thì đặt rỗng ''
-            emp_id_old: parsed.cmndOld || "",
-            // Mặc định quốc gia Việt Nam & Tỉnh nơi sinh Tây Ninh
             nation: prev.nation || "VN",
-            nationality: prev.nationality || "VietNam",
+            nationality: prev.nationality || "Việt Nam",
             birth_province: detectedProvinceCode,
             province: detectedProvinceCode,
           }));
-          handleCheckHistory(parsed.cccd, parsed.cmndOld || undefined);
+          handleCheckHistory(parsed.cccd);
 
           // Phát âm thanh phản hồi bíp nhẹ
           try {
@@ -1493,27 +1491,25 @@ const FALLBACK_DEMANDS = [
     try {
       const promises: Promise<any>[] = [];
 
-      // 1. Fetch resign_data theo đúng cccd và emp_id_old
-      const queryOldCccd = form.emp_id_old?.trim();
+      // 1. Fetch resign_data theo đúng cccd / empno
       promises.push(
         fetch("/api/aw-recuitingReport/GetDataByCCCDResign", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cccd: queryCccd, emp_id_old: queryOldCccd, empno: queryEmpno }),
+          body: JSON.stringify({ cccd: queryCccd, empno: queryEmpno }),
         })
           .then((r) => r.json())
           .catch(() => [])
       );
 
       // 2. Fetch check-cccd if cccd present
-      if ((queryCccd || queryOldCccd) && (!historyResult || historyResult.cccdQuery !== queryCccd)) {
+      if (queryCccd && (!historyResult || historyResult.cccdQuery !== queryCccd)) {
         const normalized = normalizeCccd(queryCccd);
-        const normalizedOld = normalizeCccd(queryOldCccd);
         promises.push(
           fetch("/api/candidates/check-cccd", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cccd: normalized, emp_id_old: normalizedOld }),
+            body: JSON.stringify({ cccd: normalized }),
           })
             .then((r) => r.json())
             .catch(() => null)
@@ -1533,11 +1529,9 @@ const FALLBACK_DEMANDS = [
       if (checkRes) {
         setHistoryResult({ ...checkRes, cccdQuery: queryCccd });
         if (checkRes.found) {
-          const autoOldCccd = checkRes.empIdOld || (resignList[0]?.er_numberid && resignList[0]?.er_numberid !== queryCccd ? resignList[0]?.er_numberid : "");
           const autoOldEmpno = checkRes.oldEmpno || checkRes.empno;
           setForm((prev) => ({
             ...prev,
-            emp_id_old: prev.emp_id_old || autoOldCccd || "",
             inVG: `Có (${checkRes.count || 1} lần)`,
             empno_old: autoOldEmpno || prev.empno_old || "",
           }));
@@ -1577,85 +1571,6 @@ const FALLBACK_DEMANDS = [
       });
     } finally {
       setLoadingResignData(false);
-    }
-  };
-
-  // Webcam camera handlers
-  const startCamera = async () => {
-    setCameraError(null);
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480, facingMode: "user" },
-        });
-        setCameraStream(stream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } else {
-        setCameraError("Trình duyệt không hỗ trợ truy cập máy ảnh trực tiếp");
-      }
-    } catch (err: any) {
-      setCameraError("Không thể kích hoạt máy ảnh: " + (err.message || "Vui lòng cấp quyền"));
-    }
-  };
-
-  const stopCamera = () => {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach((track) => track.stop());
-      setCameraStream(null);
-    }
-  };
-
-  const handleOpenPhotoModal = () => {
-    setCameraModalOpen(true);
-    setTimeout(() => {
-      startCamera();
-    }, 150);
-  };
-
-  const handleClosePhotoModal = () => {
-    stopCamera();
-    setCameraModalOpen(false);
-  };
-
-  const handleCapturePhoto = () => {
-    if (videoRef.current) {
-      const video = videoRef.current;
-      const canvas = document.createElement("canvas");
-      canvas.width = 300;
-      canvas.height = 400; // 3x4 portrait aspect
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        // Draw centered and cropped to 3:4 portrait
-        const vW = video.videoWidth || 640;
-        const vH = video.videoHeight || 480;
-        const targetRatio = 3 / 4;
-        let sW = vW;
-        let sH = vW / targetRatio;
-        if (sH > vH) {
-          sH = vH;
-          sW = vH * targetRatio;
-        }
-        const sX = (vW - sW) / 2;
-        const sY = (vH - sH) / 2;
-        ctx.drawImage(video, sX, sY, sW, sH, 0, 0, 300, 400);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
-        setForm((prev) => ({ ...prev, candidate_picture: dataUrl }));
-        handleClosePhotoModal();
-      }
-    }
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setForm((prev) => ({ ...prev, candidate_picture: reader.result as string }));
-        handleClosePhotoModal();
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -1729,11 +1644,11 @@ const FALLBACK_DEMANDS = [
       const payload = {
         ...form,
         empno_hrm: formattedEmpno,
+        position_hrm: form.position,
         keyInDate: isEditing ? undefined : new Date().toISOString().split("T")[0],
         id: candidateId || undefined,
         candidateName: form.name.toUpperCase().trim(),
         dateOfBirth: form.dateBirth,
-        photoUrl: form.candidate_picture,
       };
 
       const res = await fetch("/api/candidates", {
@@ -1838,53 +1753,40 @@ const FALLBACK_DEMANDS = [
       showCancel: true,
       onConfirm: () => {
       setForm({
-        keyInDate: new Date().toISOString().split("T")[0],
-        candidate_picture: null,
         cccd: "",
-        emp_id_old: "",
         selectedDatecccd: "",
         name: "",
         dateBirth: "",
-        gender: "Nam",
+        gender: "0",
         address: "",
         sub_address: "",
         tel: "",
         sub_tel: "",
         email: "",
-        edu: "",
-        school_gra: "",
-        work_exp: "",
-        work_exp_pt: "",
-        ex_company: "",
-        ex_position: "",
         loc: "aw",
         dept_apply: "",
         loc_apply: "Worker",
         dm_id: "",
         dm_Subpos: "",
-        source_recruit: "Facebook Tuyển dụng",
-        bus_info: "",
+        source_recruit: "",
         date_cv: "",
-        inVG: "Không",
+        date_salary: "",
+        inVG: "",
         empno_old: "",
         comp_return: "",
         remark: "",
         date_hr_inter: new Date().toISOString().split("T")[0],
         date_hr_review: new Date().toISOString().split("T")[0],
         hrAcc: "no",
-        reason: "",
         date_dept_inter: "",
         date_dept_review: "",
         deptACC: "no",
-        dept_reason: "",
-        date_salary: "",
-        reply_date: "",
-        reply_check: "no",
-        candidate_reason: "",
         inDateWork: "",
         inDateAccWork: "",
         inWorker: "no",
-        reg_bus: false,
+        change_date: "",
+        edu: "",
+        school_gra: "",
         empno_hrm: "",
         newDept: "",
         position: "",
@@ -1892,11 +1794,14 @@ const FALLBACK_DEMANDS = [
         level: "",
         parameters: "",
         time_trial: "" as unknown as number,
+        code_mc: "SCS006",
+        loc_work: "AW",
+        direct: "",
+        tmp_categoryid: "00001",
         dantoc: "A",
-        religious: "000",
         married: "0",
         nation: "VN",
-        nationality: "VietNam",
+        nationality: "Việt Nam",
         birth_province: "T01",
         province: "T01",
       });
@@ -1951,15 +1856,6 @@ const FALLBACK_DEMANDS = [
 
           <button
             type="button"
-            onClick={handleOpenPhotoModal}
-            className="h-9 px-3.5 rounded-md bg-white hover:bg-zinc-50 dark:bg-[#202025] dark:hover:bg-[#2a2a32] text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-[#383842] text-xs font-bold inline-flex items-center space-x-1.5 transition-all shadow-xs"
-          >
-            <Camera className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-            <span>{t("takeOrUploadPhoto", "Chụp / Tải ảnh 3x4")}</span>
-          </button>
-
-          <button
-            type="button"
             onClick={() => {
               setQrModalOpen(true);
               setQrModalInput("");
@@ -1999,368 +1895,195 @@ const FALLBACK_DEMANDS = [
                 <span className="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center text-xs font-black shadow-xs">
                   1
                 </span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-black text-xs uppercase tracking-wide">{t("card1Title", "Thông Tin Cá Nhân & Ảnh Chân Dung")}</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-black text-xs uppercase tracking-wide">{t("card1Title", "Thông Tin Cá Nhân")}</span>
               </div>
               <span className="text-[11px] text-zinc-600 dark:text-zinc-400 font-medium">
                 {t("idRequired", "* Bắt buộc số CCCD và Họ tên")}
               </span>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-4 items-start">
-              {/* Left Side: Personal Info Inputs */}
-              <div className="flex-1 min-w-0 space-y-4">
-                {/* Row 1: CCCD, Issue Date, Name, DOB, Gender */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
-                  {blacklistAlert && blacklistAlert.reasons.length > 0 && (
-                    <div className="col-span-12 p-3 bg-rose-500/10 dark:bg-rose-950/40 border-2 border-rose-500/50 rounded-xl flex items-start gap-3 text-rose-800 dark:text-rose-200">
-                      <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
-                      <div className="text-xs space-y-1">
-                        <div className="font-bold uppercase tracking-wider text-rose-700 dark:text-rose-300">
-                          ⚠️ CẢNH BÁO THẨM ĐỊNH TUYỂN DỤNG (BLACKLIST / BỎ VIỆC)
-                        </div>
-                        <div className="text-zinc-700 dark:text-zinc-300">
-                          Ứng viên từng làm việc tại công ty và có lịch sử thôi việc cần lưu ý:
-                        </div>
-                        <ul className="list-disc list-inside font-semibold text-rose-800 dark:text-rose-200">
-                          {blacklistAlert.reasons.map((rs, idx) => (
-                            <li key={idx}>{rs}</li>
-                          ))}
-                        </ul>
+            <div className="space-y-4">
+              {/* Row 1: CCCD, Issue Date, Name, DOB, Gender */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
+                {blacklistAlert && blacklistAlert.reasons.length > 0 && (
+                  <div className="col-span-12 p-3 bg-rose-500/10 dark:bg-rose-950/40 border-2 border-rose-500/50 rounded-xl flex items-start gap-3 text-rose-800 dark:text-rose-200">
+                    <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                    <div className="text-xs space-y-1">
+                      <div className="font-bold uppercase tracking-wider text-rose-700 dark:text-rose-300">
+                        ⚠️ CẢNH BÁO THẨM ĐỊNH TUYỂN DỤNG (BLACKLIST / BỎ VIỆC)
                       </div>
+                      <div className="text-zinc-700 dark:text-zinc-300">
+                        Ứng viên từng làm việc tại công ty và có lịch sử thôi việc cần lưu ý:
+                      </div>
+                      <ul className="list-disc list-inside font-semibold text-rose-800 dark:text-rose-200">
+                        {blacklistAlert.reasons.map((rs, idx) => (
+                          <li key={idx}>{rs}</li>
+                        ))}
+                      </ul>
                     </div>
-                  )}
-
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3">
-                    <OutlinedBox label={t("idNo", "Số CCCD / CMND")} required>
-                      <input
-                        name="cccd"
-                        id="cccd"
-                        type="text"
-                        required
-                        value={form.cccd}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (val.includes("|")) {
-                            const ok = handleApplyScannedCccd(val);
-                            if (ok) return;
-                            // Giữ nguyên chuỗi tạm thời trong ô để máy quét tiếp tục bắn hết chuỗi
-                            setForm((prev) => ({ ...prev, cccd: val }));
-                            return;
-                          }
-                          // Nếu đang quét nhanh (nhiều hơn 12 ký tự hoặc có ký tự khác số), không cắt cụt để tránh làm hỏng QR đang truyền
-                          if (val.length > 12) {
-                            setForm((prev) => ({ ...prev, cccd: val }));
-                            return;
-                          }
-                          setForm((prev) => ({ ...prev, cccd: val.replace(/\D/g, "").slice(0, 12) }));
-                        }}
-                        onKeyDown={(e) => {
-                          const inputVal = (e.target as HTMLInputElement).value;
-                          if (e.key === "Enter" && (inputVal.includes("|") || form.cccd.includes("|"))) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleApplyScannedCccd(inputVal || form.cccd);
-                          }
-                        }}
-                        onPaste={(e) => {
-                          const pasted = e.clipboardData.getData("text");
-                          if (pasted.includes("|")) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleApplyScannedCccd(pasted);
-                          }
-                        }}
-                        onBlur={(e) => {
-                          const inputVal = e.target.value;
-                          if (inputVal.includes("|") || form.cccd.includes("|")) {
-                            const ok = handleApplyScannedCccd(inputVal || form.cccd);
-                            if (!ok) {
-                              const digits = (inputVal || form.cccd).split("|")[0].replace(/\D/g, "").slice(0, 12);
-                              setForm((prev) => ({ ...prev, cccd: digits }));
-                            }
-                          } else {
-                            handleCheckHistory(form.cccd, form.emp_id_old);
-                          }
-                        }}
-                        className="flex-1 h-full bg-transparent px-2.5 text-sm tabular-nums font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleCheckHistory(form.cccd, form.emp_id_old)}
-                        disabled={checkingHistory || !form.cccd}
-                        className="h-full px-3.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#25252c] dark:hover:bg-[#2f2f38] text-xs font-bold text-zinc-800 dark:text-zinc-200 border-l border-zinc-300 dark:border-[#383842] shrink-0 transition-colors cursor-pointer"
-                      >
-                        {checkingHistory ? "..." : t("checkHistory", "Kiểm tra")}
-                      </button>
-                    </OutlinedBox>
                   </div>
+                )}
 
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-2">
-                    <OutlinedInput
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3">
+                  <OutlinedBox label={t("idNo", "Số CCCD / CMND")} required>
+                    <input
+                      name="cccd"
+                      id="cccd"
                       type="text"
-                      label={t("oldIdCard", "Số CMND Cũ")}
-                      value={form.emp_id_old}
-                      onChange={(e) => setForm({ ...form, emp_id_old: e.target.value.replace(/\D/g, "").slice(0, 9) })}
-                      onBlur={() => {
-                        if (form.emp_id_old || form.cccd) {
-                          handleCheckHistory(form.cccd, form.emp_id_old);
+                      required
+                      value={form.cccd}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val.includes("|")) {
+                          const ok = handleApplyScannedCccd(val);
+                          if (ok) return;
+                          // Giữ nguyên chuỗi tạm thời trong ô để máy quét tiếp tục bắn hết chuỗi
+                          setForm((prev) => ({ ...prev, cccd: val }));
+                          return;
+                        }
+                        // Nếu đang quét nhanh (nhiều hơn 12 ký tự hoặc có ký tự khác số), không cắt cụt để tránh làm hỏng QR đang truyền
+                        if (val.length > 12) {
+                          setForm((prev) => ({ ...prev, cccd: val }));
+                          return;
+                        }
+                        setForm((prev) => ({ ...prev, cccd: val.replace(/\D/g, "").slice(0, 12) }));
+                      }}
+                      onKeyDown={(e) => {
+                        const inputVal = (e.target as HTMLInputElement).value;
+                        if (e.key === "Enter" && (inputVal.includes("|") || form.cccd.includes("|"))) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleApplyScannedCccd(inputVal || form.cccd);
                         }
                       }}
-                      className="tabular-nums"
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData("text");
+                        if (pasted.includes("|")) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleApplyScannedCccd(pasted);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const inputVal = e.target.value;
+                        if (inputVal.includes("|") || form.cccd.includes("|")) {
+                          const ok = handleApplyScannedCccd(inputVal || form.cccd);
+                          if (!ok) {
+                            const digits = (inputVal || form.cccd).split("|")[0].replace(/\D/g, "").slice(0, 12);
+                            setForm((prev) => ({ ...prev, cccd: digits }));
+                          }
+                        } else {
+                          handleCheckHistory(form.cccd);
+                        }
+                      }}
+                      className="flex-1 h-full bg-transparent px-2.5 text-sm tabular-nums font-bold text-cyan-600 dark:text-cyan-400 focus:outline-none"
                     />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-2">
-                    <OutlinedInput
-                      type="date"
-                      label={t("idIssueDate", "Ngày cấp CCCD")}
-                      value={form.selectedDatecccd}
-                      onChange={(e) => setForm({ ...form, selectedDatecccd: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label={t("nameUppercase", "Họ và Tên (Viết hoa)")}
-                      required
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value.toUpperCase() })}
-                      className="font-bold uppercase"
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-3 xl:col-span-2">
-                    <OutlinedInput
-                      type="date"
-                      label={t("birthday", "Ngày sinh")}
-                      value={form.dateBirth}
-                      onChange={(e) => setForm({ ...form, dateBirth: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-3 xl:col-span-1">
-                    <OutlinedBox label={t("gender", "Giới tính")} className="px-2 space-x-2">
-                      <label className="inline-flex items-center space-x-1 cursor-pointer text-xs font-medium text-zinc-800 dark:text-zinc-200 select-none">
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="Nam"
-                          checked={form.gender === "Nam"}
-                          onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                          className="w-3.5 h-3.5 text-emerald-600 focus:ring-emerald-500 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 cursor-pointer"
-                        />
-                        <span>{t("male", "Nam")}</span>
-                      </label>
-                      <label className="inline-flex items-center space-x-1 cursor-pointer text-xs font-medium text-zinc-800 dark:text-zinc-200 select-none">
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="Nữ"
-                          checked={form.gender === "Nữ"}
-                          onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                          className="w-3.5 h-3.5 text-emerald-600 focus:ring-emerald-500 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 cursor-pointer"
-                        />
-                        <span>{t("female", "Nữ")}</span>
-                      </label>
-                    </OutlinedBox>
-                  </div>
-                </div>
-
-                {/* Row 2: Address, Sub-address, Tel, Sub-tel, Email */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3">
-                    <OutlinedInput
-                      type="text"
-                      label={t("address", "Địa chỉ thường trú")}
-                      value={form.address}
-                      onChange={(e) => handleAddressChange(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3">
-                    <OutlinedInput
-                      type="text"
-                      label={t("subAddress", "Địa chỉ tạm trú / khác")}
-                      value={form.sub_address}
-                      onChange={(e) => handleSubAddressChange(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-4 xl:col-span-2">
-                    <OutlinedInput
-                      type="tel"
-                      label={t("mainPhone", "SĐT chính")}
-                      value={form.tel}
-                      onChange={(e) => handleTelChange(e.target.value)}
-                      className="tabular-nums"
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-4 xl:col-span-2">
-                    <OutlinedInput
-                      type="tel"
-                      label={t("subPhone", "SĐT phụ")}
-                      value={form.sub_tel}
-                      onChange={(e) => handleSubTelChange(e.target.value)}
-                      className="tabular-nums"
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-4 xl:col-span-2">
-                    <OutlinedInput
-                      type="email"
-                      label={t("email", "Địa chỉ Email")}
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                {/* Row 3: Education, Graduate School, Work exp, Part-time, Ex company, Ex position */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedSelect
-                      label={t("education", "Trình độ học vấn")}
-                      value={form.edu}
-                      onChange={(e) => setForm({ ...form, edu: e.target.value })}
+                    <button
+                      type="button"
+                      onClick={() => handleCheckHistory(form.cccd)}
+                      disabled={checkingHistory || !form.cccd}
+                      className="h-full px-3.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-[#25252c] dark:hover:bg-[#2f2f38] text-xs font-bold text-zinc-800 dark:text-zinc-200 border-l border-zinc-300 dark:border-[#383842] shrink-0 transition-colors cursor-pointer"
                     >
-                      <option value=""> {t("education", "Chọn trình độ học vấn")} </option>
-                      {form.edu &&
-                        !hrmOptions.edus?.some((item) => item.code === form.edu) && (
-                          <option value={form.edu}>
-                            {hrmOptions.edus?.find((item) => item.name.toLowerCase() === form.edu.toLowerCase())?.name || form.edu}
-                          </option>
-                        )}
-                      {(hrmOptions.edus && hrmOptions.edus.length > 0
-                        ? hrmOptions.edus
-                        : [
-                            { code: "001", name: "Tiểu học (5 năm)" },
-                            { code: "002", name: "THCS (9 năm)" },
-                            { code: "003", name: "Dưới Lớp 12" },
-                            { code: "004", name: "Tốt nghiệp 12 (Không có kinh nghiệm)" },
-                            { code: "005", name: "Tốt nghiệp 12 (Có kinh nghiệm)" },
-                            { code: "006", name: "Trung học CN" },
-                            { code: "007", name: "Cao đẳng" },
-                            { code: "008", name: "Đại Học" },
-                            { code: "009", name: "Thạc Sĩ" },
-                            { code: "010", name: "Tiến Sĩ" },
-                          ]
-                      ).map((e, idx) => (
-                        <option key={`edu-${e.code || idx}-${idx}`} value={e.code}>
-                          {e.name}
-                        </option>
-                      ))}
-                    </OutlinedSelect>
-                  </div>
+                      {checkingHistory ? "..." : t("checkHistory", "Kiểm tra")}
+                    </button>
+                  </OutlinedBox>
+                </div>
 
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label={t("school", "Trường tốt nghiệp")}
-                      value={form.school_gra}
-                      onChange={(e) => setForm({ ...form, school_gra: e.target.value })}
-                    />
-                  </div>
+                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                  <OutlinedInput
+                    type="date"
+                    label={t("idIssueDate", "Ngày cấp CCCD")}
+                    value={form.selectedDatecccd}
+                    onChange={(e) => setForm({ ...form, selectedDatecccd: e.target.value })}
+                  />
+                </div>
 
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label={t("workInfo", "Kinh nghiệm làm việc")}
-                      value={form.work_exp}
-                      onChange={(e) => setForm({ ...form, work_exp: e.target.value })}
-                    />
-                  </div>
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3">
+                  <OutlinedInput
+                    type="text"
+                    label={t("nameUppercase", "Họ và Tên (Viết hoa)")}
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value.toUpperCase() })}
+                    className="font-bold uppercase"
+                  />
+                </div>
 
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label="Part-time"
-                      value={form.work_exp_pt}
-                      onChange={(e) => setForm({ ...form, work_exp_pt: e.target.value })}
-                    />
-                  </div>
+                <div className="col-span-12 sm:col-span-3 xl:col-span-2">
+                  <OutlinedInput
+                    type="date"
+                    label={t("birthday", "Ngày sinh")}
+                    value={form.dateBirth}
+                    onChange={(e) => setForm({ ...form, dateBirth: e.target.value })}
+                  />
+                </div>
 
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label={t("oldFactory", "Công ty cũ đã làm")}
-                      value={form.ex_company}
-                      onChange={(e) => setForm({ ...form, ex_company: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="col-span-12 sm:col-span-6 md:col-span-4 2xl:col-span-2">
-                    <OutlinedInput
-                      type="text"
-                      label={t("position", "Vị trí đã làm")}
-                      value={form.ex_position}
-                      onChange={(e) => setForm({ ...form, ex_position: e.target.value })}
-                    />
-                  </div>
+                <div className="col-span-12 sm:col-span-3 xl:col-span-2">
+                  <OutlinedBox label={t("gender", "Giới tính")} className="px-3 space-x-4">
+                    <label className="inline-flex items-center space-x-1.5 cursor-pointer text-xs font-medium text-zinc-800 dark:text-zinc-200 select-none">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="0"
+                        checked={form.gender === "0"}
+                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                        className="w-3.5 h-3.5 text-emerald-600 focus:ring-emerald-500 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 cursor-pointer"
+                      />
+                      <span>{t("male", "Nam")}</span>
+                    </label>
+                    <label className="inline-flex items-center space-x-1.5 cursor-pointer text-xs font-medium text-zinc-800 dark:text-zinc-200 select-none">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="1"
+                        checked={form.gender === "1"}
+                        onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                        className="w-3.5 h-3.5 text-emerald-600 focus:ring-emerald-500 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 cursor-pointer"
+                      />
+                      <span>{t("female", "Nữ")}</span>
+                    </label>
+                  </OutlinedBox>
                 </div>
               </div>
 
-              {/* Right Side: Portrait Frame 3x4 */}
-              <div className="shrink-0 self-start">
-                <div
-                  onClick={handleOpenPhotoModal}
-                  className="w-[110px] h-[146px] rounded-lg bg-zinc-50 hover:bg-zinc-100 dark:bg-[#1a1a20] dark:hover:bg-[#202026] border-2 border-dashed border-zinc-300 hover:border-emerald-500 dark:border-[#383842] dark:hover:border-emerald-500 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer group shadow-xs transition-all active:scale-95"
-                  title={t("takeOrUploadPhoto", "Bấm để chụp ảnh webcam hoặc tải ảnh lên")}
-                >
-                  {(() => {
-                    const activePhoto =
-                      form.candidate_picture ||
-                      resolveEpmPhotoUrl(form.empno_hrm || form.empno_old, form.loc);
+              {/* Row 2: Address, Sub-address, Tel, Sub-tel */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
+                <div className="col-span-12 sm:col-span-6 xl:col-span-4">
+                  <OutlinedInput
+                    type="text"
+                    label={t("address", "Địa chỉ thường trú")}
+                    value={form.address}
+                    onChange={(e) => handleAddressChange(e.target.value)}
+                  />
+                </div>
 
-                    if (activePhoto) {
-                      return (
-                        <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={activePhoto}
-                            alt="Portrait 3x4"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              // Nếu link ảnh EPM lỗi hoặc chưa có ảnh trên server, ẩn ảnh để hiện khung chụp mặc định
-                              (e.currentTarget as HTMLElement).style.display = "none";
-                              const fallbackDiv = (e.currentTarget as HTMLElement).parentElement?.querySelector(".fallback-no-photo");
-                              if (fallbackDiv) {
-                                (fallbackDiv as HTMLElement).classList.remove("hidden");
-                              }
-                            }}
-                          />
-                          <div className="fallback-no-photo hidden text-center p-2 text-zinc-400 group-hover:text-zinc-200 transition-colors">
-                            <Camera className="w-6 h-6 mx-auto mb-1 text-zinc-400 group-hover:text-emerald-500 transition-colors" />
-                            <span className="text-[11px] font-bold block leading-tight text-zinc-700 dark:text-zinc-300">{t("photo3x4", "ẢNH 3x4")}</span>
-                            <span className="text-[9px] text-zinc-500 block mt-0.5">{t("takeOrUploadPhoto", "Chụp / tải ảnh")}</span>
-                          </div>
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 text-white">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setForm((prev) => ({ ...prev, candidate_picture: null }));
-                              }}
-                              className="p-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white cursor-pointer"
-                              title={t("deletePhoto", "Xóa ảnh")}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                            <span className="text-[11px] font-semibold">{t("changePhoto", "Đổi ảnh")}</span>
-                          </div>
-                        </>
-                      );
-                    }
+                <div className="col-span-12 sm:col-span-6 xl:col-span-4">
+                  <OutlinedInput
+                    type="text"
+                    label={t("subAddress", "Địa chỉ tạm trú / khác")}
+                    value={form.sub_address}
+                    onChange={(e) => handleSubAddressChange(e.target.value)}
+                  />
+                </div>
 
-                    return (
-                      <div className="text-center p-2 text-zinc-400 group-hover:text-zinc-200 transition-colors">
-                        <Camera className="w-6 h-6 mx-auto mb-1 text-zinc-400 group-hover:text-emerald-500 transition-colors" />
-                        <span className="text-[11px] font-bold block leading-tight text-zinc-700 dark:text-zinc-300">{t("photo3x4", "ẢNH 3x4")}</span>
-                        <span className="text-[9px] text-zinc-500 block mt-0.5">{t("takeOrUploadPhoto", "Chụp / tải ảnh")}</span>
-                      </div>
-                    );
-                  })()}
+                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                  <OutlinedInput
+                    type="tel"
+                    label={t("mainPhone", "SĐT chính")}
+                    value={form.tel}
+                    onChange={(e) => handleTelChange(e.target.value)}
+                    className="tabular-nums"
+                  />
+                </div>
+
+                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                  <OutlinedInput
+                    type="tel"
+                    label={t("subPhone", "SĐT phụ")}
+                    value={form.sub_tel}
+                    onChange={(e) => handleSubTelChange(e.target.value)}
+                    className="tabular-nums"
+                  />
                 </div>
               </div>
             </div>
@@ -2517,31 +2240,21 @@ const FALLBACK_DEMANDS = [
                   </OutlinedSelect>
                 </div>
 
-                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
-                  <OutlinedSelect
-                    label={t("bus", "Nhà xe bus")}
-                    value={form.bus_info}
-                    onChange={(e) => setForm({ ...form, bus_info: e.target.value })}
-                  >
-                    <option key="default-bus" value=""> {t("selectBus", "Chọn tuyến xe bus")} </option>
-                    {form.bus_info &&
-                      !(hrmOptions.busRoutes && hrmOptions.busRoutes.length > 0 ? hrmOptions.busRoutes : BUS_OPTIONS).includes(form.bus_info) && (
-                        <option key={`custom-bus-${form.bus_info}`} value={form.bus_info}>{form.bus_info}</option>
-                      )}
-                    {(hrmOptions.busRoutes && hrmOptions.busRoutes.length > 0 ? hrmOptions.busRoutes : BUS_OPTIONS).map((b) => (
-                      <option key={`bus-${b}`} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </OutlinedSelect>
-                </div>
-
                 <div className="col-span-12 sm:col-span-4 xl:col-span-2">
                   <OutlinedInput
                     type="date"
                     label={t("cvReceivedDate", "Ngày nhận CV")}
                     value={form.date_cv}
                     onChange={(e) => setForm({ ...form, date_cv: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-12 sm:col-span-4 xl:col-span-2">
+                  <OutlinedInput
+                    type="date"
+                    label={t("salarySignDate", "Ngày ký lương")}
+                    value={form.date_salary}
+                    onChange={(e) => setForm({ ...form, date_salary: e.target.value })}
                   />
                 </div>
 
@@ -2596,123 +2309,68 @@ const FALLBACK_DEMANDS = [
                 </div>
               </div>
 
-              {/* Row 2: HR Interview & Review & HR Reject reason */}
-              <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap items-stretch sm:items-center gap-3">
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("interviewDate", "Ngày HR PV")}
-                    value={form.date_hr_inter}
-                    onChange={(e) => setForm({ ...form, date_hr_inter: e.target.value })}
-                  />
+              {/* Row 2: HR Interview & Review + Department Interview & Review */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="w-full sm:w-[175px] shrink-0">
+                    <OutlinedInput
+                      type="date"
+                      label={t("interviewDate", "Ngày HR PV")}
+                      value={form.date_hr_inter}
+                      onChange={(e) => setForm({ ...form, date_hr_inter: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="w-full sm:w-[175px] shrink-0">
+                    <OutlinedInput
+                      type="date"
+                      label={t("hrAccept", "Ngày HR duyệt")}
+                      value={form.date_hr_review}
+                      onChange={(e) => setForm({ ...form, date_hr_review: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="flex-1 h-[38px] flex items-center">
+                    <CompactSwitch
+                      label={t("hrAccept", "HR Chấp nhận")}
+                      checked={form.hrAcc === "yes"}
+                      onChange={(val) => setForm({ ...form, hrAcc: val ? "yes" : "no" })}
+                    />
+                  </div>
                 </div>
 
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("hrAccept", "Ngày HR duyệt")}
-                    value={form.date_hr_review}
-                    onChange={(e) => setForm({ ...form, date_hr_review: e.target.value })}
-                  />
-                </div>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="w-full sm:w-[175px] shrink-0">
+                    <OutlinedInput
+                      type="date"
+                      label={t("deptInterviewDate", "Ngày BP PV")}
+                      value={form.date_dept_inter}
+                      onChange={(e) => setForm({ ...form, date_dept_inter: e.target.value })}
+                    />
+                  </div>
 
-                <div className="w-full sm:w-[180px] shrink-0 h-[38px] flex items-center">
-                  <CompactSwitch
-                    label={t("hrAccept", "HR Chấp nhận")}
-                    checked={form.hrAcc === "yes"}
-                    onChange={(val) => setForm({ ...form, hrAcc: val ? "yes" : "no" })}
-                  />
-                </div>
+                  <div className="w-full sm:w-[175px] shrink-0">
+                    <OutlinedInput
+                      type="date"
+                      label={t("deptReviewDate", "Ngày BP duyệt")}
+                      value={form.date_dept_review}
+                      onChange={(e) => setForm({ ...form, date_dept_review: e.target.value })}
+                    />
+                  </div>
 
-                <div className="flex-1 min-w-[200px]">
-                  <OutlinedInput
-                    type="text"
-                    label={t("deptRejectReason", "Lý do HR từ chối")}
-                    value={form.reason}
-                    onChange={(e) => setForm({ ...form, reason: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Row 3: Department Review & Reject Reason */}
-              <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap items-stretch sm:items-center gap-3">
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("deptInterviewDate", "Ngày BP PV")}
-                    value={form.date_dept_inter}
-                    onChange={(e) => setForm({ ...form, date_dept_inter: e.target.value })}
-                  />
-                </div>
-
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("deptReviewDate", "Ngày BP duyệt")}
-                    value={form.date_dept_review}
-                    onChange={(e) => setForm({ ...form, date_dept_review: e.target.value })}
-                  />
-                </div>
-
-                <div className="w-full sm:w-[180px] shrink-0 h-[38px] flex items-center">
-                  <CompactSwitch
-                    label={t("deptApproved", "BP Chấp nhận")}
-                    checked={form.deptACC === "yes"}
-                    onChange={(val) => setForm({ ...form, deptACC: val ? "yes" : "no" })}
-                  />
-                </div>
-
-                <div className="flex-1 min-w-[200px]">
-                  <OutlinedInput
-                    type="text"
-                    label={t("deptRejectReason", "Lý do BP từ chối")}
-                    value={form.dept_reason}
-                    onChange={(e) => setForm({ ...form, dept_reason: e.target.value })}
-                  />
+                  <div className="flex-1 h-[38px] flex items-center">
+                    <CompactSwitch
+                      label={t("deptApproved", "BP Chấp nhận")}
+                      checked={form.deptACC === "yes"}
+                      onChange={(val) => setForm({ ...form, deptACC: val ? "yes" : "no" })}
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Row 4: Salary Date, Candidate Reply, Reply Date, Candidate Reject Reason */}
+              {/* Row 3: Expected on board, Actual on board, Change Date, Started working, Comp Return, Note */}
               <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap items-stretch sm:items-center gap-3">
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("salarySignDate", "Ngày ký lương")}
-                    value={form.date_salary}
-                    onChange={(e) => setForm({ ...form, date_salary: e.target.value })}
-                  />
-                </div>
-
-                <div className="w-full sm:w-[180px] shrink-0">
-                  <OutlinedInput
-                    type="date"
-                    label={t("candidateReplyDate", "Ngày ứng viên phản hồi")}
-                    value={form.reply_date}
-                    onChange={(e) => setForm({ ...form, reply_date: e.target.value })}
-                  />
-                </div>
-
-                <div className="w-full sm:w-[180px] shrink-0 h-[38px] flex items-center">
-                  <CompactSwitch
-                    label={t("candidateAgreed", "Ứng viên đồng ý")}
-                    checked={form.reply_check === "yes"}
-                    onChange={(val) => setForm({ ...form, reply_check: val ? "yes" : "no" })}
-                  />
-                </div>
-
-                <div className="flex-1 min-w-[200px]">
-                  <OutlinedInput
-                    type="text"
-                    label={t("candidateRejectReason", "Lý do ứng viên từ chối")}
-                    value={form.candidate_reason}
-                    onChange={(e) => setForm({ ...form, candidate_reason: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Row 5: Expected on board, Actual on board, Started working, Bus reg, Previous company, Note */}
-              <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap items-stretch sm:items-center gap-3">
-                <div className="w-full sm:w-[180px] shrink-0">
+                <div className="w-full sm:w-[165px] shrink-0">
                   <OutlinedInput
                     type="date"
                     label={t("expectedWorkDate", "Ngày vào làm dự kiến")}
@@ -2722,7 +2380,7 @@ const FALLBACK_DEMANDS = [
                   />
                 </div>
 
-                <div className="w-full sm:w-[180px] shrink-0">
+                <div className="w-full sm:w-[165px] shrink-0">
                   <OutlinedInput
                     type="date"
                     label={t("actualWorkDate", "Ngày thực tế vào làm")}
@@ -2732,7 +2390,16 @@ const FALLBACK_DEMANDS = [
                   />
                 </div>
 
-                <div className="w-full sm:w-[180px] shrink-0 h-[38px] flex items-center">
+                <div className="w-full sm:w-[165px] shrink-0">
+                  <OutlinedInput
+                    type="date"
+                    label={t("changeWorkDate", "Ngày đổi vào làm")}
+                    value={form.change_date}
+                    onChange={(e) => setForm({ ...form, change_date: e.target.value })}
+                  />
+                </div>
+
+                <div className="w-full sm:w-[165px] shrink-0 h-[38px] flex items-center">
                   <CompactSwitch
                     label={t("startedWorking", "Đã vào làm việc")}
                     checked={form.inWorker === "yes"}
@@ -2740,15 +2407,7 @@ const FALLBACK_DEMANDS = [
                   />
                 </div>
 
-                <div className="w-full sm:w-[180px] shrink-0 h-[38px] flex items-center">
-                  <CompactSwitch
-                    label={t("regBus", "Đăng ký xe bus")}
-                    checked={form.reg_bus}
-                    onChange={(val) => setForm({ ...form, reg_bus: val })}
-                  />
-                </div>
-
-                <div className="w-full sm:w-[180px] xl:w-[200px] shrink-0">
+                <div className="w-full sm:w-[190px] shrink-0">
                   <OutlinedSelect
                     label={t("returningCompany", "Công ty trở về")}
                     value={form.comp_return}
@@ -2767,7 +2426,7 @@ const FALLBACK_DEMANDS = [
                   </OutlinedSelect>
                 </div>
 
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-[180px]">
                   <OutlinedInput
                     type="text"
                     label={t("recordNotes", "Ghi chú hồ sơ")}
@@ -2956,7 +2615,7 @@ const FALLBACK_DEMANDS = [
                 </div>
               </div>
 
-              {/* Row 2: Ethnicity, Religious, Marital, Nation, Nationality, Birth Prov, Reside Prov */}
+              {/* Row 2: Ethnicity, Marital, Nation, Nationality, Birth Prov, Reside Prov */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
                 <div className="col-span-12 sm:col-span-6 xl:col-span-2">
                   <OutlinedSelect
@@ -2974,37 +2633,6 @@ const FALLBACK_DEMANDS = [
                     {(hrmOptions.dantocs || []).map((dt, idx) => (
                       <option key={`dt-${dt.code || idx}-${idx}`} value={dt.code}>
                         {dt.name}
-                      </option>
-                    ))}
-                  </OutlinedSelect>
-                </div>
-
-                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
-                  <OutlinedSelect
-                    label={t("religious", "Tôn giáo")}
-                    value={form.religious}
-                    onChange={(e) => setForm({ ...form, religious: e.target.value })}
-                  >
-                    <option value=""> {t("selectReligion", "Chọn tôn giáo")} </option>
-                    {form.religious &&
-                      !(hrmOptions.religious || []).some((r) => r.code === form.religious) && (
-                        <option value={form.religious}>
-                          {(() => {
-                            const matched = (hrmOptions.religious || []).find(
-                              (r) =>
-                                r.code === form.religious ||
-                                r.name.toLowerCase() === form.religious.toLowerCase() ||
-                                r.name_vi?.toLowerCase() === form.religious.toLowerCase() ||
-                                r.name_en?.toLowerCase() === form.religious.toLowerCase() ||
-                                r.name_cn?.toLowerCase() === form.religious.toLowerCase()
-                            );
-                            return matched ? getReligiousDisplayName(matched) : form.religious;
-                          })()}
-                        </option>
-                      )}
-                    {(hrmOptions.religious || []).map((r, idx) => (
-                      <option key={`rel-${r.code || idx}-${idx}`} value={r.code}>
-                        {getReligiousDisplayName(r)}
                       </option>
                     ))}
                   </OutlinedSelect>
@@ -3041,7 +2669,7 @@ const FALLBACK_DEMANDS = [
                       setForm({
                         ...form,
                         nation: newNation,
-                        ...(matchedCountry ? { nationality: matchedCountry.name } : {}),
+                        ...(matchedCountry ? { nationality: matchedCountry.name } : newNation === "VN" ? { nationality: "Việt Nam" } : {}),
                       });
                     }}
                   >
@@ -3057,7 +2685,7 @@ const FALLBACK_DEMANDS = [
                   </OutlinedSelect>
                 </div>
 
-                <div className="col-span-6 sm:col-span-3 xl:col-span-1">
+                <div className="col-span-6 sm:col-span-3 xl:col-span-2">
                   <OutlinedSelect
                     label={t("nationality", "Quốc tịch")}
                     value={form.nationality}
@@ -3067,7 +2695,11 @@ const FALLBACK_DEMANDS = [
                       setForm({
                         ...form,
                         nationality: newNat,
-                        ...(matchedCountry ? { nation: matchedCountry.code } : {}),
+                        ...(matchedCountry
+                          ? { nation: matchedCountry.code }
+                          : /vi[ệe]t\s*nam/i.test(newNat)
+                          ? { nation: "VN" }
+                          : {}),
                       });
                     }}
                   >
@@ -3105,7 +2737,7 @@ const FALLBACK_DEMANDS = [
                   </OutlinedSelect>
                 </div>
 
-                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3">
                   <OutlinedSelect
                     label={t("resideProvince", "Tỉnh / TP Cư trú")}
                     value={form.province}
@@ -3124,6 +2756,132 @@ const FALLBACK_DEMANDS = [
                       </option>
                     ))}
                   </OutlinedSelect>
+                </div>
+              </div>
+
+              {/* Row 3: Code MC, Work Location, Direct/Indirect, Category, Education, School, Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-4">
+                <div className="col-span-6 sm:col-span-4 xl:col-span-2">
+                  <OutlinedSelect
+                    label={t("timekeepingSite", "Mã máy chấm công")}
+                    value={form.code_mc}
+                    onChange={(e) => setForm({ ...form, code_mc: e.target.value })}
+                  >
+                    <option value=""> {t("selectTimekeepingSite", "Chọn mã MCC")} </option>
+                    {form.code_mc && !(hrmOptions.codeMcs || ["SCS006"]).includes(form.code_mc) && (
+                      <option value={form.code_mc}>{form.code_mc}</option>
+                    )}
+                    {(hrmOptions.codeMcs && hrmOptions.codeMcs.length > 0 ? hrmOptions.codeMcs : ["SCS006"]).map((mc, idx) => (
+                      <option key={`mc-${mc}-${idx}`} value={mc}>
+                        {mc}
+                      </option>
+                    ))}
+                  </OutlinedSelect>
+                </div>
+
+                <div className="col-span-6 sm:col-span-4 xl:col-span-1">
+                  <OutlinedSelect
+                    label={t("workArea", "Nơi làm việc")}
+                    value={form.loc_work}
+                    onChange={(e) => setForm({ ...form, loc_work: e.target.value })}
+                  >
+                    <option value=""> {t("selectWorkArea", "Chọn nơi LV")} </option>
+                    {form.loc_work && !(hrmOptions.locWorks || ["AW"]).includes(form.loc_work) && (
+                      <option value={form.loc_work}>{form.loc_work}</option>
+                    )}
+                    {(hrmOptions.locWorks && hrmOptions.locWorks.length > 0 ? hrmOptions.locWorks : ["AW"]).map((lw, idx) => (
+                      <option key={`lw-${lw}-${idx}`} value={lw}>
+                        {lw}
+                      </option>
+                    ))}
+                  </OutlinedSelect>
+                </div>
+
+                <div className="col-span-12 sm:col-span-4 xl:col-span-2">
+                  <OutlinedSelect
+                    label={t("isDirect", "Trực tiếp / Gián tiếp")}
+                    value={form.direct}
+                    onChange={(e) => setForm({ ...form, direct: e.target.value })}
+                  >
+                    <option value=""> {t("selectIsDirect", "Chọn trực/gián tiếp")} </option>
+                    {form.direct && !(hrmOptions.directs || []).some((d) => d.code === form.direct) && (
+                      <option value={form.direct}>{form.direct}</option>
+                    )}
+                    {(hrmOptions.directs && hrmOptions.directs.length > 0
+                      ? hrmOptions.directs
+                      : [
+                          { code: "0", name: "0 - Trực tiếp" },
+                          { code: "1", name: "1 - Gián tiếp" },
+                          { code: "3", name: "3 - Cán bộ" },
+                        ]
+                    ).map((d, idx) => (
+                      <option key={`direct-${d.code}-${idx}`} value={d.code}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </OutlinedSelect>
+                </div>
+
+                <div className="col-span-6 sm:col-span-4 xl:col-span-1">
+                  <OutlinedInput
+                    type="text"
+                    label={t("tmpCategory", "Loại NV")}
+                    value={form.tmp_categoryid}
+                    onChange={(e) => setForm({ ...form, tmp_categoryid: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-12 sm:col-span-8 xl:col-span-2">
+                  <OutlinedSelect
+                    label={t("education", "Trình độ học vấn")}
+                    value={form.edu}
+                    onChange={(e) => setForm({ ...form, edu: e.target.value })}
+                  >
+                    <option value=""> {t("education", "Chọn trình độ học vấn")} </option>
+                    {form.edu &&
+                      !hrmOptions.edus?.some((item) => item.code === form.edu) && (
+                        <option value={form.edu}>
+                          {hrmOptions.edus?.find((item) => item.name.toLowerCase() === form.edu.toLowerCase())?.name || form.edu}
+                        </option>
+                      )}
+                    {(hrmOptions.edus && hrmOptions.edus.length > 0
+                      ? hrmOptions.edus
+                      : [
+                          { code: "001", name: "Tiểu học (5 năm)" },
+                          { code: "002", name: "THCS (9 năm)" },
+                          { code: "003", name: "Dưới Lớp 12" },
+                          { code: "004", name: "Tốt nghiệp 12 (Không có kinh nghiệm)" },
+                          { code: "005", name: "Tốt nghiệp 12 (Có kinh nghiệm)" },
+                          { code: "006", name: "Trung học CN" },
+                          { code: "007", name: "Cao đẳng" },
+                          { code: "008", name: "Đại Học" },
+                          { code: "009", name: "Thạc Sĩ" },
+                          { code: "010", name: "Tiến Sĩ" },
+                        ]
+                    ).map((e, idx) => (
+                      <option key={`edu-${e.code || idx}-${idx}`} value={e.code}>
+                        {e.name}
+                      </option>
+                    ))}
+                  </OutlinedSelect>
+                </div>
+
+                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                  <OutlinedInput
+                    type="text"
+                    label={t("school", "Trường tốt nghiệp")}
+                    value={form.school_gra}
+                    onChange={(e) => setForm({ ...form, school_gra: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-12 sm:col-span-6 xl:col-span-2">
+                  <OutlinedInput
+                    type="email"
+                    label={t("email", "Địa chỉ Email")}
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  />
                 </div>
               </div>
             </div>
@@ -3176,82 +2934,6 @@ const FALLBACK_DEMANDS = [
           </div>
         </div>
       </form>
-
-      {/* ========================================================================= */}
-      {/* MODAL 1: CAMERA & TẢI ẢNH CHÂN DUNG 3x4 */}
-      {/* ========================================================================= */}
-      {cameraModalOpen && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) handleClosePhotoModal();
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-3"
-        >
-          <div className="bg-white dark:bg-[#18181C] border border-zinc-200 dark:border-[#26262C] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-[#26262C]">
-              <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                <Camera className="w-4 h-4" />
-                <span>{t("photoModalTitle")}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleClosePhotoModal}
-                className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-4 flex flex-col items-center">
-              {cameraError ? (
-                <div className="p-3 mb-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs text-center w-full">
-                  {cameraError}
-                </div>
-              ) : (
-                <div className="relative w-64 h-80 rounded-xl bg-black border border-zinc-300 dark:border-zinc-700 overflow-hidden shadow-inner flex items-center justify-center">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Guideline rectangle 3:4 */}
-                  <div className="absolute inset-4 border-2 border-dashed border-cyan-400/70 rounded-lg pointer-events-none flex items-center justify-center">
-                    <span className="text-[10px] text-cyan-200 bg-black/50 px-2 py-0.5 rounded">
-                      {t("alignFaceGuide")}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-4 flex items-center space-x-2 w-full justify-center">
-                {!cameraError && (
-                  <button
-                    type="button"
-                    onClick={handleCapturePhoto}
-                    className="h-7 px-4 rounded-md bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold inline-flex items-center space-x-1.5"
-                  >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>{t("capturePhotoNow")}</span>
-                  </button>
-                )}
-
-                <label className="h-7 px-3 rounded-md bg-zinc-100 hover:bg-zinc-200 dark:bg-[#202025] dark:hover:bg-[#2a2a32] border border-zinc-200 dark:border-[#26262C] text-xs font-semibold text-zinc-700 dark:text-zinc-300 inline-flex items-center space-x-1.5 cursor-pointer">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>{t("uploadPhotoComputer")}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Hidden background receiver textarea for USB Barcode/QR Scanner (MC-9103) */}
       <textarea
