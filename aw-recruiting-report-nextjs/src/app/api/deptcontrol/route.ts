@@ -41,8 +41,23 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  let body: Record<string, unknown>;
   try {
-    const body = await req.json();
+    body = await req.json();
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { success: false, error: "Invalid or empty request body" },
+        { status: 400 }
+      );
+    }
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Malformed JSON request body" },
+      { status: 400 }
+    );
+  }
+
+  try {
     const {
       id,
       department,
@@ -63,15 +78,23 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const startDate = start_date ? new Date(start_date) : null;
-    const endDate = end_date ? new Date(end_date) : null;
+    const parseDate = (d: unknown): Date | null => {
+      if (!d || typeof d !== "string" && typeof d !== "number" && !(d instanceof Date)) {
+        return null;
+      }
+      const parsed = new Date(d as string | number | Date);
+      return !isNaN(parsed.getTime()) ? parsed : null;
+    };
+
+    const startDate = parseDate(start_date);
+    const endDate = parseDate(end_date);
 
     const data = {
       department: department ? String(department).trim() : "",
       mainGroup: main_group ? String(main_group).trim() : null,
       subDepartment: sub_department ? String(sub_department).trim() : "",
       subDivision: sub_division ? String(sub_division).trim() : "",
-      name: parsedName || {},
+      name: (parsedName as object) || {},
       startDate,
       endDate,
     };

@@ -19,8 +19,23 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  let body: Record<string, unknown>;
   try {
-    const body = await req.json();
+    body = await req.json();
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { success: false, error: "Invalid or empty request body" },
+        { status: 400 }
+      );
+    }
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Malformed JSON request body" },
+      { status: 400 }
+    );
+  }
+
+  try {
     const { id, source } = body;
 
     let parsedSource = source;

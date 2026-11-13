@@ -24,13 +24,14 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const depts = await prisma.awDept.findMany({
-      where,
-      orderBy: [{ department: "asc" }, { subDepartment: "asc" }, { subDivision: "asc" }],
-    });
+    const [depts, deptCodes] = await Promise.all([
+      prisma.awDept.findMany({
+        where,
+        orderBy: [{ department: "asc" }, { subDepartment: "asc" }, { subDivision: "asc" }],
+      }),
+      prisma.awDeptCode.findMany(),
+    ]);
 
-    // Check if we need fallback names from aw_dept_code
-    const deptCodes = await prisma.awDeptCode.findMany();
     const deptCodeMap = new Map<string, unknown>();
     for (const code of deptCodes) {
       deptCodeMap.set(code.deptCode, code.name);
