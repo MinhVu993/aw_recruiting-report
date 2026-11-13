@@ -196,6 +196,7 @@ function DemandContent() {
             dem_amount: Number(d.dem_amount ?? d.demAmount ?? 0),
             dem_recruited: Number(d.dem_recruited ?? d.demRecruited ?? 0),
             stocknumber: Number(d.stocknumber ?? 0),
+            key_in: d.key_in || (d.createdAt ? String(d.createdAt).split("T")[0] : "") || d.dem_inputdate || d.demInputdate || "",
             dem_inputdate: d.dem_inputdate || d.demInputdate || "",
             dem_fulfilled: d.dem_fulfilled || d.demFulfilled || "no",
             dem_fullfilldate: d.dem_fullfilldate || d.demFullfilldate || "",
